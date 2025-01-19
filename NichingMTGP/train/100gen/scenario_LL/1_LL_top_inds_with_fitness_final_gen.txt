@@ -1,0 +1,80 @@
+Individual:0
+Tree 0:
+add('SLACK', add(add('PT', add(maximum('PT', add('PT', 'SLACK')), minimum(add('MWT', protected_div('NPT', 'WKR')), minimum(protected_div(minimum('MWT', 'NPT'), multiply('WKR', 'MWT')), 'NPT')))), 'PT'))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'NIQ')), 'MWT'), 'NIQ'), 'PT')), add(subtract(multiply('NOR', add('MWT', 'MWT')), maximum(add(minimum(multiply(protected_div('NIQ', 'NOR'), 'MWT'), 'SLACK'), add(maximum('NIQ', 'PT'), protected_div('SLACK', 'NIQ'))), protected_div(subtract('NIQ', 'NIQ'), 'PT'))), multiply('PT', 'NIQ')))
+Fitness:
+994.5
+
+Individual:1
+Tree 0:
+add('SLACK', add('PT', add('NPT', minimum(maximum(minimum('SLACK', protected_div('SLACK', add('NPT', 'NIQ'))), maximum('WIQ', 'PT')), multiply(minimum('TIS', 'SLACK'), 'NOR')))))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'PT')), 'NIQ'), 'WKR'), 'PT')), add(multiply(add('PT', 'MWT'), multiply('PT', 'PT')), multiply('PT', 'NIQ')))
+Fitness:
+1015.5
+
+Individual:2
+Tree 0:
+add('SLACK', add(add('PT', add(maximum('PT', add('PT', 'SLACK')), minimum(add('MWT', protected_div('NPT', 'WKR')), minimum(protected_div(minimum('MWT', 'NPT'), multiply('WKR', 'MWT')), 'NPT')))), 'PT'))
+Tree 1:
+add(multiply(add('PT', multiply(add('PT', 'MWT'), 'NIQ')), add('TIS', 'WKR')), multiply(protected_div(subtract(protected_div(multiply('PT', 'NIQ'), 'NOR'), 'MWT'), protected_div('SLACK', 'SLACK')), multiply(add('PT', 'MWT'), 'NIQ')))
+Fitness:
+1034.5
+
+Individual:3
+Tree 0:
+add('SLACK', add(add(add(maximum('PT', add(add('SLACK', 'PT'), 'NIQ')), 'WIQ'), 'NIQ'), 'NPT'))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'NIQ')), 'NIQ'), 'WKR'), 'PT')), 'PT')
+Fitness:
+1045.0
+
+Individual:4
+Tree 0:
+add(maximum('SLACK', add(add(add(add('PT', protected_div('SLACK', 'PT')), maximum('PT', 'SLACK')), add(add('SLACK', 'NPT'), 'NIQ')), 'NIQ')), maximum('WKR', add('NPT', add(protected_div('WKR', add(add('NPT', 'WIQ'), add('PT', protected_div('SLACK', 'NIQ')))), 'OWT'))))
+Tree 1:
+add(multiply(add('PT', multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'NIQ')), multiply('PT', multiply(add('PT', 'MWT'), 'NIQ'))), multiply(multiply('PT', add('PT', 'MWT')), 'MWT'))), 'MWT'), protected_div('NIQ', 'PT'))
+Fitness:
+1050.0
+
+Individual:5
+Tree 0:
+add('SLACK', add(add('NOR', add('NOR', 'NOR')), add(add('SLACK', 'SLACK'), 'NIQ')))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'NIQ')), 'NIQ'), 'WKR'), 'PT')), add(multiply(add('PT', multiply(add('WIQ', 'OWT'), maximum('NPT', 'MWT'))), 'WIQ'), multiply('PT', 'NIQ')))
+Fitness:
+1054.5
+
+Individual:6
+Tree 0:
+add('SLACK', add(add('PT', maximum('NPT', 'SLACK')), minimum('MWT', 'NPT')))
+Tree 1:
+add(add('MWT', add(add(multiply(multiply('PT', add('PT', 'MWT')), 'MWT'), 'MWT'), 'PT')), 'NOR')
+Fitness:
+1056.0
+
+Individual:7
+Tree 0:
+add('SLACK', add('PT', add('PT', protected_div('SLACK', protected_div('SLACK', 'PT')))))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'NIQ')), 'MWT'), 'WKR'), 'PT')), add(multiply(add('PT', 'MWT'), multiply('PT', 'PT')), multiply('PT', 'NIQ')))
+Fitness:
+1057.0
+
+Individual:8
+Tree 0:
+add('SLACK', add('PT', add(maximum('NPT', add(add('SLACK', 'PT'), 'NIQ')), protected_div('SLACK', 'PT'))))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'PT')), 'NIQ'), 'SLACK'), 'MWT')), add(multiply(add('PT', 'MWT'), multiply('PT', 'PT')), multiply('PT', 'NIQ')))
+Fitness:
+1059.5
+
+Individual:9
+Tree 0:
+add('SLACK', maximum('WKR', add('SLACK', add(minimum('SLACK', 'NPT'), 'OWT'))))
+Tree 1:
+add(add('MWT', add(multiply(add(multiply('PT', multiply(add('PT', 'MWT'), 'NIQ')), 'MWT'), 'NIQ'), 'PT')), add(subtract(multiply('NOR', add('MWT', 'PT')), maximum(add(minimum(multiply(protected_div('NIQ', 'NOR'), 'MWT'), 'SLACK'), add(maximum('NIQ', 'PT'), protected_div('SLACK', 'NIQ'))), protected_div(subtract('NIQ', 'NPT'), 'PT'))), multiply('PT', 'NIQ')))
+Fitness:
+1073.5
+

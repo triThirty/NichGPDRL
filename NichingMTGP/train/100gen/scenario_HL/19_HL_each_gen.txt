@@ -1,0 +1,708 @@
+Best individuals from each gen:
+
+Gen: 0
+Individual:
+Tree 0:
+minimum(multiply(add('SLACK', 'WIQ'), multiply('MWT', 'NPT')), minimum(add('NIQ', 'SLACK'), minimum('WIQ', 'PT')))
+Tree 1:
+multiply(subtract(multiply('PT', 'SLACK'), minimum('WKR', 'PT')), minimum(protected_div('TIS', 'NOR'), maximum('NPT', 'PT')))
+
+Gen: 1
+Individual:
+Tree 0:
+subtract(protected_div(subtract('OWT', 'PT'), minimum('OWT', 'OWT')), subtract(add(maximum('SLACK', 'MWT'), add('TIS', 'NOR')), maximum('PT', 'MWT')))
+Tree 1:
+maximum(add('MWT', 'PT'), add('NIQ', 'WIQ'))
+
+Gen: 2
+Individual:
+Tree 0:
+minimum(multiply(add('SLACK', 'WIQ'), multiply('MWT', 'WIQ')), minimum(add('NIQ', 'SLACK'), minimum('WIQ', 'PT')))
+Tree 1:
+minimum(minimum('PT', 'MWT'), maximum('MWT', 'NPT'))
+
+Gen: 3
+Individual:
+Tree 0:
+minimum('SLACK', subtract('WIQ', 'NOR'))
+Tree 1:
+add('PT', 'NIQ')
+
+Gen: 4
+Individual:
+Tree 0:
+maximum('MWT', 'SLACK')
+Tree 1:
+maximum(add('NIQ', 'PT'), 'WIQ')
+
+Gen: 5
+Individual:
+Tree 0:
+minimum(multiply(add('SLACK', subtract('TIS', 'PT')), multiply('MWT', protected_div('SLACK', 'PT'))), minimum(add('NIQ', 'SLACK'), minimum('WIQ', 'PT')))
+Tree 1:
+maximum(add('NIQ', 'PT'), add('NIQ', 'WIQ'))
+
+Gen: 6
+Individual:
+Tree 0:
+minimum('SLACK', subtract('WIQ', 'NOR'))
+Tree 1:
+add('PT', 'NIQ')
+
+Gen: 7
+Individual:
+Tree 0:
+minimum('SLACK', subtract('WIQ', subtract(minimum('OWT', 'OWT'), 'PT')))
+Tree 1:
+add('PT', minimum('PT', 'MWT'))
+
+Gen: 8
+Individual:
+Tree 0:
+minimum('PT', 'SLACK')
+Tree 1:
+maximum(add('NIQ', 'PT'), add(multiply('PT', 'PT'), 'WIQ'))
+
+Gen: 9
+Individual:
+Tree 0:
+subtract('SLACK', 'NPT')
+Tree 1:
+add(add(add('NIQ', 'PT'), 'PT'), minimum('NOR', 'MWT'))
+
+Gen: 10
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', 'PT'), multiply('MWT', 'WIQ')), 'WIQ')
+Tree 1:
+maximum(add(add('NIQ', 'PT'), 'PT'), subtract(minimum(add('WKR', 'SLACK'), maximum(add('MWT', 'PT'), 'SLACK')), subtract(multiply('TIS', 'WIQ'), minimum('NPT', 'OWT'))))
+
+Gen: 11
+Individual:
+Tree 0:
+subtract('SLACK', protected_div(add('NPT', 'NPT'), 'SLACK'))
+Tree 1:
+maximum(add(add(add('NIQ', 'PT'), 'PT'), 'PT'), add(maximum('SLACK', 'WIQ'), 'MWT'))
+
+Gen: 12
+Individual:
+Tree 0:
+minimum(multiply(add('SLACK', 'WIQ'), multiply('MWT', minimum('OWT', 'OWT'))), 'NIQ')
+Tree 1:
+add('PT', minimum('PT', 'MWT'))
+
+Gen: 13
+Individual:
+Tree 0:
+subtract('SLACK', minimum('NPT', 'SLACK'))
+Tree 1:
+maximum(add(add('NIQ', 'PT'), 'PT'), 'PT')
+
+Gen: 14
+Individual:
+Tree 0:
+subtract('SLACK', protected_div('SLACK', 'SLACK'))
+Tree 1:
+maximum(add(add('NIQ', 'PT'), 'PT'), 'PT')
+
+Gen: 15
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', 'PT'), multiply(add('SLACK', 'PT'), 'NIQ')), 'WIQ')
+Tree 1:
+add(add(add('NIQ', 'PT'), 'PT'), minimum('NOR', 'MWT'))
+
+Gen: 16
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', 'PT'), multiply(add('SLACK', 'PT'), 'NIQ')), 'WIQ')
+Tree 1:
+add(add(add('NIQ', 'PT'), 'PT'), minimum('NOR', 'MWT'))
+
+Gen: 17
+Individual:
+Tree 0:
+subtract('SLACK', 'WKR')
+Tree 1:
+add('PT', minimum('PT', 'MWT'))
+
+Gen: 18
+Individual:
+Tree 0:
+minimum(multiply(add('SLACK', minimum('OWT', 'SLACK')), 'SLACK'), 'NIQ')
+Tree 1:
+add(add(add('NIQ', 'PT'), 'PT'), minimum('NOR', 'MWT'))
+
+Gen: 19
+Individual:
+Tree 0:
+maximum(multiply('NIQ', multiply(add('SLACK', minimum('OWT', 'OWT')), 'SLACK')), 'SLACK')
+Tree 1:
+maximum(add(add('NIQ', 'PT'), 'PT'), 'MWT')
+
+Gen: 20
+Individual:
+Tree 0:
+subtract('SLACK', protected_div(protected_div('SLACK', 'PT'), minimum('SLACK', minimum('OWT', 'NIQ'))))
+Tree 1:
+maximum(add(add('NIQ', add(add('NIQ', 'PT'), minimum('PT', 'MWT'))), 'PT'), 'PT')
+
+Gen: 21
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('NIQ', 'SLACK')), multiply('NOR', multiply(add('SLACK', subtract('TIS', 'OWT')), add(multiply('PT', 'SLACK'), 'SLACK'))))
+Tree 1:
+add(add(add('NIQ', add('NIQ', 'PT')), 'PT'), 'PT')
+
+Gen: 22
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('PT', 'SLACK')), multiply('NOR', multiply(add('SLACK', 'SLACK'), add(multiply('PT', 'SLACK'), 'SLACK'))))
+Tree 1:
+add(add(add('NIQ', add(minimum('PT', 'MWT'), 'PT')), 'PT'), 'PT')
+
+Gen: 23
+Individual:
+Tree 0:
+subtract('SLACK', protected_div('NOR', multiply(maximum('TIS', 'WIQ'), subtract('NOR', 'MWT'))))
+Tree 1:
+add(add('PT', minimum('PT', 'MWT')), minimum('NOR', 'MWT'))
+
+Gen: 24
+Individual:
+Tree 0:
+subtract('SLACK', minimum(minimum('NIQ', 'SLACK'), protected_div(add(multiply(protected_div(multiply('NPT', 'WIQ'), protected_div('NOR', 'WKR')), maximum(protected_div('NOR', 'WIQ'), minimum('PT', 'WIQ'))), maximum(add(add('MWT', 'NPT'), add('NIQ', 'MWT')), 'SLACK')), subtract(maximum(protected_div(add('OWT', 'MWT'), add('OWT', 'NIQ')), add(multiply('PT', 'PT'), protected_div('PT', 'PT'))), subtract(minimum(protected_div('OWT', 'NPT'), protected_div('NOR', 'OWT')), multiply(add('OWT', 'OWT'), minimum('NPT', 'WKR')))))))
+Tree 1:
+add(add(add(minimum('PT', minimum('MWT', 'MWT')), 'PT'), 'MWT'), add(add('PT', 'PT'), 'MWT'))
+
+Gen: 25
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('PT', 'SLACK')), multiply('NOR', multiply(add('SLACK', subtract('TIS', add('PT', 'NPT'))), add(multiply('PT', 'NIQ'), 'SLACK'))))
+Tree 1:
+add(add(add('NIQ', 'PT'), 'MWT'), add(add('PT', 'NPT'), 'MWT'))
+
+Gen: 26
+Individual:
+Tree 0:
+subtract('SLACK', protected_div('SLACK', add(minimum(subtract('OWT', 'TIS'), 'NIQ'), 'SLACK')))
+Tree 1:
+add('PT', minimum('PT', 'MWT'))
+
+Gen: 27
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum('NPT', protected_div(subtract('MWT', 'WKR'), add('SLACK', minimum('OWT', 'SLACK')))))
+Tree 1:
+add(minimum('PT', 'MWT'), 'PT')
+
+Gen: 28
+Individual:
+Tree 0:
+maximum(add('SLACK', 'NPT'), maximum('NPT', protected_div(subtract('MWT', protected_div('SLACK', add('NIQ', 'SLACK'))), add('SLACK', minimum('OWT', 'PT')))))
+Tree 1:
+maximum(add(add(add('NIQ', 'PT'), 'MWT'), add('NIQ', 'PT')), add(maximum('SLACK', 'PT'), 'MWT'))
+
+Gen: 29
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply('PT', 'SLACK')), 'WIQ')
+Tree 1:
+add(add(add('NIQ', add(minimum('PT', 'MWT'), 'PT')), 'PT'), protected_div(add(subtract(minimum(maximum(maximum('WKR', 'TIS'), multiply('OWT', 'OWT')), multiply(add('WIQ', 'OWT'), multiply('PT', 'MWT'))), subtract(subtract(maximum('NPT', 'NOR'), subtract('WIQ', 'SLACK')), maximum(minimum('OWT', 'PT'), minimum('NPT', 'OWT')))), protected_div(subtract(multiply(multiply('WKR', 'WIQ'), subtract('MWT', 'PT')), multiply(subtract('WKR', 'WKR'), add('SLACK', 'NIQ'))), minimum(add('NIQ', 'PT'), 'MWT'))), minimum(subtract(protected_div(multiply(add('WKR', 'TIS'), maximum('NOR', 'MWT')), protected_div(maximum('NOR', 'TIS'), minimum('NOR', 'MWT'))), subtract(protected_div(add('NIQ', 'OWT'), add('PT', 'WIQ')), protected_div(add('TIS', 'TIS'), add('WIQ', 'TIS')))), add(add(subtract(minimum('TIS', 'OWT'), multiply('WKR', 'TIS')), multiply(maximum('WKR', 'PT'), protected_div('MWT', 'TIS'))), maximum(minimum(maximum('TIS', 'PT'), multiply('NPT', 'NIQ')), add(maximum('MWT', 'TIS'), minimum('TIS', 'OWT')))))))
+
+Gen: 30
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum('NPT', protected_div(subtract('MWT', add('NPT', 'SLACK')), add('SLACK', minimum('OWT', 'SLACK')))))
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), 'WKR')), 'MWT'))
+
+Gen: 31
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum('NPT', protected_div(subtract('MWT', 'WKR'), add('PT', minimum('OWT', 'SLACK')))))
+Tree 1:
+add('PT', minimum('PT', 'MWT'))
+
+Gen: 32
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum('NPT', protected_div(subtract('MWT', 'WKR'), add('PT', minimum('OWT', 'SLACK')))))
+Tree 1:
+add(add(add('NIQ', add(minimum('PT', 'MWT'), minimum('PT', 'MWT'))), 'PT'), 'PT')
+
+Gen: 33
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('PT', 'SLACK')), multiply('NOR', multiply(add('SLACK', 'PT'), add(multiply('PT', 'SLACK'), subtract(minimum(minimum('MWT', 'WKR'), add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'PT'), minimum('NOR', 'WIQ')))))))
+Tree 1:
+add('PT', add('PT', 'MWT'))
+
+Gen: 34
+Individual:
+Tree 0:
+subtract('SLACK', minimum('NPT', add(add(maximum(protected_div(maximum('NOR', 'OWT'), add(protected_div('NOR', 'SLACK'), multiply('WIQ', 'NPT'))), protected_div(protected_div(maximum('NIQ', 'NPT'), add('WKR', 'MWT')), protected_div(subtract('NOR', 'NPT'), minimum('NOR', 'WIQ')))), maximum(protected_div(protected_div('NPT', subtract('MWT', 'MWT')), subtract(protected_div('WIQ', 'WKR'), maximum('WIQ', 'SLACK'))), protected_div(add(maximum('WKR', 'WKR'), minimum('OWT', 'TIS')), subtract(subtract('NOR', 'WKR'), 'PT')))), subtract(add(subtract(minimum(minimum('TIS', 'WKR'), add('NOR', 'NPT')), maximum(protected_div('NPT', 'TIS'), minimum('NOR', 'WIQ'))), 'SLACK'), add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract(add(subtract('MWT', 'NPT'), subtract('SLACK', 'NOR')), subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK'))))))))
+Tree 1:
+add('PT', minimum('PT', minimum('PT', 'MWT')))
+
+Gen: 35
+Individual:
+Tree 0:
+subtract('SLACK', minimum('NPT', add(add(maximum(protected_div(maximum('NIQ', 'OWT'), add(subtract('SLACK', 'NOR'), multiply('WIQ', 'NPT'))), protected_div(protected_div(maximum('NIQ', 'NPT'), add('WKR', 'MWT')), protected_div(subtract('NOR', 'NPT'), minimum('NOR', 'WIQ')))), maximum(protected_div(protected_div('NPT', subtract('MWT', 'MWT')), subtract(protected_div('WIQ', 'WKR'), maximum('NIQ', 'SLACK'))), protected_div(add(maximum('WKR', 'WKR'), minimum('OWT', 'TIS')), subtract(subtract('NOR', 'WKR'), 'PT')))), subtract(add(subtract(minimum(minimum('TIS', 'WKR'), add('NOR', 'NPT')), maximum(protected_div('NPT', 'TIS'), minimum('NOR', 'WIQ'))), 'SLACK'), add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract(add(subtract('MWT', 'NPT'), subtract('SLACK', 'NOR')), subtract(multiply('OWT', 'NIQ'), add('OWT', 'SLACK'))))))))
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), 'PT')), 'MWT'))
+
+Gen: 36
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', add(subtract(minimum(minimum('TIS', 'WKR'), add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), 'NIQ')), 'SLACK')), add(maximum(protected_div(protected_div('SLACK', 'PT'), 'NPT'), 'NOR'), 'NPT')), multiply(maximum(minimum('NIQ', 'WKR'), 'NPT'), 'NIQ'))
+Tree 1:
+add(add('PT', minimum(minimum('PT', 'MWT'), 'MWT')), 'PT')
+
+Gen: 37
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('PT', 'SLACK')), multiply('NOR', multiply(add('SLACK', 'PT'), add(multiply('PT', 'SLACK'), subtract(minimum('NIQ', add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), minimum('NOR', 'WIQ')))))))
+Tree 1:
+add('PT', minimum('PT', minimum(minimum('PT', 'MWT'), 'MWT')))
+
+Gen: 38
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('PT', 'SLACK')), multiply('NOR', multiply(add('SLACK', 'PT'), add(multiply('PT', 'SLACK'), subtract(minimum('NIQ', add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), minimum('NOR', 'NPT')))))))
+Tree 1:
+add(add(add('NIQ', add('NIQ', 'PT')), protected_div(protected_div(multiply(add(add('NIQ', 'NIQ'), add('TIS', 'NIQ')), multiply(subtract('SLACK', 'TIS'), multiply('SLACK', 'OWT'))), minimum(protected_div(protected_div('OWT', 'PT'), multiply('PT', 'OWT')), maximum(protected_div('MWT', 'NOR'), subtract('MWT', 'WKR')))), minimum(subtract(maximum(multiply('TIS', 'NPT'), add('TIS', 'TIS')), maximum(protected_div('OWT', 'NOR'), protected_div('PT', 'OWT'))), maximum(subtract(subtract(add('NIQ', 'PT'), 'OWT'), maximum('PT', 'NIQ')), maximum(add('PT', 'NOR'), protected_div('WKR', 'PT')))))), 'PT')
+
+Gen: 39
+Individual:
+Tree 0:
+subtract('SLACK', protected_div(add('SLACK', 'NPT'), 'PT'))
+Tree 1:
+add('PT', minimum(minimum('PT', 'MWT'), minimum(minimum('PT', 'MWT'), 'MWT')))
+
+Gen: 40
+Individual:
+Tree 0:
+multiply(add('SLACK', 'PT'), multiply(protected_div('OWT', 'WKR'), 'NIQ'))
+Tree 1:
+add(minimum('PT', 'MWT'), 'PT')
+
+Gen: 41
+Individual:
+Tree 0:
+multiply(multiply(maximum(protected_div('SLACK', 'OWT'), subtract('NPT', 'WIQ')), 'SLACK'), maximum(add('SLACK', 'MWT'), subtract(maximum('TIS', protected_div(minimum(subtract('WIQ', 'NIQ'), minimum('WIQ', 'SLACK')), 'PT')), 'WIQ')))
+Tree 1:
+add('PT', add('NIQ', add(minimum('PT', 'MWT'), minimum('PT', 'WKR'))))
+
+Gen: 42
+Individual:
+Tree 0:
+maximum(add('SLACK', protected_div('SLACK', add('OWT', 'SLACK'))), maximum(subtract(add(maximum('NIQ', 'TIS'), maximum('SLACK', 'PT')), protected_div(maximum('OWT', 'TIS'), add('WIQ', 'PT'))), protected_div('WKR', minimum('NOR', multiply('PT', 'SLACK')))))
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), multiply('TIS', protected_div(multiply(add(add('NIQ', 'NIQ'), add('TIS', 'NIQ')), multiply(subtract('SLACK', 'TIS'), multiply('MWT', 'OWT'))), minimum(minimum('PT', 'MWT'), maximum(protected_div('MWT', 'NOR'), subtract('MWT', 'WKR')))))))
+
+Gen: 43
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum(add(add(maximum(protected_div(maximum('NOR', 'OWT'), add(protected_div('NOR', 'SLACK'), multiply('WIQ', 'NPT'))), protected_div(protected_div(maximum('NIQ', 'NPT'), add('WKR', 'MWT')), protected_div(subtract('NOR', 'NPT'), minimum('NOR', 'WIQ')))), maximum(protected_div(protected_div('NPT', subtract('MWT', 'MWT')), subtract(protected_div('WIQ', 'WKR'), maximum('SLACK', 'SLACK'))), protected_div(add(maximum('WKR', 'WKR'), minimum('OWT', 'TIS')), subtract(subtract('NOR', 'WKR'), 'PT')))), subtract(add(subtract(minimum(minimum('TIS', 'WKR'), add('NOR', 'NPT')), maximum(protected_div('NPT', 'TIS'), minimum('PT', 'WIQ'))), 'SLACK'), add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract(add(subtract('MWT', 'NPT'), subtract('SLACK', 'NOR')), subtract(multiply('WIQ', 'NIQ'), 'TIS'))))), protected_div(subtract(protected_div('PT', add('NOR', 'NPT')), add('NPT', 'SLACK')), add('SLACK', 'NOR'))))
+Tree 1:
+add('PT', add(add(add('NIQ', add(minimum('PT', 'MWT'), add('NIQ', 'PT'))), add(minimum('PT', 'MWT'), add('NIQ', 'PT'))), add(add('NIQ', 'PT'), 'MWT')))
+
+Gen: 44
+Individual:
+Tree 0:
+subtract('SLACK', protected_div('OWT', 'NPT'))
+Tree 1:
+add('PT', minimum(minimum('PT', 'MWT'), minimum(minimum('PT', 'MWT'), 'MWT')))
+
+Gen: 45
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum(add(add(maximum(protected_div(maximum('NOR', 'OWT'), add(protected_div('NOR', 'SLACK'), multiply('WIQ', 'NPT'))), protected_div(protected_div(maximum('NIQ', 'NPT'), add('WKR', 'MWT')), protected_div(subtract('NOR', 'NPT'), minimum('NOR', 'WIQ')))), maximum(protected_div(protected_div('NPT', subtract('MWT', 'MWT')), subtract(protected_div('WIQ', 'WKR'), maximum('SLACK', 'SLACK'))), protected_div(add(maximum('WKR', 'WKR'), minimum('OWT', 'TIS')), subtract(subtract('NOR', 'WKR'), 'PT')))), subtract(add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract(add(subtract('MWT', 'NPT'), subtract('SLACK', 'NOR')), subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK')))), add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract(add(subtract('MWT', 'NPT'), 'NOR'), subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK')))))), protected_div(subtract(protected_div('PT', add('NOR', 'NPT')), add('NPT', 'SLACK')), add('SLACK', 'NOR'))))
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add(add('PT', minimum(minimum('PT', 'MWT'), 'MWT')), 'MWT'))), 'MWT'))
+
+Gen: 46
+Individual:
+Tree 0:
+maximum(add('SLACK', protected_div('SLACK', add('OWT', protected_div(maximum('OWT', 'TIS'), multiply('MWT', 'SLACK'))))), maximum('NPT', protected_div(subtract('MWT', protected_div('WKR', add(add(minimum('PT', 'WIQ'), 'NPT'), 'SLACK'))), minimum('NOR', multiply('PT', 'SLACK')))))
+Tree 1:
+add(add('PT', minimum(minimum('PT', 'MWT'), 'MWT')), 'WKR')
+
+Gen: 47
+Individual:
+Tree 0:
+maximum(add('SLACK', multiply('PT', 'NOR')), multiply(subtract(minimum(minimum('TIS', 'WKR'), add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), 'NIQ')), multiply(add('SLACK', 'WKR'), add(multiply('PT', minimum('PT', 'WIQ')), 'SLACK'))))
+Tree 1:
+add('PT', add(add(add('NIQ', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), minimum('MWT', 'MWT')), add('PT', 'PT')))
+
+Gen: 48
+Individual:
+Tree 0:
+multiply(multiply(add(multiply(add('SLACK', add('OWT', 'PT')), multiply('SLACK', 'SLACK')), add('OWT', 'SLACK')), add('NPT', 'SLACK')), multiply(multiply(protected_div('MWT', minimum('PT', 'WIQ')), 'NIQ'), 'NIQ'))
+Tree 1:
+add('PT', add(add(add('NIQ', add(minimum('PT', 'MWT'), 'PT')), 'MWT'), 'NIQ'))
+
+Gen: 49
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', 'NPT'), add('NPT', 'WKR')), 'WKR')
+Tree 1:
+add('PT', add('PT', add('MWT', add(add('OWT', add(minimum('PT', 'MWT'), 'MWT')), 'WKR'))))
+
+Gen: 50
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', add(subtract(minimum('PT', add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), 'NIQ')), 'SLACK')), add(maximum(protected_div(protected_div('SLACK', 'SLACK'), 'NPT'), 'NOR'), 'NPT')), 'SLACK')
+Tree 1:
+add(minimum('PT', 'MWT'), 'PT')
+
+Gen: 51
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', add(subtract(minimum('SLACK', add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), 'NIQ')), 'SLACK')), add(maximum(protected_div(protected_div('SLACK', 'PT'), 'NPT'), 'NOR'), 'NPT')), multiply(maximum(minimum('NIQ', 'WKR'), 'SLACK'), 'NIQ'))
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), multiply('TIS', protected_div(multiply('NIQ', multiply(multiply('SLACK', 'OWT'), multiply('SLACK', 'OWT'))), minimum(protected_div(protected_div('OWT', 'PT'), multiply(minimum('PT', 'MWT'), 'OWT')), maximum(protected_div('MWT', 'NOR'), subtract('MWT', 'WKR')))))))
+
+Gen: 52
+Individual:
+Tree 0:
+multiply(multiply(add(add('SLACK', 'NPT'), add('OWT', 'SLACK')), minimum(minimum(protected_div(maximum(add(multiply('WIQ', 'WIQ'), protected_div('WIQ', 'PT')), multiply(multiply('PT', 'SLACK'), subtract('WIQ', 'SLACK'))), protected_div(protected_div(add('SLACK', 'WKR'), add('WKR', 'WIQ')), minimum(minimum('MWT', 'NOR'), maximum('NPT', 'NPT')))), subtract(minimum(subtract(minimum('OWT', 'TIS'), multiply('PT', 'NIQ')), subtract(minimum('PT', 'NIQ'), minimum('NOR', 'WKR'))), minimum(subtract(subtract('OWT', 'NOR'), add('NPT', 'PT')), multiply(add('PT', 'PT'), multiply('NOR', 'TIS'))))), add(protected_div(subtract(subtract(maximum('WIQ', 'NPT'), add('SLACK', 'WIQ')), maximum(subtract('WIQ', 'WKR'), maximum('NIQ', 'SLACK'))), subtract(multiply(minimum('NPT', 'SLACK'), add('NIQ', 'PT')), protected_div(add('WKR', 'WKR'), minimum('MWT', 'PT')))), add(maximum(protected_div('MWT', minimum('PT', 'WIQ')), minimum(maximum('NOR', 'OWT'), maximum('WKR', 'WIQ'))), add(multiply(subtract('NOR', 'NOR'), subtract('NOR', 'NIQ')), multiply(add('MWT', 'OWT'), maximum('WKR', 'WKR'))))))), multiply(multiply(protected_div('MWT', minimum('PT', 'WIQ')), 'NIQ'), 'NIQ'))
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), multiply('TIS', protected_div(multiply(add(add('NIQ', 'NIQ'), add('TIS', 'NIQ')), multiply(subtract('SLACK', 'TIS'), multiply('SLACK', 'OWT'))), minimum(protected_div(protected_div('OWT', 'PT'), multiply(minimum('PT', 'MWT'), 'OWT')), maximum(protected_div('MWT', 'NOR'), subtract('MWT', 'WKR')))))))
+
+Gen: 53
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', add(subtract(minimum('SLACK', add(minimum('PT', 'WIQ'), 'NPT')), maximum(protected_div('NPT', 'TIS'), 'NIQ')), 'SLACK')), add(maximum(protected_div(protected_div('SLACK', 'PT'), 'NPT'), 'NOR'), 'NPT')), multiply(maximum(minimum('NIQ', 'WKR'), 'NIQ'), 'TIS'))
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add('NIQ', 'PT'))), multiply('TIS', protected_div('MWT', add('PT', minimum(minimum('PT', 'MWT'), 'MWT'))))))
+
+Gen: 54
+Individual:
+Tree 0:
+maximum('PT', multiply('SLACK', 'WIQ'))
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), add('PT', minimum(minimum('PT', 'MWT'), 'MWT'))), add('NIQ', 'PT')), 'MWT'))
+
+Gen: 55
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply('PT', maximum(protected_div('SLACK', multiply('PT', 'PT')), 'NPT'))), 'NPT')
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), add('PT', 'PT'))), add(add(add(minimum('PT', 'MWT'), 'MWT'), minimum('PT', add(minimum('PT', 'MWT'), 'MWT'))), add('PT', 'PT'))))
+
+Gen: 56
+Individual:
+Tree 0:
+maximum(add('SLACK', protected_div(maximum('NIQ', 'NPT'), add('WKR', 'SLACK'))), multiply('PT', 'SLACK'))
+Tree 1:
+add('PT', add(add(add('NIQ', add(minimum('PT', 'MWT'), add('MWT', 'PT'))), minimum('MWT', 'MWT')), 'WKR'))
+
+Gen: 57
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', add(minimum('SLACK', 'WIQ'), 'SLACK')), add(protected_div('NPT', 'TIS'), 'NPT')), 'SLACK')
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), add('PT', 'PT'))), add(add(add(minimum('PT', 'MWT'), 'MWT'), minimum('PT', add(minimum('PT', 'MWT'), 'MWT'))), add('PT', 'PT'))))
+
+Gen: 58
+Individual:
+Tree 0:
+maximum(add('PT', multiply('PT', 'SLACK')), multiply(protected_div(protected_div(subtract('WIQ', 'MWT'), multiply('OWT', 'PT')), add(maximum('MWT', 'PT'), minimum('OWT', 'MWT'))), 'WIQ'))
+Tree 1:
+add('PT', add('OWT', add(minimum('PT', 'MWT'), 'MWT')))
+
+Gen: 59
+Individual:
+Tree 0:
+maximum(add('WKR', multiply('PT', 'SLACK')), multiply(subtract('SLACK', protected_div('NOR', 'SLACK')), multiply(add(add('SLACK', minimum('SLACK', 'PT')), 'PT'), add(add('SLACK', 'PT'), protected_div('WIQ', add('WKR', 'MWT'))))))
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), add('NIQ', add(minimum('PT', 'MWT'), 'MWT'))), add(add(minimum('PT', 'MWT'), 'MWT'), 'PT')), 'MWT'))
+
+Gen: 60
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', 'WIQ'), 'SLACK')), multiply('SLACK', 'WIQ'))
+Tree 1:
+add('PT', add(add(add('NIQ', add(add('OWT', add(minimum('PT', 'MWT'), 'MWT')), 'PT')), minimum('PT', 'MWT')), 'WKR'))
+
+Gen: 61
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply('PT', maximum('SLACK', 'NIQ'))), 'NPT')
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add('PT', add(minimum('PT', 'MWT'), 'MWT')))), minimum(add(add(protected_div(protected_div(maximum('WKR', 'NOR'), subtract('SLACK', 'WIQ')), minimum(protected_div('PT', 'NIQ'), add('TIS', 'PT'))), multiply(minimum(protected_div('NPT', 'MWT'), add('SLACK', 'PT')), add(multiply('OWT', 'PT'), protected_div('WKR', 'OWT')))), subtract(add('PT', 'PT'), protected_div(protected_div(minimum('MWT', 'MWT'), minimum('NOR', 'NOR')), minimum('NOR', minimum('WIQ', 'MWT'))))), maximum(multiply(add(maximum(maximum('NPT', 'NOR'), subtract('NPT', 'WIQ')), multiply(minimum('MWT', 'WKR'), add('PT', 'NOR'))), maximum(maximum(add('SLACK', 'NPT'), add('WKR', 'NIQ')), multiply(add('WKR', 'NOR'), maximum('NIQ', 'TIS')))), subtract(minimum('NIQ', add(add('OWT', 'PT'), maximum('WKR', 'PT'))), subtract(maximum(multiply('NOR', 'NPT'), maximum('PT', 'OWT')), subtract(multiply('WIQ', 'OWT'), maximum('WIQ', 'WIQ'))))))))
+
+Gen: 62
+Individual:
+Tree 0:
+multiply(multiply(maximum(protected_div('SLACK', 'OWT'), 'SLACK'), 'SLACK'), maximum(add(minimum(minimum(protected_div('TIS', 'TIS'), add('SLACK', 'SLACK')), minimum('PT', maximum('WKR', 'PT'))), subtract(multiply(multiply('WIQ', multiply('PT', 'SLACK')), protected_div('NIQ', 'TIS')), subtract(protected_div('PT', 'NPT'), protected_div('TIS', 'WIQ')))), 'PT'))
+Tree 1:
+add('PT', add(minimum('PT', 'MWT'), add('PT', 'PT')))
+
+Gen: 63
+Individual:
+Tree 0:
+maximum(add('SLACK', protected_div(subtract('TIS', 'WKR'), subtract('PT', 'MWT'))), multiply(subtract('NOR', 'NIQ'), multiply('PT', 'PT')))
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), add('PT', 'PT'))), add('NIQ', add(add(add('PT', 'WKR'), minimum('PT', 'MWT')), 'MWT'))))
+
+Gen: 64
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', 'WIQ'), 'SLACK')), multiply('SLACK', 'WIQ'))
+Tree 1:
+add('PT', add('MWT', add('PT', 'NIQ')))
+
+Gen: 65
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum(add(add(maximum(protected_div(maximum('NOR', 'OWT'), add('PT', multiply('WIQ', 'NPT'))), protected_div(protected_div(maximum('NIQ', 'NPT'), add('WKR', 'MWT')), protected_div(subtract('NOR', 'NPT'), minimum('NOR', 'WIQ')))), maximum(protected_div(protected_div('NPT', subtract('MWT', 'MWT')), subtract(protected_div('WIQ', 'WKR'), maximum('SLACK', 'SLACK'))), protected_div(add(maximum('WKR', 'WKR'), minimum('OWT', 'TIS')), subtract(subtract('NOR', 'WKR'), 'PT')))), subtract(add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract('NPT', subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK')))), add(multiply(protected_div(add('OWT', 'MWT'), 'PT'), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract('NIQ', subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK')))))), protected_div(subtract(protected_div('PT', add('NOR', 'NPT')), add('NPT', 'SLACK')), add('SLACK', 'NOR'))))
+Tree 1:
+add('PT', add(add('PT', minimum('MWT', 'MWT')), 'WKR'))
+
+Gen: 66
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), maximum(add(add(maximum(protected_div(maximum('NOR', 'OWT'), add(protected_div('NOR', 'SLACK'), multiply('WIQ', 'NPT'))), protected_div(protected_div(maximum('NIQ', 'NPT'), add('WKR', 'MWT')), protected_div(subtract('NOR', 'NPT'), minimum('NOR', 'WIQ')))), maximum(protected_div(protected_div('NPT', subtract('MWT', 'MWT')), 'SLACK'), protected_div(add(maximum('WKR', 'WKR'), minimum('OWT', 'TIS')), subtract(subtract('NOR', 'WKR'), 'PT')))), subtract(add(multiply(protected_div(add('OWT', 'MWT'), add('OWT', 'OWT')), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract('NPT', subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK')))), add(multiply(protected_div(add('OWT', 'MWT'), 'PT'), subtract('SLACK', protected_div('NOR', 'SLACK'))), subtract(add(subtract('MWT', 'NPT'), 'NOR'), subtract(multiply('WIQ', 'NIQ'), add('OWT', 'SLACK')))))), protected_div(subtract(protected_div('PT', add('NOR', 'NPT')), add('NPT', 'SLACK')), add('SLACK', 'NOR'))))
+Tree 1:
+add('MWT', add(add(add(add('PT', add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), 'PT'))), minimum(add('NIQ', add(minimum('PT', 'MWT'), 'PT')), 'MWT')), 'PT'), 'MWT'))
+
+Gen: 67
+Individual:
+Tree 0:
+maximum(multiply('PT', 'SLACK'), multiply('SLACK', 'WIQ'))
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))), 'MWT'), add(add(minimum('PT', 'MWT'), 'MWT'), 'PT')), 'MWT'))
+
+Gen: 68
+Individual:
+Tree 0:
+maximum(multiply('PT', 'SLACK'), multiply('SLACK', protected_div(subtract('NOR', 'WIQ'), minimum('NOR', maximum('SLACK', 'NIQ')))))
+Tree 1:
+add('MWT', add(add(add(add('PT', add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), 'PT'))), minimum('PT', 'MWT')), 'PT'), 'MWT'))
+
+Gen: 69
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', 'WIQ'), add(protected_div('NPT', multiply(add('SLACK', add('SLACK', 'SLACK')), add(protected_div('NPT', 'TIS'), 'NPT'))), 'NPT')), 'PT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), 'MWT'))), minimum('PT', 'MWT')), 'PT'), 'MWT'))
+
+Gen: 70
+Individual:
+Tree 0:
+maximum(add('SLACK', 'SLACK'), 'NPT')
+Tree 1:
+add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), add('MWT', add(add('OWT', add(minimum('PT', 'MWT'), protected_div('SLACK', 'WIQ'))), add('NIQ', add(add('PT', minimum('MWT', 'PT')), add(add('PT', 'PT'), minimum('PT', 'MWT'))))))))
+
+Gen: 71
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', multiply('TIS', 'SLACK')), 'SLACK')), 'PT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), 'WKR'))), minimum('PT', 'MWT')), minimum('PT', 'MWT')), 'MWT'))
+
+Gen: 72
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', multiply(subtract('WIQ', maximum('NIQ', 'NPT')), 'SLACK')), 'SLACK')), multiply('PT', 'SLACK'))
+Tree 1:
+add(add(add('NIQ', add(minimum('PT', minimum('PT', 'MWT')), add(minimum('PT', 'MWT'), minimum('PT', 'MWT')))), minimum(minimum(subtract(minimum(subtract('TIS', 'MWT'), subtract('MWT', 'MWT')), add(subtract('NPT', 'OWT'), add('SLACK', 'WIQ'))), 'MWT'), 'WIQ')), 'PT')
+
+Gen: 73
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', multiply(subtract('WIQ', maximum('NIQ', 'NPT')), 'SLACK')), 'SLACK')), 'OWT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'PT'))), minimum(add('NIQ', 'PT'), 'MWT')), 'PT'), 'MWT'))
+
+Gen: 74
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', 'MWT'), 'SLACK')), multiply(add('MWT', add('SLACK', 'SLACK')), add(protected_div('NPT', 'WIQ'), 'NPT')))
+Tree 1:
+add('PT', add(minimum('PT', 'MWT'), add('MWT', add(add('OWT', add(minimum('PT', 'MWT'), protected_div('SLACK', 'WIQ'))), add('NIQ', add(add('PT', minimum('MWT', 'PT')), add(add('PT', 'PT'), minimum('PT', 'MWT'))))))))
+
+Gen: 75
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply('WIQ', maximum('SLACK', 'NIQ'))), 'NPT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), 'PT')), 'PT'))
+
+Gen: 76
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', multiply(subtract('WIQ', maximum('NIQ', 'NPT')), 'SLACK')), 'SLACK')), 'OWT')
+Tree 1:
+add(add(add(minimum('PT', 'MWT'), 'MWT'), 'PT'), add(protected_div(add('OWT', 'PT'), 'MWT'), 'PT'))
+
+Gen: 77
+Individual:
+Tree 0:
+maximum('PT', 'SLACK')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'PT'))), minimum(add('NIQ', add(minimum('PT', 'MWT'), 'PT')), 'MWT')), 'PT'), 'MWT'))
+
+Gen: 78
+Individual:
+Tree 0:
+maximum(add(multiply('PT', multiply('SLACK', maximum('SLACK', protected_div(multiply('PT', 'SLACK'), 'TIS')))), add(minimum('PT', 'SLACK'), 'SLACK')), 'PT')
+Tree 1:
+add('MWT', add(add(add(add(protected_div(add('OWT', 'PT'), 'PT'), 'PT'), minimum('PT', 'MWT')), 'PT'), 'NIQ'))
+
+Gen: 79
+Individual:
+Tree 0:
+maximum(add('WKR', multiply('PT', 'SLACK')), multiply('SLACK', 'SLACK'))
+Tree 1:
+add('PT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'PT'))), minimum(add('NIQ', add(minimum('PT', 'MWT'), 'MWT')), 'MWT')), 'PT'), 'MWT'))
+
+Gen: 80
+Individual:
+Tree 0:
+maximum(add(add('PT', 'SLACK'), multiply('PT', multiply('WKR', 'WIQ'))), multiply(subtract('NOR', protected_div('NOR', protected_div('PT', minimum('PT', 'SLACK')))), 'WIQ'))
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), 'WKR'))), add(add('PT', add('PT', maximum(maximum('NIQ', 'SLACK'), maximum('NPT', 'WIQ')))), add(add(add('PT', 'WKR'), minimum('PT', 'MWT')), 'MWT'))))
+
+Gen: 81
+Individual:
+Tree 0:
+maximum(add('SLACK', 'PT'), add(subtract(minimum('PT', subtract('SLACK', 'WIQ')), 'NIQ'), 'SLACK'))
+Tree 1:
+add('PT', add(add('NIQ', add(add(add('PT', 'MWT'), minimum('PT', 'MWT')), 'MWT')), add(add('PT', add('MWT', maximum('PT', add('WKR', 'NIQ')))), add('NIQ', 'MWT'))))
+
+Gen: 82
+Individual:
+Tree 0:
+multiply(multiply(add('SLACK', add(multiply('PT', 'SLACK'), 'SLACK')), add(protected_div('NPT', 'PT'), 'NPT')), minimum(add('SLACK', add(subtract('NOR', 'NOR'), 'SLACK')), 'WKR'))
+Tree 1:
+add('PT', add(add('NIQ', add(minimum('PT', 'MWT'), add(minimum('PT', 'MWT'), 'WKR'))), add(add('PT', add('PT', maximum(maximum('NIQ', 'SLACK'), maximum('NPT', 'WIQ')))), add(add(add('PT', 'WKR'), minimum('PT', 'MWT')), 'MWT'))))
+
+Gen: 83
+Individual:
+Tree 0:
+maximum(add('NOR', multiply('PT', multiply('WIQ', 'SLACK'))), 'PT')
+Tree 1:
+add('PT', add(add('NIQ', add('NIQ', add('PT', add(minimum('PT', 'MWT'), 'MWT')))), minimum(add(add(add(add('PT', minimum('MWT', 'MWT')), 'MWT'), multiply(minimum(protected_div('NPT', 'MWT'), add('SLACK', 'PT')), add(multiply('OWT', 'PT'), protected_div('WKR', 'OWT')))), subtract(add('PT', 'PT'), protected_div(protected_div(minimum('PT', 'MWT'), minimum('NOR', 'NOR')), minimum('NOR', minimum('WIQ', 'MWT'))))), maximum(minimum('PT', 'MWT'), subtract(minimum('NIQ', add(add('PT', 'PT'), maximum('WKR', 'PT'))), subtract(maximum('PT', maximum('PT', 'OWT')), subtract(multiply('WIQ', 'OWT'), maximum('WIQ', 'WIQ'))))))))
+
+Gen: 84
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply(maximum('SLACK', multiply('SLACK', multiply('WIQ', maximum('SLACK', 'NIQ')))), add('PT', protected_div(multiply('PT', 'SLACK'), 'TIS')))), 'SLACK')
+Tree 1:
+add('MWT', add(add(add('PT', add(maximum(maximum(subtract('NIQ', 'OWT'), subtract('NIQ', 'NOR')), maximum(maximum('NOR', 'WIQ'), add('PT', 'SLACK'))), add('PT', 'PT'))), 'PT'), 'NIQ'))
+
+Gen: 85
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply(maximum('NIQ', 'SLACK'), maximum(subtract('OWT', 'MWT'), 'NIQ'))), 'NPT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', minimum('PT', 'MWT'))), minimum('PT', 'MWT')), add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), 'PT')), 'PT'))
+
+Gen: 86
+Individual:
+Tree 0:
+maximum(add(multiply('PT', multiply('SLACK', maximum('SLACK', protected_div('SLACK', 'TIS')))), 'SLACK'), 'PT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), 'PT')), 'PT'))
+
+Gen: 87
+Individual:
+Tree 0:
+maximum(add('PT', 'SLACK'), 'SLACK')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(protected_div(minimum('PT', 'MWT'), minimum('NOR', 'NOR')), 'PT')), minimum('PT', 'PT')), add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), 'PT')), 'PT'))
+
+Gen: 88
+Individual:
+Tree 0:
+maximum(add(multiply('PT', multiply('SLACK', maximum('SLACK', protected_div('OWT', 'TIS')))), add(minimum(protected_div(add(multiply('PT', 'WIQ'), multiply('OWT', 'NIQ')), maximum(maximum('WIQ', 'NPT'), minimum('OWT', 'NIQ'))), 'SLACK'), 'SLACK')), 'PT')
+Tree 1:
+add('PT', add(add('NOR', add(minimum('PT', 'MWT'), add('PT', add('NIQ', add(minimum('PT', 'MWT'), 'PT'))))), add(add('PT', add('PT', maximum('PT', add('WKR', 'NIQ')))), add('MWT', 'MWT'))))
+
+Gen: 89
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply(maximum('NIQ', 'SLACK'), maximum('SLACK', 'NIQ'))), 'NPT')
+Tree 1:
+add('MWT', add(add(subtract('PT', 'NIQ'), minimum('NIQ', 'PT')), protected_div(multiply('WIQ', multiply('OWT', 'PT')), multiply('MWT', 'PT'))))
+
+Gen: 90
+Individual:
+Tree 0:
+maximum('SLACK', 'PT')
+Tree 1:
+add('PT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'PT'))), 'PT'), protected_div(minimum('PT', 'MWT'), minimum('NOR', 'NOR'))), 'MWT'))
+
+Gen: 91
+Individual:
+Tree 0:
+maximum('NOR', add('SLACK', add(minimum('PT', multiply(add('PT', protected_div(multiply('SLACK', 'SLACK'), 'TIS')), 'PT')), 'SLACK')))
+Tree 1:
+add('MWT', add(add(subtract('PT', 'NIQ'), add('PT', add(minimum('PT', 'TIS'), minimum('NOR', 'NOR')))), protected_div(multiply('WIQ', 'MWT'), multiply('MWT', 'PT'))))
+
+Gen: 92
+Individual:
+Tree 0:
+maximum(add('PT', 'SLACK'), add('SLACK', protected_div(multiply('PT', 'SLACK'), 'TIS')))
+Tree 1:
+add('MWT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'WIQ'))), minimum('PT', 'MWT')), add(add(add('PT', multiply('WIQ', 'TIS')), minimum('PT', 'MWT')), 'PT')), 'PT'))
+
+Gen: 93
+Individual:
+Tree 0:
+maximum(add('SLACK', add(minimum('PT', multiply(maximum(subtract('OWT', 'MWT'), 'NIQ'), maximum('SLACK', protected_div('SLACK', 'TIS')))), maximum('NIQ', 'SLACK'))), multiply('PT', multiply('PT', multiply('SLACK', 'SLACK'))))
+Tree 1:
+add('MWT', add(add(add(add('PT', add('NIQ', minimum('PT', 'MWT'))), minimum('PT', 'MWT')), add('NPT', 'NOR')), 'PT'))
+
+Gen: 94
+Individual:
+Tree 0:
+maximum(add('PT', add(multiply('PT', 'SLACK'), 'SLACK')), add('SLACK', add(minimum('PT', multiply('PT', 'PT')), 'SLACK')))
+Tree 1:
+add('MWT', add(add(add(add('PT', add(protected_div('PT', 'PT'), 'PT')), minimum('PT', 'PT')), add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), 'PT')), add(add('PT', 'PT'), maximum('WKR', 'PT'))))
+
+Gen: 95
+Individual:
+Tree 0:
+maximum('NOR', add('SLACK', add(minimum('PT', multiply(add('PT', protected_div(add('NPT', 'SLACK'), 'TIS')), 'NIQ')), 'SLACK')))
+Tree 1:
+add('MWT', add(add(add('PT', add('NIQ', 'PT')), minimum('PT', 'MWT')), add(add('PT', 'PT'), maximum('WKR', 'PT'))))
+
+Gen: 96
+Individual:
+Tree 0:
+maximum(multiply('PT', multiply(maximum('SLACK', multiply('PT', minimum(maximum('SLACK', 'TIS'), subtract('PT', 'MWT')))), multiply('PT', multiply('NIQ', 'SLACK')))), multiply('SLACK', 'SLACK'))
+Tree 1:
+add('PT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'PT'))), 'PT'), protected_div(minimum('PT', 'MWT'), minimum('NOR', 'NIQ'))), 'MWT'))
+
+Gen: 97
+Individual:
+Tree 0:
+maximum('NOR', maximum('SLACK', multiply('PT', multiply('WIQ', maximum('SLACK', 'NIQ')))))
+Tree 1:
+add(minimum('PT', 'MWT'), add(add(subtract('PT', add('NIQ', add('PT', 'MWT'))), minimum('NIQ', 'SLACK')), protected_div(multiply('WIQ', subtract(minimum('PT', add(add('PT', 'PT'), maximum('WKR', 'PT'))), subtract(maximum('PT', maximum('PT', 'OWT')), subtract(multiply('WIQ', 'OWT'), maximum('WIQ', 'WIQ'))))), 'TIS')))
+
+Gen: 98
+Individual:
+Tree 0:
+maximum(add(multiply('PT', multiply('PT', maximum('SLACK', 'NIQ'))), add(minimum('PT', multiply(add('SLACK', protected_div('PT', 'TIS')), 'TIS')), 'SLACK')), 'NPT')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(protected_div(minimum('PT', 'MWT'), minimum('NOR', 'NOR')), 'PT')), minimum('PT', 'PT')), multiply('WIQ', 'TIS')), 'PT'))
+
+Gen: 99
+Individual:
+Tree 0:
+maximum(add('PT', add(add('SLACK', 'NOR'), 'SLACK')), add('SLACK', add(minimum('PT', multiply(add('PT', protected_div('NIQ', 'TIS')), protected_div('NIQ', 'TIS'))), 'SLACK')))
+Tree 1:
+add('PT', add(add('PT', add('MWT', maximum('WKR', 'PT'))), 'NOR'))
+
+Gen: 100
+Individual:
+Tree 0:
+maximum(add('SLACK', add('PT', 'SLACK')), 'TIS')
+Tree 1:
+add('MWT', add(add(add(add('PT', add(add(minimum('PT', 'MWT'), 'PT'), add('PT', 'WIQ'))), minimum('PT', 'MWT')), add(add(add('MWT', multiply('WIQ', 'TIS')), minimum('PT', 'MWT')), 'PT')), 'PT'))

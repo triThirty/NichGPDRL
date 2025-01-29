@@ -51,9 +51,11 @@ def save_individual_to_txt(randomSeeds, dataSetName,individuals): # save individ
     return
 
 def clear_individual_each_gen_to_txt(randomSeeds, dataSetName): # save individual as txt by mengxu
-    file = open('./MTGP/train/scenario_' + str(dataSetName) + '/' + str(randomSeeds) + '_' + dataSetName+'_each_gen.txt', 'w') # 'w' represent coverage, 'a' denotes not coverage
-    file.write("Best individuals from each gen:\n")
-    file.close()
+    # file = open('./MTGP/train/scenario_' + str(dataSetName) + '/' + str(randomSeeds) + '_' + dataSetName+'_each_gen.txt', 'w') # 'w' represent coverage, 'a' denotes not coverage
+    # file.write("Best individuals from each gen:\n")
+    # file.close()
+    with open('./MTGP/train/scenario_' + str(dataSetName) + '/' + str(randomSeeds) + '_' + dataSetName+'_each_gen.txt', 'a') as file:
+        file.write("Best individuals from each gen:\n")
     return
 
 def save_individual_each_gen_to_txt(randomSeeds, dataSetName, individuals, gen): # save individual as txt by mengxu

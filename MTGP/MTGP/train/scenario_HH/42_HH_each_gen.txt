@@ -1,0 +1,43 @@
+Best individuals from each gen:
+
+Gen: 0
+Individual:
+Tree 0:
+maximum('TIS', 'PT')
+Tree 1:
+add('NIQ', 'PT')
+
+Gen: 1
+Individual:
+Tree 0:
+add(minimum(maximum(subtract('PT', 'NOR'), 'WIQ'), 'OWT'), multiply(minimum(add('WIQ', 'WIQ'), multiply(maximum('TIS', 'PT'), 'WKR')), minimum('NPT', 'OWT')))
+Tree 1:
+add('NIQ', 'PT')
+
+Gen: 2
+Individual:
+Tree 0:
+minimum('WKR', 'PT')
+Tree 1:
+add('NIQ', 'PT')
+
+Gen: 3
+Individual:
+Tree 0:
+add(minimum(maximum(subtract('PT', 'NOR'), 'WIQ'), 'OWT'), multiply(minimum(add('WIQ', 'WIQ'), multiply(maximum('TIS', 'PT'), 'WKR')), minimum('NPT', 'OWT')))
+Tree 1:
+add('NIQ', 'PT')
+
+Gen: 4
+Individual:
+Tree 0:
+add(minimum(maximum(subtract('PT', 'NOR'), 'WIQ'), 'OWT'), multiply(minimum(add('WIQ', 'WIQ'), multiply(maximum('TIS', 'PT'), 'WKR')), minimum('NPT', 'OWT')))
+Tree 1:
+add('NIQ', 'PT')
+
+Gen: 5
+Individual:
+Tree 0:
+add(minimum(maximum(subtract('PT', 'NOR'), 'WIQ'), 'OWT'), multiply(minimum(add('WIQ', 'WIQ'), multiply(maximum('TIS', 'PT'), 'WKR')), minimum('NPT', 'OWT')))
+Tree 1:
+add('NIQ', 'PT')

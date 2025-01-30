@@ -11,6 +11,7 @@ from MTGP import saveFile
 import time
 import random
 
+
 import numpy as np
 import job_creation
 import agent_machine
@@ -21,75 +22,122 @@ import routing
 
 class shopfloor:
     def __init__(self, env, span, m_no, wc_no, sequencing_tree, routing_tree, **kwargs):
-        '''STEP 1: create environment instances and specifiy simulation span '''
-        self.env=env
+        """STEP 1: create environment instances and specifiy simulation span"""
+        self.env = env
         self.span = span
         self.m_no = m_no
         self.m_list = []
         self.wc_no = wc_no
         self.wc_list = []
-        self.ifPrint = kwargs['ifPrint'] # added by mengxu
+        self.ifPrint = kwargs["ifPrint"]  # added by mengxu
         # self.sequencingTree = sequencing_tree
         # self.routingTree = routing_tree
         # self.routingRule = kwargs['tree_routing']
         m_per_wc = int(self.m_no / self.wc_no)
-        '''STEP 2.1: create instances of machines'''
+        """STEP 2.1: create instances of machines"""
         for i in range(m_no):
-            expr1 = '''self.m_{} = agent_machine.machine(env, {}, print = 0)'''.format(i,i) # create machines
+            expr1 = """self.m_{} = agent_machine.machine(env, {}, print = 0)""".format(
+                i, i
+            )  # create machines
             exec(expr1)
-            expr2 = '''self.m_list.append(self.m_{})'''.format(i) # add to machine list
+            expr2 = """self.m_list.append(self.m_{})""".format(i)  # add to machine list
             exec(expr2)
-        #print(self.m_list)
-        '''STEP 2.2: create instances of work centers'''
+        # print(self.m_list)
+        """STEP 2.2: create instances of work centers"""
         cum_m_idx = 0
         for i in range(wc_no):
             x = [self.m_list[m_idx] for m_idx in range(cum_m_idx, cum_m_idx + m_per_wc)]
-            #print(x)
-            expr1 = '''self.wc_{} = agent_workcenter.workcenter(env, {}, x)'''.format(i,i) # create work centers
+            # print(x)
+            expr1 = """self.wc_{} = agent_workcenter.workcenter(env, {}, x)""".format(
+                i, i
+            )  # create work centers
             exec(expr1)
-            expr2 = '''self.wc_list.append(self.wc_{})'''.format(i) # add to machine list
+            expr2 = """self.wc_list.append(self.wc_{})""".format(
+                i
+            )  # add to machine list
             exec(expr2)
             cum_m_idx += m_per_wc
-        #print(self.wc_list)
+        # print(self.wc_list)
 
-        '''STEP 3: initialize the job creator'''
+        """STEP 3: initialize the job creator"""
         # env, span, machine_list, workcenter_list, number_of_jobs, pt_range, due_tightness, E_utliz
-        if 'seed' in kwargs:
+        if "seed" in kwargs:
             # self.job_creator = job_creation.creation \
             #     (self.env, self.span, self.m_list, self.wc_list, [5, 25], 2, 0.9, random_seed=True, ifPrint = self.ifPrint)
-            if 'dataset_name' in kwargs:
-                if kwargs['dataset_name'] == 'HH':
-                    self.job_creator = job_creation.creation(self.env, self.span, self.m_list, self.wc_list, \
-                        [5,25], 2, 0.9, seed=kwargs['seed'], random_seed = True, ifPrint = self.ifPrint) #ifPrint = self.ifPrint is added by mengxu to make it clearer when using MTGP to train
-                elif kwargs['dataset_name'] == 'HL':
-                    self.job_creator = job_creation.creation(self.env, self.span, self.m_list, self.wc_list, \
-                                                             [5, 25], 3, 0.9, seed=kwargs['seed'], random_seed = True, ifPrint=self.ifPrint)
-                elif kwargs['dataset_name'] == 'LH':
-                    self.job_creator = job_creation.creation(self.env, self.span, self.m_list, self.wc_list, \
-                                                             [10, 20], 2, 0.9, seed=kwargs['seed'], random_seed = True, ifPrint=self.ifPrint)
-                elif kwargs['dataset_name'] == 'LL':
-                    self.job_creator = job_creation.creation(self.env, self.span, self.m_list, self.wc_list, \
-                                                             [10, 20], 3, 0.9, seed=kwargs['seed'], random_seed = True, ifPrint=self.ifPrint)
-            #self.job_creator.output()
+            if "dataset_name" in kwargs:
+                if kwargs["dataset_name"] == "HH":
+                    self.job_creator = job_creation.creation(
+                        self.env,
+                        self.span,
+                        self.m_list,
+                        self.wc_list,
+                        [5, 25],
+                        2,
+                        0.9,
+                        seed=kwargs["seed"],
+                        random_seed=True,
+                        ifPrint=self.ifPrint,
+                    )  # ifPrint = self.ifPrint is added by mengxu to make it clearer when using MTGP to train
+                elif kwargs["dataset_name"] == "HL":
+                    self.job_creator = job_creation.creation(
+                        self.env,
+                        self.span,
+                        self.m_list,
+                        self.wc_list,
+                        [5, 25],
+                        3,
+                        0.9,
+                        seed=kwargs["seed"],
+                        random_seed=True,
+                        ifPrint=self.ifPrint,
+                    )
+                elif kwargs["dataset_name"] == "LH":
+                    self.job_creator = job_creation.creation(
+                        self.env,
+                        self.span,
+                        self.m_list,
+                        self.wc_list,
+                        [10, 20],
+                        2,
+                        0.9,
+                        seed=kwargs["seed"],
+                        random_seed=True,
+                        ifPrint=self.ifPrint,
+                    )
+                elif kwargs["dataset_name"] == "LL":
+                    self.job_creator = job_creation.creation(
+                        self.env,
+                        self.span,
+                        self.m_list,
+                        self.wc_list,
+                        [10, 20],
+                        3,
+                        0.9,
+                        seed=kwargs["seed"],
+                        random_seed=True,
+                        ifPrint=self.ifPrint,
+                    )
+            # self.job_creator.output()
         else:
             print("WARNING: seed is not fixed !!")
             raise Exception
 
-        '''STEP 4: initialize machines and work centers'''
+        """STEP 4: initialize machines and work centers"""
         for wc in self.wc_list:
             wc.print_info = 0
             wc.initialization(self.job_creator)
             wc.setJobRoutingTree(routing_tree)
-        for i,m in enumerate(self.m_list):
+        for i, m in enumerate(self.m_list):
             m.print_info = 0
-            wc_idx = int(i/m_per_wc)
-            m.initialization(self.m_list,self.wc_list,self.job_creator,self.wc_list[wc_idx])
+            wc_idx = int(i / m_per_wc)
+            m.initialization(
+                self.m_list, self.wc_list, self.job_creator, self.wc_list[wc_idx]
+            )
             m.setJobSequencingTree(sequencing_tree)
 
-
-        '''STEP 5: set sequencing or routing rules, and DRL'''
+        """STEP 5: set sequencing or routing rules, and DRL"""
         # check if need to reset sequencing rule
-        if 'sequencing_rule' in kwargs:
+        if "sequencing_rule" in kwargs:
             # if 'tree_sequencing' in kwargs:
             #     print(str(kwargs['tree_sequencing'])) #add by mengxu to check if this is right! 2022.10.15
             #     order = "m.tree_sequencing = " + str(kwargs['tree_sequencing'])
@@ -100,28 +148,42 @@ class shopfloor:
             #             print("Rule assigned to machine {} is invalid !".format(m.m_idx))
             #         raise Exception
             if self.ifPrint:
-                print("Taking over: machines use {} sequencing rule".format(kwargs['sequencing_rule']))
+                print(
+                    "Taking over: machines use {} sequencing rule".format(
+                        kwargs["sequencing_rule"]
+                    )
+                )
             for m in self.m_list:
-                order = "m.job_sequencing = sequencing." + kwargs['sequencing_rule']
+                order = "m.job_sequencing = sequencing." + kwargs["sequencing_rule"]
                 # order = "m.job_sequencing = sequencing." + kwargs['sequencing_rule']
                 try:
                     exec(order)
                 except:
                     if self.ifPrint:
-                        print("Rule assigned to machine {} is invalid !".format(m.m_idx))
+                        print(
+                            "Rule assigned to machine {} is invalid !".format(m.m_idx)
+                        )
                     raise Exception
 
         # check if need to reset routing rule
-        if 'routing_rule' in kwargs:
+        if "routing_rule" in kwargs:
             if self.ifPrint:
-                print("Taking over: workcenters use {} routing rule".format(kwargs['routing_rule']))
+                print(
+                    "Taking over: workcenters use {} routing rule".format(
+                        kwargs["routing_rule"]
+                    )
+                )
             for wc in self.wc_list:
-                order = "wc.job_routing = routing." + kwargs['routing_rule']
+                order = "wc.job_routing = routing." + kwargs["routing_rule"]
                 try:
                     exec(order)
                 except:
                     if self.ifPrint:
-                        print("Rule assigned to workcenter {} is invalid !".format(wc.wc_idx))
+                        print(
+                            "Rule assigned to workcenter {} is invalid !".format(
+                                wc.wc_idx
+                            )
+                        )
                     raise Exception
 
         # specify the architecture of DRL
@@ -153,33 +215,59 @@ def init_stats():
     stats.register("max", np.max)
     return stats
 
-def evaluate(individual, toolbox, seed):
+
+def evaluate(individual, rd, seed):
     # add by mengxu 2022.10.13 to add the training instances ===============================================
     # create the environment instance for simulation
     env = simpy.Environment()
-    dataset_name = rd['dataset_name']
+    dataset_name = rd["dataset_name"]
     # create the shop floor instance
-    rule_R = 'GP_evolve_R'
-    rule_S = 'GP_evolve_S'
+    rule_R = "GP_evolve_R"
+    rule_S = "GP_evolve_S"
     # np.random.seed(seed)
-    spf = shopfloor(env, span, m_no, wc_no, individual[0], individual[1], routing_rule=rule_R, sequencing_rule=rule_S,
-                    seed=seed, ifPrint=False, dataset_name=dataset_name)
+    spf = shopfloor(
+        env,
+        span,
+        m_no,
+        wc_no,
+        individual[0],
+        individual[1],
+        routing_rule=rule_R,
+        sequencing_rule=rule_S,
+        seed=seed,
+        ifPrint=False,
+        dataset_name=dataset_name,
+    )
     spf.simulation()
-    output_time, cumulative_tard, tard_mean, tard_max, tard_rate = spf.job_creator.tardiness_output()
+    output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
+        spf.job_creator.tardiness_output()
+    )
     fitness = cumulative_tard[-1]
 
-    for i in range(ins_each_gen-1):
+    for i in range(ins_each_gen - 1):
         seed = seed + 1000
         env = simpy.Environment()
-        spf = shopfloor(env, span, m_no, wc_no, individual[0], individual[1], routing_rule=rule_R,
-                        sequencing_rule=rule_S,
-                        seed=seed, ifPrint=False, dataset_name=dataset_name)
+        spf = shopfloor(
+            env,
+            span,
+            m_no,
+            wc_no,
+            individual[0],
+            individual[1],
+            routing_rule=rule_R,
+            sequencing_rule=rule_S,
+            seed=seed,
+            ifPrint=False,
+            dataset_name=dataset_name,
+        )
         spf.simulation()
-        output_time, cumulative_tard, tard_mean, tard_max, tard_rate = spf.job_creator.tardiness_output()
+        output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
+            spf.job_creator.tardiness_output()
+        )
         fitness = fitness + cumulative_tard[-1]
 
     # spf.job_creator.final_output() #for check
-    fitness = fitness/ins_each_gen
+    fitness = fitness / ins_each_gen
     scores = [fitness]
     # scores = [cumulative_tard[-1]]
     return scores
@@ -207,7 +295,10 @@ def evaluate(individual, toolbox, seed):
 
 
 def eval_wrapper(*args, **kwargs):
-    return evaluate(*args, **kwargs, toolbox=rd['toolbox'], seed = rd['seed'])
+    rd = kwargs["rd"]
+    # del kwargs["rd"]
+    return evaluate(*args, **kwargs, seed=rd["seed"])
+    # return evaluate(*args, **kwargs, toolbox=rd["toolbox"], seed=rd["seed"])
     # return evaluate(*args, **kwargs, toolbox=rd['toolbox'], data=rd['data'], labels=rd['labels'])
 
 
@@ -215,7 +306,6 @@ def eval_wrapper(*args, **kwargs):
 def init_data(rundata):
     global rd
     rd = rundata
-
 
 
 def GPFC_main(dataset_name, seed):
@@ -227,19 +317,18 @@ def GPFC_main(dataset_name, seed):
     # #label_to_see = list(set(x_train[:,0]))
     # training_data_norm = preprocessing.normalize(x_train[:, 1:])
 
-    rd['seed'] = seed
-    rd['dataset_name'] = dataset_name
-    num_features = 0 # the initial number of terminals is 0, then I will add more terminals into the pset
+    rd["seed"] = seed
+    rd["dataset_name"] = dataset_name
+    num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
     pset = gp.PrimitiveSet("MAIN", num_features, prefix="f")
     pset.context["array"] = np.array
     REP.init_primitives(pset)
-    weights = (-1.,)
+    weights = (-1.0,)
     creator.create("FitnessMin", base.Fitness, weights=weights)
     # set up toolbox
     toolbox = ParallelToolbox()  # base.Toolbox()
     init_toolbox(toolbox, pset)
     toolbox.register("evaluate", eval_wrapper)
-
 
     # rd['data'] = spf # rd is global parameter and store the training instance
     # rd['num_instances'] = 1 #each generation the num of instance is 1
@@ -255,21 +344,33 @@ def GPFC_main(dataset_name, seed):
     # rd['num_instances'] = rd['data'].shape[0]
     # rd['num_features'] = rd['data'].shape[1]
 
-    rd['toolbox'] = toolbox
+    rd["toolbox"] = toolbox
     pop = toolbox.population(n=POP_SIZE)
     stats = init_stats()
     hof = tools.HallOfFame(1)
-    seedRotate = True # added by mengxu 2022.10.13
+    seedRotate = True  # added by mengxu 2022.10.13
     # seedRotate = False # added by mengxu 2022.10.13
-    pop, logbook, min_fitness, best_ind_all_gen = ea_simple_elitism.eaSimple(pop, toolbox, CXPB, MUTPB, ELITISM, NGEN, seedRotate, rd, stats, halloffame=hof, verbose=True, seed =seed, dataset_name=dataset_name)
+    pop, logbook, min_fitness, best_ind_all_gen, all_individuals = ea_simple_elitism.eaSimple(
+        pop,
+        toolbox,
+        CXPB,
+        MUTPB,
+        ELITISM,
+        NGEN,
+        seedRotate,
+        rd,
+        stats,
+        halloffame=hof,
+        verbose=True,
+        seed=seed,
+        dataset_name=dataset_name,
+    )
     best = hof[0]
-    return min_fitness,best, best_ind_all_gen
+    return min_fitness, best, best_ind_all_gen, all_individuals
 
 
-
-
-POP_SIZE =50
-NGEN = 50
+POP_SIZE = 50
+NGEN = 100
 CXPB = 0.8
 MUTPB = 0.2
 ELITISM = 10
@@ -282,22 +383,24 @@ rd = {}
 span = 1000
 m_no = 6
 wc_no = 3
-ins_each_gen = 2 # added by mengxu followed the advice of Meng 2022.11.01
+ins_each_gen = 2  # added by mengxu followed the advice of Meng 2022.11.01
+
+
 def main(dataset_name, seed):
-# if __name__ == "__main__":
-#     dataset_name = str(sys.argv[1])
-#     seed = int(sys.argv[2])
+    # if __name__ == "__main__":
+    #     dataset_name = str(sys.argv[1])
+    #     seed = int(sys.argv[2])
     random.seed(int(seed))
     np.random.seed(int(seed))
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
-    min_fitness,p_one,best_ind_all_gen= GPFC_main(dataset_name,seed)
+    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(dataset_name, seed)
     end = time.time()
     running_time = end - start
+    saveFile.saveAllIndividuals(seed, dataset_name, all_individuals)
     saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)
     saveFile.saveMinFitness(seed, dataset_name, min_fitness)
     saveFile.saveRunningTime(seed, dataset_name, running_time)
     print(min_fitness)
     print("Training time: " + str(running_time))
-    print('Training end!')
-
+    print("Training end!")

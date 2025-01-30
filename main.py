@@ -20,10 +20,16 @@ import main_training_S_online_learning
 sys.path
 
 if __name__ == '__main__':
-    dataset_name = str(sys.argv[1]) # HH or HL or LH or LL
-    seed = int(sys.argv[2]) # a random number, e.g., 0
-    algo = str(sys.argv[3]) # as the following
+    # dataset_name = str(sys.argv[1]) # HH or HL or LH or LL
+    # seed = int(sys.argv[2]) # a random number, e.g., 0
+    # algo = str(sys.argv[3]) # as the following
 
+    dataset_name = 'HH'
+    seed = 42
+    algo = 'MTGP'
+
+    import os
+    print(f"Main process ID: {os.getpid()}")
     if algo == 'MTGP':
         print('----------MTGP----------')
         GPmain.main(dataset_name, seed)

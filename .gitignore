@@ -6,7 +6,7 @@ __pycache__/
 MTGP/train/
 NichingMTGP/train
 
-
+.DS_Store
 
 # C extensions
 *.so

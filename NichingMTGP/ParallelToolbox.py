@@ -2,6 +2,7 @@ import pickle
 
 from deap import base
 from multiprocessing import cpu_count, Pool
+from functools import partial
 
 
 ##thanks TPOT
@@ -18,12 +19,13 @@ class ParallelToolbox(base.Toolbox):
         self.__dict__.update(state)
 
     # created by mengxu 2022.11.28 for multiple processing
-    def multiProcess(self, evaluate, invalid_ind):
+    def multiProcess(self, evaluate, invalid_ind, rd):
         cores = cpu_count()
         # print("cores: " + str(cores))
         pickle.dumps(invalid_ind)
         pickle.dumps(evaluate)
-        fitnesses = Pool().map(evaluate, invalid_ind)
+        partial_evaluate = partial(evaluate, rd=rd)
+        fitnesses = Pool().map(partial_evaluate, invalid_ind)
         return fitnesses
         # cube_parts = self.inds_split(invalid_ind, cores)
         # # print("objective: " + objectives[i])

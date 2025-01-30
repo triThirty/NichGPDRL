@@ -3,6 +3,7 @@ import random
 import numpy as np
 from deap import tools
 
+
 from NichingMTGP import saveFile
 from NichingMTGP.selection import selElitistAndTournament
 from NichingMTGP.niching.niching import niching_clear
@@ -70,7 +71,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, reppb, elitism, ngen, seedRotate,
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
 
     rd['seed'] = randomSeed_ngen[0]
-    fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind)
+    fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
     # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
@@ -131,7 +132,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, reppb, elitism, ngen, seedRotate,
         # invalid_elite_ind = sorted_elite #modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
         for ind in invalid_elite_ind:
             del ind.fitness.values
-        fitnesses_elite = toolbox.multiProcess(toolbox.evaluate, invalid_elite_ind)
+        fitnesses_elite = toolbox.multiProcess(toolbox.evaluate, invalid_elite_ind, rd)
         # fitnesses_elite = toolbox.map(toolbox.evaluate, invalid_elite_ind)
         for ind, fit in zip(invalid_elite_ind, fitnesses_elite):
             ind.fitness.values = fit
@@ -141,7 +142,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, reppb, elitism, ngen, seedRotate,
         # invalid_ind = offspring #modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
         for ind in invalid_ind:
             del ind.fitness.values
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind)
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
         # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit

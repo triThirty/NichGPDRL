@@ -274,7 +274,7 @@ def init_stats():
     stats.register("max", np.max)
     return stats
 
-def evaluate(individual, toolbox, seed):
+def evaluate(individual, rd, seed):
     # add by mengxu 2022.10.13 to add the training instances ===============================================
     # create the environment instance for simulation
     if len(individual) == 2:
@@ -331,7 +331,9 @@ def evaluate(individual, toolbox, seed):
     return scores
 
 def eval_wrapper(*args, **kwargs):
-    return evaluate(*args, **kwargs, toolbox=rd['toolbox'], seed = rd['seed'])
+    rd = kwargs["rd"]
+    return evaluate(*args, **kwargs, seed=rd["seed"])
+    # return evaluate(*args, **kwargs, toolbox=rd['toolbox'], seed = rd['seed'])
     # return evaluate(*args, **kwargs, toolbox=rd['toolbox'], data=rd['data'], labels=rd['labels'])
 
 
@@ -372,7 +374,7 @@ def GPFC_main(dataset_name, seed):
 
 
 POP_SIZE =40
-NGEN = 50
+NGEN = 100
 CXPB = 0.8
 MUTPB = 0.15
 REPPB = 0.05
@@ -406,6 +408,7 @@ def main(dataset_name, seed):
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)
+    saveFile.save_each_gen_best_individual_json_format(seed, dataset_name, best_ind_all_gen)
     saveFile.saveMinFitness(seed, dataset_name, min_fitness)
     saveFile.saveRunningTime(seed, dataset_name, running_time)
     saveFile.save_top_inds_final_gen_meng(seed, dataset_name, top_inds_final_gen)

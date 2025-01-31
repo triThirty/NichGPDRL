@@ -69,6 +69,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, reppb, elitism, ngen, seedRotate,
     best_ind_all_gen = [] #add by mengxu
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
+    saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
 
     rd['seed'] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
@@ -126,6 +127,7 @@ def eaSimple(population, toolbox, cxpb, mutpb, reppb, elitism, ngen, seedRotate,
         # print('after',offspring[0][1])
         # print('after',offspring[0][2])
         # exit()
+        saveFile.save_all_individuals(seed, dataset_name, offspring)
 
         # Evaluate the sorted_elite with an invalid fitness as we rotate seed, add by mengxu
         invalid_elite_ind = [ind for ind in sorted_elite]

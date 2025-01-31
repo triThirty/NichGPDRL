@@ -3,33 +3,71 @@ import numpy as np
 import json
 
 
-def save_individual(randomSeeds, dataSetName, individuals):
+def save_all_individuals(randomSeeds, dataSetName, individuals, with_fitness=False):
+    try:
+        with open(
+            "./NichingMTGP/train/scenario_"
+            + str(dataSetName)
+            + "/"
+            + str(randomSeeds)
+            + "_all_individual_"
+            + dataSetName
+            + "_formula_format"
+            + ".json",
+            "r",
+        ) as file:
+            individuals_list = json.load(file)
+    except FileNotFoundError:
+        individuals_list = []
+        with open(
+            "./NichingMTGP/train/scenario_"
+            + str(dataSetName)
+            + "/"
+            + str(randomSeeds)
+            + "_all_individual_"
+            + dataSetName
+            + "_formula_format"
+            + ".json",
+            "w",
+        ) as file:
+            json.dump(individuals_list, file)
+    if not with_fitness:
+        for key, ind in enumerate(individuals):
+            individual_dict = {
+                "T0": str(ind[0]),
+                "T1": str(ind[1]),
+                "fitness": 0,
+            }
+            individuals_list.append(individual_dict)
+    else:
+        individuals_list = individuals
     with open(
         "./NichingMTGP/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
-        + "_"
+        + "_all_individual_"
         + dataSetName
-        + ".pickle",
-        "wb",
+        + "_formula_format"
+        + ".json",
+        "w",
     ) as file:
-        pickle.dump(individuals, file, protocol=pickle.HIGHEST_PROTOCOL)
-    file.close()
-    return
+        json.dump(individuals_list, file)
 
 
 def save_each_gen_best_individual_json_format(
     randomSeeds, dataSetName, best_ind_all_gen
 ):
-    individual_dict = {}
+    individual_dict = []
 
     for key, ind in enumerate(best_ind_all_gen):
-        individual_dict[str(key)] = {
-            "T0": str(ind[0]),
-            "T1": str(ind[1]),
-            "fitness": 0,
-        }
+        individual_dict.append(
+            {
+                "T0": str(ind[0]),
+                "T1": str(ind[1]),
+                "fitness": 0,
+            }
+        )
 
     with open(
         "./NichingMTGP/train/scenario_"
@@ -38,6 +76,7 @@ def save_each_gen_best_individual_json_format(
         + str(randomSeeds)
         + "_meng_individual_"
         + dataSetName
+        + "_formula_format"
         + ".json",
         "w",
     ) as fileName_individual:
@@ -56,6 +95,7 @@ def save_each_gen_best_individual_on_test_dataset(
         + str(randomSeeds)
         + "_meng_individual_"
         + dataSetName
+        + "_formula_format"
         + ".json",
         "w",
     ) as fileName_individual:
@@ -63,7 +103,7 @@ def save_each_gen_best_individual_on_test_dataset(
 
 
 def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_gen):
-    individual_dict = {}
+    individual_dict = []
 
     for gen in range(len(best_ind_all_gen)):
         best_ind = best_ind_all_gen[gen]
@@ -88,10 +128,9 @@ def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_ge
         if len(best_ind) == 2:
             individual.append(routing_list)
 
-        individual_dict.__setitem__(gen, individual)
+        # individual_dict.__setitem__(gen, individual)
+        individual_dict.append(individual)
 
-    # fileName_individual = open('./MTGP/train/' + str(randomSeeds) + '_meng_individual_' + dataSetName + '.pkl', "wb")
-    # pickle.dump(individual_dict, fileName_individual)
     with open(
         "./NichingMTGP/train/scenario_"
         + str(dataSetName)
@@ -99,16 +138,14 @@ def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_ge
         + str(randomSeeds)
         + "_meng_individual_"
         + dataSetName
-        + ".pkl",
-        "wb",
+        + ".json",
+        "w",
     ) as fileName_individual:
-        pickle.dump(individual_dict, fileName_individual)
-
-    return
+        json.dump(individual_dict, fileName_individual)
 
 
 def save_top_inds_final_gen_meng(randomSeeds, dataSetName, top_inds_fitness_final_gen):
-    individual_dict = {}
+    individual_dict = []
 
     for gen in range(len(top_inds_fitness_final_gen)):
         best_ind = top_inds_fitness_final_gen[gen]
@@ -133,7 +170,8 @@ def save_top_inds_final_gen_meng(randomSeeds, dataSetName, top_inds_fitness_fina
         if len(best_ind) == 2:
             individual.append(routing_list)
 
-        individual_dict.__setitem__(gen, individual)
+        # individual_dict.__setitem__(gen, individual)
+        individual_dict.append(individual)
 
     # fileName_individual = open('./MTGP/train/' + str(randomSeeds) + '_meng_individual_' + dataSetName + '.pkl', "wb")
     # pickle.dump(individual_dict, fileName_individual)

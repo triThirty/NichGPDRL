@@ -1,5 +1,6 @@
 import simpy
 import sys
+import re
 
 sys.path
 # import matplotlib.pyplot as plt
@@ -455,12 +456,12 @@ sum_record = []
 benchmark_record = []
 max_record = []
 rate_record = []
-iteration = 100  # original 1
+iteration = 2  # original 1
 # dont mess with above one-
-export_result = 1
+export_result = 0
 
 
-def main(dataset_name, seedOfRun):
+def main(dataset_name, seedOfRun, input_algo):
     # if __name__ == "__main__":
     #     dataSetName = str(sys.argv[1])
     #     seedOfRun = int(sys.argv[2])
@@ -472,10 +473,22 @@ def main(dataset_name, seedOfRun):
     # Do validation and obtain the best evolved rule
     best_MTGP_rule_index = 50
     # MTGP rule test, test the best rule obtained from all the generations
-    dict_best_MTGP_individuals = mtload.load_individual_from_gen(seedOfRun, dataSetName)
-    dict_best_MTGP_individuals_dict = mtload.load_individual_from_gen_json_format(
-        seedOfRun, dataSetName
-    )
+    if input_algo == "GP_all_gen_test":
+        dict_best_MTGP_individuals = mtload.load_individual_from_gen(
+            seedOfRun, dataSetName
+        )
+        dict_best_MTGP_individuals_dict = mtload.load_individual_from_gen_json_format(
+            seedOfRun, dataSetName
+        )
+    elif input_algo == "GP_all_individuals_test":
+        dict_best_MTGP_individuals_dict = (
+            mtload.load_all_individuals_from_gen_json_format(seedOfRun, dataSetName)
+        )
+        dict_best_MTGP_individuals = []
+        for ind in dict_best_MTGP_individuals_dict:
+            t0 = re.findall(r"[a-zA-Z_]+", ind["T0"])
+            t1 = re.findall(r"[a-zA-Z_]+", ind["T1"])
+            dict_best_MTGP_individuals.append([t0, t1])
 
     # # Do validation and obtain the best evolved rule
     # best_GPLS_rule_index = 51
@@ -566,12 +579,13 @@ def main(dataset_name, seedOfRun):
             max_record[run].append(tard_max)
             rate_record[run].append(tard_rate)
 
-        for idx in range(len(dict_best_MTGP_individuals)):
+        # for idx in range(len(dict_best_MTGP_individuals)):
+        for idx, individual in enumerate(dict_best_MTGP_individuals):
             algo = "GP_gen_" + str(idx)
             if run == 0:
                 MTGP.append(algo)
-            individual = dict_best_MTGP_individuals.get(idx)
-            ind_dict = dict_best_MTGP_individuals_dict[str(idx)]
+            # individual = dict_best_MTGP_individuals.get(str(idx))
+            ind_dict = dict_best_MTGP_individuals_dict[idx]
             sequencing_rule_tree = individual[0]
             routing_rule_tree = individual[1]
             # np.random.seed(int(seed))  # add by mengxu 2022.10.31
@@ -667,11 +681,17 @@ def main(dataset_name, seedOfRun):
             max_record[run].append(tard_max)
             rate_record[run].append(tard_rate)
 
-    for _, ind in dict_best_MTGP_individuals_dict.items():
+    # for _, ind in dict_best_MTGP_individuals_dict.items():
+    for ind in dict_best_MTGP_individuals_dict:
         ind["fitness"] = ind["fitness"] / iteration
-    saveFile.save_each_gen_best_individual_on_test_dataset(
-        seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
-    )
+    if input_algo == "GP_all_gen_test":
+        saveFile.save_each_gen_best_individual_on_test_dataset(
+            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
+        )
+    elif input_algo == "GP_all_individuals_test":
+        saveFile.save_all_individuals(
+            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict, with_fitness=True
+        )
     # title = benchmark + MTGP + ['Integrated_DRL']
     title = benchmark + MTGP
 

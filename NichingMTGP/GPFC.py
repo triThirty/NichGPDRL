@@ -374,7 +374,7 @@ def GPFC_main(dataset_name, seed):
 
 
 POP_SIZE =40
-NGEN = 100
+NGEN = 1
 CXPB = 0.8
 MUTPB = 0.15
 REPPB = 0.05

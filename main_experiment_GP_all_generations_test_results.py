@@ -456,7 +456,7 @@ sum_record = []
 benchmark_record = []
 max_record = []
 rate_record = []
-iteration = 2  # original 1
+iteration = 100  # original 1
 # dont mess with above one-
 export_result = 0
 

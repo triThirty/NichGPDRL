@@ -24,14 +24,13 @@ import NichingMTGP.niching.SequencingPhenoCharacterisation as SequencingPhenoCha
 class shopfloor:
     def __init__(self, env, span, m_no, wc_no, sequencing_tree, routing_tree, **kwargs):
         '''STEP 1: create environment instances and specifiy simulation span '''
-        self.env=env
+        self.env = env
         self.span = span
         self.m_no = m_no
         self.m_list = []
         self.wc_no = wc_no
         self.wc_list = []
         self.ifPrint = kwargs['ifPrint'] # added by mengxu
-
         # self.sequencingTree = sequencing_tree
         # self.routingTree = routing_tree
         # self.routingRule = kwargs['tree_routing']
@@ -374,7 +373,7 @@ def GPFC_main(dataset_name, seed):
 
 
 POP_SIZE =40
-NGEN = 1
+NGEN = 100
 CXPB = 0.8
 MUTPB = 0.15
 REPPB = 0.05

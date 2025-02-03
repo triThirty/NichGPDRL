@@ -36,7 +36,7 @@ def save_all_individuals(randomSeeds, dataSetName, individuals, with_fitness=Fal
             individual_dict = {
                 "T0": str(ind[0]),
                 "T1": str(ind[1]),
-                "fitness": 0,
+                "fitness": ind.fitness.values[0],
             }
             individuals_list.append(individual_dict)
     else:

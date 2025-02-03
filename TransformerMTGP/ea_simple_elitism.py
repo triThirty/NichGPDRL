@@ -92,7 +92,6 @@ def eaSimple(
     best_ind_all_gen = []  # add by mengxu
     # Evaluate the individuals with an invalid fitness
     invalid_ind = [ind for ind in population if not ind.fitness.valid]
-    saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
 
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
@@ -100,8 +99,9 @@ def eaSimple(
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    surrogate_train(invalid_ind, transformer_model)
-    transformer_model.eval()
+    saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
+    # surrogate_train(invalid_ind, transformer_model)
+    # transformer_model.eval()
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -153,7 +153,6 @@ def eaSimple(
         # print('after',offspring[0][1])
         # print('after',offspring[0][2])
         # exit()
-        saveFile.save_all_individuals(seed, dataset_name, offspring)
 
         # Evaluate the sorted_elite with an invalid fitness as we rotate seed, add by mengxu
         invalid_elite_ind = [ind for ind in sorted_elite]
@@ -175,6 +174,7 @@ def eaSimple(
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
 
+        saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
         # Replace the current population by the offspring
         population[:] = invalid_elite_ind + invalid_ind
         # population[:] = sorted_elite+offspring

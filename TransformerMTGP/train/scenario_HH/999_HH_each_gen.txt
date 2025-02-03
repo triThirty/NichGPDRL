@@ -1,8 +1,0 @@
-Best individuals from each gen:
-
-Gen: 0
-Individual:
-Tree 0:
-add('NPT', 'PT')
-Tree 1:
-multiply(minimum(add(protected_div(add(multiply('PT', 'NOR'), minimum('SLACK', 'NOR')), subtract(maximum('PT', 'OWT'), minimum('NOR', 'NOR'))), protected_div(protected_div(minimum('TIS', 'PT'), add('WIQ', 'NOR')), maximum(subtract('SLACK', 'WKR'), protected_div('NIQ', 'SLACK')))), maximum(add(protected_div(add('SLACK', 'PT'), subtract('NIQ', 'WIQ')), maximum(minimum('OWT', 'PT'), subtract('TIS', 'SLACK'))), add(protected_div(add('PT', 'WKR'), minimum('WIQ', 'NOR')), minimum(protected_div('WIQ', 'TIS'), multiply('NPT', 'MWT'))))), maximum(protected_div(subtract(subtract(add('NIQ', 'MWT'), subtract('SLACK', 'NPT')), multiply(subtract('NIQ', 'MWT'), maximum('NPT', 'TIS'))), protected_div(multiply(multiply('MWT', 'MWT'), minimum('TIS', 'PT')), subtract(maximum('WIQ', 'WKR'), subtract('WIQ', 'PT')))), add(protected_div(protected_div(maximum('WKR', 'NOR'), maximum('PT', 'NIQ')), add(add('NPT', 'TIS'), protected_div('WIQ', 'NIQ'))), subtract(subtract(minimum('NIQ', 'MWT'), subtract('OWT', 'WIQ')), add(maximum('NOR', 'PT'), subtract('NPT', 'NIQ'))))))

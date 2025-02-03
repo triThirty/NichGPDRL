@@ -1,0 +1,80 @@
+Individual:0
+Tree 0:
+maximum(add('PT', add(protected_div('SLACK', maximum(protected_div('SLACK', maximum('PT', 'SLACK')), protected_div('SLACK', 'PT'))), 'NOR')), 'SLACK')
+Tree 1:
+add(minimum(add(add('PT', add('PT', 'MWT')), multiply(maximum(minimum(protected_div('PT', 'MWT'), 'NOR'), add('PT', 'WIQ')), 'PT')), minimum(add('PT', add('PT', 'MWT')), 'MWT')), 'SLACK')
+Fitness:
+92.0
+
+Individual:1
+Tree 0:
+add('PT', add('SLACK', protected_div('SLACK', protected_div(add('SLACK', 'SLACK'), protected_div('SLACK', 'SLACK')))))
+Tree 1:
+add(minimum(add('PT', add('PT', 'MWT')), 'TIS'), subtract(add(subtract('NIQ', 'NIQ'), 'PT'), subtract(maximum(add(protected_div('PT', 'NPT'), minimum('TIS', 'OWT')), minimum(add('MWT', 'WIQ'), subtract('MWT', 'NOR'))), minimum('TIS', 'NPT'))))
+Fitness:
+93.5
+
+Individual:2
+Tree 0:
+maximum(add('PT', add(protected_div('SLACK', 'SLACK'), add('MWT', 'SLACK'))), 'SLACK')
+Tree 1:
+add(minimum(add(add('PT', add('PT', 'MWT')), multiply(maximum(minimum(protected_div('PT', 'MWT'), 'NOR'), add('PT', 'WIQ')), 'PT')), minimum(add('PT', add('PT', 'MWT')), 'TIS')), 'SLACK')
+Fitness:
+97.5
+
+Individual:3
+Tree 0:
+maximum(add('PT', add(protected_div('SLACK', maximum(protected_div('SLACK', maximum('PT', 'SLACK')), protected_div('SLACK', 'PT'))), 'NOR')), 'SLACK')
+Tree 1:
+add(minimum(add('PT', add('PT', 'MWT')), 'TIS'), subtract(add(multiply(maximum(multiply('NPT', 'SLACK'), subtract('NIQ', 'PT')), minimum(minimum('WIQ', 'WKR'), multiply('WKR', 'NIQ'))), 'PT'), subtract(maximum(add(protected_div('PT', 'NPT'), minimum('TIS', 'OWT')), 'WIQ'), minimum('TIS', protected_div('PT', 'MWT')))))
+Fitness:
+102.5
+
+Individual:4
+Tree 0:
+maximum(add('PT', add(protected_div('SLACK', maximum(protected_div('SLACK', protected_div('SLACK', 'PT')), protected_div('SLACK', 'PT'))), 'NOR')), 'SLACK')
+Tree 1:
+add(minimum(add('PT', add('PT', 'MWT')), 'TIS'), subtract(add(subtract('NIQ', 'NIQ'), 'PT'), subtract(maximum(add(protected_div('PT', 'NPT'), minimum('TIS', add('PT', 'MWT'))), minimum(add('MWT', 'MWT'), subtract('MWT', 'PT'))), minimum('TIS', protected_div('PT', 'MWT')))))
+Fitness:
+113.5
+
+Individual:5
+Tree 0:
+add('PT', add(add('SLACK', protected_div('PT', protected_div(add('SLACK', 'SLACK'), protected_div('SLACK', 'SLACK')))), protected_div('PT', protected_div(add('SLACK', 'SLACK'), protected_div('SLACK', 'SLACK')))))
+Tree 1:
+add(minimum(add(add('PT', add('PT', 'MWT')), 'WIQ'), minimum(add('PT', add(minimum(add('PT', 'WIQ'), 'MWT'), 'WIQ')), 'OWT')), subtract(add(minimum(add('PT', 'WIQ'), add('PT', add('PT', add('PT', subtract('MWT', 'NOR'))))), 'WIQ'), 'WKR'))
+Fitness:
+114.0
+
+Individual:6
+Tree 0:
+maximum(add('PT', add(protected_div('SLACK', maximum(protected_div('SLACK', maximum('PT', 'SLACK')), protected_div('SLACK', 'PT'))), 'NOR')), 'SLACK')
+Tree 1:
+add(minimum(add(add('PT', add('PT', add('PT', add('PT', 'WIQ')))), 'MWT'), 'OWT'), 'PT')
+Fitness:
+118.0
+
+Individual:7
+Tree 0:
+maximum(add('PT', subtract('SLACK', 'NPT')), 'SLACK')
+Tree 1:
+add(minimum(add('PT', add('PT', add('PT', 'MWT'))), 'TIS'), subtract(add(subtract(subtract(maximum('WKR', 'MWT'), minimum('NPT', 'NIQ')), protected_div('WKR', maximum('NIQ', 'SLACK'))), minimum(subtract(subtract('WKR', 'PT'), multiply('TIS', 'NPT')), add(minimum('TIS', protected_div('PT', 'MWT')), subtract('WIQ', 'MWT')))), subtract(maximum(add(protected_div('PT', 'NPT'), 'WKR'), minimum(add('MWT', 'MWT'), subtract('MWT', 'NOR'))), subtract(maximum(minimum('TIS', 'WIQ'), 'WKR'), multiply('MWT', minimum('WKR', minimum(add('PT', 'WIQ'), 'PT')))))))
+Fitness:
+120.0
+
+Individual:8
+Tree 0:
+maximum(add('PT', subtract('SLACK', 'NPT')), 'PT')
+Tree 1:
+add(minimum(add(add('PT', add('PT', 'MWT')), multiply('PT', 'PT')), minimum(add('PT', add('PT', 'OWT')), 'TIS')), 'SLACK')
+Fitness:
+121.5
+
+Individual:9
+Tree 0:
+maximum(add('PT', add(protected_div(maximum('NPT', 'SLACK'), maximum('NPT', 'SLACK')), 'SLACK')), 'SLACK')
+Tree 1:
+add(minimum(add('PT', 'MWT'), minimum('NIQ', 'TIS')), add(add('SLACK', 'WIQ'), add('PT', subtract('MWT', 'NOR'))))
+Fitness:
+122.5
+

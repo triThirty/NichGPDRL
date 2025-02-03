@@ -5,6 +5,7 @@ __pycache__/
 
 MTGP/train/
 NichingMTGP/train
+experiment_result/
 
 .DS_Store
 

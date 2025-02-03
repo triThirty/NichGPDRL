@@ -1,0 +1,80 @@
+Individual:0
+Tree 0:
+maximum('PT', protected_div(multiply('TIS', 'SLACK'), add(minimum(multiply(maximum(add('PT', 'SLACK'), 'PT'), 'WIQ'), minimum(minimum(multiply('NOR', 'SLACK'), multiply('MWT', 'MWT')), subtract(protected_div('WKR', 'WIQ'), 'NIQ'))), 'WIQ')))
+Tree 1:
+multiply(multiply(add('PT', multiply(add('PT', add('MWT', 'MWT')), 'MWT')), 'MWT'), 'MWT')
+Fitness:
+271.5
+
+Individual:1
+Tree 0:
+maximum('PT', minimum(multiply(maximum(add(maximum(add('PT', 'SLACK'), protected_div('SLACK', 'TIS')), 'SLACK'), 'TIS'), subtract(multiply('SLACK', 'NIQ'), 'NIQ')), 'MWT'))
+Tree 1:
+multiply(add(multiply(add('PT', maximum(add('MWT', 'MWT'), maximum('SLACK', 'NIQ'))), 'MWT'), add('PT', multiply('MWT', add('PT', 'WKR')))), 'PT')
+Fitness:
+279.5
+
+Individual:2
+Tree 0:
+maximum('PT', minimum(multiply(maximum(add(maximum(add('PT', 'SLACK'), protected_div('NIQ', 'TIS')), 'SLACK'), 'TIS'), subtract(multiply('SLACK', 'MWT'), 'NIQ')), 'MWT'))
+Tree 1:
+multiply(multiply(add('PT', multiply(multiply(add('PT', 'MWT'), 'MWT'), maximum('MWT', subtract('MWT', 'PT')))), 'MWT'), multiply(multiply(add('PT', 'MWT'), 'PT'), add('PT', multiply(add('PT', 'WKR'), 'TIS'))))
+Fitness:
+289.0
+
+Individual:3
+Tree 0:
+add('MWT', maximum(add('PT', 'SLACK'), protected_div('PT', minimum(maximum(subtract('NPT', 'PT'), subtract('TIS', 'MWT')), 'NOR'))))
+Tree 1:
+multiply(multiply(add('PT', multiply(add('PT', add('MWT', 'MWT')), 'MWT')), 'MWT'), 'MWT')
+Fitness:
+290.5
+
+Individual:4
+Tree 0:
+maximum('PT', protected_div(multiply('TIS', 'SLACK'), maximum(maximum(maximum('PT', 'NIQ'), protected_div('NIQ', 'OWT')), protected_div(protected_div('SLACK', protected_div('WIQ', 'NOR')), multiply(add('PT', 'SLACK'), 'PT')))))
+Tree 1:
+multiply(add(multiply(add('PT', maximum(add('MWT', 'MWT'), maximum('SLACK', 'NIQ'))), 'MWT'), add('PT', 'WIQ')), multiply(multiply(add('MWT', add('PT', 'MWT')), 'MWT'), 'PT'))
+Fitness:
+292.0
+
+Individual:5
+Tree 0:
+maximum('PT', add(minimum(multiply('SLACK', 'WIQ'), minimum(minimum(multiply('NOR', 'PT'), multiply('MWT', 'MWT')), add(maximum('NIQ', 'MWT'), maximum(protected_div('PT', 'SLACK'), 'SLACK')))), subtract(minimum(protected_div(multiply(multiply('SLACK', 'MWT'), 'MWT'), 'NOR'), protected_div(minimum('NPT', 'NIQ'), protected_div('WKR', 'WIQ'))), maximum(maximum(add(maximum(add('PT', 'SLACK'), protected_div('SLACK', 'TIS')), 'SLACK'), protected_div('NIQ', 'OWT')), protected_div(protected_div('WKR', 'WIQ'), multiply('NIQ', 'TIS'))))))
+Tree 1:
+multiply(add(add(multiply(add('PT', multiply(add(add('PT', 'MWT'), 'MWT'), 'PT')), 'MWT'), add('PT', 'WIQ')), 'WIQ'), add('MWT', 'PT'))
+Fitness:
+296.0
+
+Individual:6
+Tree 0:
+add('NOR', maximum(add('PT', 'SLACK'), protected_div('PT', maximum(maximum(multiply(maximum(add('PT', 'SLACK'), 'PT'), 'WIQ'), protected_div('NIQ', 'OWT')), protected_div(protected_div('WKR', 'WIQ'), multiply(add('PT', multiply('TIS', 'SLACK')), 'PT'))))))
+Tree 1:
+multiply(multiply(multiply(add('PT', 'MWT'), 'MWT'), 'MWT'), 'PT')
+Fitness:
+297.0
+
+Individual:7
+Tree 0:
+maximum('PT', minimum(multiply(maximum(add('SLACK', 'SLACK'), 'NOR'), subtract(multiply('SLACK', 'MWT'), 'SLACK')), 'MWT'))
+Tree 1:
+multiply(add(add(multiply(add('PT', multiply(add(add('PT', 'MWT'), 'MWT'), 'PT')), 'MWT'), add('PT', 'WIQ')), 'WIQ'), add('MWT', 'PT'))
+Fitness:
+297.0
+
+Individual:8
+Tree 0:
+maximum('PT', protected_div(multiply('TIS', 'SLACK'), maximum(maximum(maximum('PT', 'NIQ'), protected_div('NIQ', 'OWT')), protected_div('PT', multiply(add('PT', 'SLACK'), 'PT')))))
+Tree 1:
+multiply(multiply(add('PT', multiply(multiply(add('PT', 'MWT'), maximum(add('MWT', 'SLACK'), maximum('SLACK', 'NIQ'))), maximum('MWT', subtract('MWT', 'PT')))), 'MWT'), multiply(multiply(add('PT', 'MWT'), 'PT'), add('PT', multiply(add('PT', 'WKR'), 'TIS'))))
+Fitness:
+299.5
+
+Individual:9
+Tree 0:
+maximum('SLACK', add(maximum('NOR', 'NIQ'), add('NOR', 'SLACK')))
+Tree 1:
+multiply(add(add(multiply(add('PT', multiply(add(add('PT', 'MWT'), 'MWT'), 'PT')), 'MWT'), add('PT', 'WIQ')), 'WIQ'), add('MWT', 'PT'))
+Fitness:
+300.5
+

@@ -1,5 +1,6 @@
 import MTGP.GPFC as GPmain
 import NichingMTGP.GPFC as NichingGPmain
+import TransformerMTGP.GPFC as TransformerGPmain
 import sys
 
 import main_experiment_GP_all_generations_test_results
@@ -20,14 +21,14 @@ import main_training_S_online_learning
 sys.path
 
 if __name__ == "__main__":
-    dataset_name = str(sys.argv[1]) # HH or HL or LH or LL
-    seed = int(sys.argv[2]) # a random number, e.g., 0
-    algo = str(sys.argv[3]) # as the following
+    # dataset_name = str(sys.argv[1])  # HH or HL or LH or LL
+    # seed = int(sys.argv[2])  # a random number, e.g., 0
+    # algo = str(sys.argv[3])  # as the following
 
-    # dataset_name = "HH"
-    # seed = 999
-    # algo = "GP_all_individuals_test"
-    # # algo = 'GP_all_gen_test'
+    dataset_name = "HH"
+    seed = 999
+    algo = "TransformerMTGP"
+    # algo = 'GP_all_gen_test'
 
     import os
 
@@ -42,10 +43,8 @@ if __name__ == "__main__":
         main_experiment_GP_all_generations_test_results.main(
             dataset_name, seed, "GP_all_gen_test"
         )
-    elif algo == "GP_all_individuals_test":
-        main_experiment_GP_all_generations_test_results.main(
-            dataset_name, seed, "GP_all_individuals_test"
-        )
+    elif algo == "TransformerMTGP":
+        TransformerGPmain.main(dataset_name, seed)
     elif algo == "MTGP_DRL_best_gen_test_for_CIM_paper":
         main_experiment_GP_all_generations_test_results.main(
             dataset_name, seed, "MTGP_DRL_best_gen_test_for_CIM_paper"

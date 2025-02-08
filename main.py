@@ -1,7 +1,11 @@
+import sys
+
+import torch
+
 import MTGP.GPFC as GPmain
 import NichingMTGP.GPFC as NichingGPmain
 import TransformerMTGP.GPFC as TransformerGPmain
-import sys
+import numpy as np
 
 import main_experiment_GP_all_generations_test_results
 import main_experiment_Integrated_DRL
@@ -17,17 +21,26 @@ import main_training_R_S_GPrule
 import main_training_R_GPrule
 import main_training_S_GPrule
 import main_training_S_online_learning
+import main_experiment_transformerGP_all_generations_test_results
+import main_experiment_MTGP_all_generations_test_results
 
 sys.path
 
 if __name__ == "__main__":
-    # dataset_name = str(sys.argv[1])  # HH or HL or LH or LL
-    # seed = int(sys.argv[2])  # a random number, e.g., 0
-    # algo = str(sys.argv[3])  # as the following
+    dataset_name = str(sys.argv[1])  # HH or HL or LH or LL
+    seed = int(sys.argv[2])  # a random number, e.g., 0
+    algo = str(sys.argv[3])  # as the following
 
-    dataset_name = "HH"
-    seed = 999
-    algo = "TransformerMTGP"
+    # dataset_name = "HH"
+    # seed = 2
+    # algo = "MTGP"
+    # algo = "TransformerMTGP"
+    # algo = "GP_all_gen_test"
+    # algo = "NichingMTGP"
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+    # algo = 'transformerGP_all_gen_test'
     # algo = 'GP_all_gen_test'
 
     import os
@@ -39,12 +52,20 @@ if __name__ == "__main__":
     elif algo == "NichingMTGP":
         print("----------niching MTGP----------")
         NichingGPmain.main(dataset_name, seed)
-    elif algo == "GP_all_gen_test":
+    elif algo == "NichingGP_all_gen_test":
         main_experiment_GP_all_generations_test_results.main(
+            dataset_name, seed, "NichingGP_all_gen_test"
+        )
+    elif algo == "GP_all_gen_test":
+        main_experiment_MTGP_all_generations_test_results.main(
             dataset_name, seed, "GP_all_gen_test"
         )
     elif algo == "TransformerMTGP":
         TransformerGPmain.main(dataset_name, seed)
+    elif algo == "transformerGP_all_gen_test":
+        main_experiment_transformerGP_all_generations_test_results.main(
+            dataset_name, seed, "transformerGP_all_gen_test"
+        )
     elif algo == "MTGP_DRL_best_gen_test_for_CIM_paper":
         main_experiment_GP_all_generations_test_results.main(
             dataset_name, seed, "MTGP_DRL_best_gen_test_for_CIM_paper"

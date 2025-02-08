@@ -4,6 +4,7 @@ import numpy as np
 
 from deap import gp, creator
 from deap import tools
+
 # from MTGP.GPFC import N_TREES, MAX_HEIGHT
 
 
@@ -35,28 +36,28 @@ def init_primitives(pset):
     # pset.addPrimitive(lf, 1)  # add by mengxu 2022.11.08 for GSGP
     # pset.addPrimitive(add_abs, 2)
     # pset.addPrimitive(sub_abs, 2)
-    #pset.addPrimitive(mt_if, 3)
-    #pset.addEphemeralConstant("rand", ephemeral=lambda: random.uniform(-1, 1))
+    # pset.addPrimitive(mt_if, 3)
+    # pset.addEphemeralConstant("rand", ephemeral=lambda: random.uniform(-1, 1))
     # add terminal
     # pset.addTerminal(1)  # add by mengxu //todo: the terminals seems not right, it already has three terminals in the set before I add my terminals in, need to modify
     # pset.addTerminal(2)  # add by mengxu
     # pset.addTerminal(3)  # add by mengxu
 
     # terminals for sequencing and routing in my paper
-    pset.addTerminal(str('NIQ'))  # add by mengxu
-    pset.addTerminal(str('WIQ'))  # add by mengxu
-    pset.addTerminal(str('MWT'))  # add by mengxu
-    pset.addTerminal(str('PT'))  # add by mengxu
-    pset.addTerminal(str('NPT'))  # add by mengxu
-    pset.addTerminal(str('OWT'))  # add by mengxu
-    pset.addTerminal(str('WKR'))  # add by mengxu
-    pset.addTerminal(str('NOR'))  # add by mengxu
+    pset.addTerminal(str("NIQ"))  # add by mengxu
+    pset.addTerminal(str("WIQ"))  # add by mengxu
+    pset.addTerminal(str("MWT"))  # add by mengxu
+    pset.addTerminal(str("PT"))  # add by mengxu
+    pset.addTerminal(str("NPT"))  # add by mengxu
+    pset.addTerminal(str("OWT"))  # add by mengxu
+    pset.addTerminal(str("WKR"))  # add by mengxu
+    pset.addTerminal(str("NOR"))  # add by mengxu
     # pset.addTerminal('W')  # add by mengxu
-    pset.addTerminal(str('TIS'))  # add by mengxu
+    pset.addTerminal(str("TIS"))  # add by mengxu
     # pset.addTerminal('TRANT')  # add by mengxu
 
     # adviced terminal by Yi 2022.10.31
-    pset.addTerminal(str('SLACK'))  # add by mengxu
+    pset.addTerminal(str("SLACK"))  # add by mengxu
 
     # pset.addTerminal('NIQ')  # add by mengxu
     # pset.addTerminal('WIQ')  # add by mengxu
@@ -70,7 +71,6 @@ def init_primitives(pset):
     # pset.addTerminal('TIS')  # add by mengxu
     # # pset.addTerminal('TRANT')  # add by mengxu
 
-
     # # terminals for sequencing
     # pset.addTerminal('current_pt') #add by mengxu //todo: the terminals seems not right, it already has three terminals in the set before I add my terminals in, need to modify
     # pset.addTerminal('slack') #add by mengxu
@@ -81,26 +81,35 @@ def init_primitives(pset):
     # pset.addTerminal('que_size')  # add by mengxu
 
 
-def lf(x): # add by mengxu 2022.11.08
+def lf(x):  # add by mengxu 2022.11.08
     return 1 / (1 + np.exp(-x))
 
 
 def init_toolbox(toolbox, pset):
-    creator.create("Individual", list, fitness=creator.FitnessMin, pset=pset)
+    creator.create(
+        "Individual",
+        list,
+        fitness=creator.FitnessMin,
+        num_calculation=int,
+        pset=pset,
+    )
 
-    toolbox.register("expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=6) # original max = 6, modified by mengxu 2022.10.15 to check
+    toolbox.register(
+        "expr", gp.genHalfAndHalf, pset=pset, min_=1, max_=6
+    )  # original max = 6, modified by mengxu 2022.10.15 to check
     toolbox.register("tree", tools.initIterate, gp.PrimitiveTree, toolbox.expr)
-    toolbox.register("individual", tools.initRepeat, creator.Individual, toolbox.tree, n=N_TREES)
+    toolbox.register(
+        "individual", tools.initRepeat, creator.Individual, toolbox.tree, n=N_TREES
+    )
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
 
     toolbox.register("expr_mut", gp.genFull, min_=2, max_=8)
-    #toolbox.register("mate", xmate)
-    #toolbox.register("mutate", xmut, expr=toolbox.expr_mut)
+    # toolbox.register("mate", xmate)
+    # toolbox.register("mutate", xmut, expr=toolbox.expr_mut)
 
-    toolbox.register("mate",lim_xmate)
-    toolbox.register("mutate",lim_xmut,expr=toolbox.expr_mut)
-
+    toolbox.register("mate", lim_xmate)
+    toolbox.register("mutate", lim_xmut, expr=toolbox.expr_mut)
 
 
 def maxheight(v):
@@ -117,21 +126,23 @@ def wrap(func, *args, **kwargs):
             new_inds[i] = random.choice(keep_inds)
     return new_inds
 
+
 # the following is modified by mengxu
 def xmate(ind1, ind2):
-    if len(ind1)==2:
+    if len(ind1) == 2:
         i1 = random.randrange(len(ind1))
         # i2 = random.randrange(len(ind2))
-        #todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
+        # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
         ind1[i1], ind2[i1] = gp.cxOnePoint(ind1[i1], ind2[i1])
 
-        #exchange the other tree
-        i2 = 1 - i1 # only for individual with two tree
+        # exchange the other tree
+        i2 = 1 - i1  # only for individual with two tree
         ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
     else:
         if len(ind1) == 2:
             ind1[0], ind2[0] = gp.cxOnePoint(ind1[0], ind2[0])
     return ind1, ind2
+
 
 # def xmate(ind1, ind2):
 #     i1 = random.randrange(len(ind1))
@@ -146,9 +157,9 @@ def lim_xmate(ind1, ind2):
 
 def xmut(ind, expr):
     i1 = random.randrange(len(ind))
-    indx = gp.mutUniform(ind[i1], expr,pset=ind.pset)
+    indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
     ind[i1] = indx[0]
-    return ind,
+    return (ind,)
 
 
 def lim_xmut(ind, expr):
@@ -171,7 +182,7 @@ def mt_if(a, b, c):
 
 
 def protected_div(left, right):
-    with np.errstate(divide='ignore', invalid='ignore'):
+    with np.errstate(divide="ignore", invalid="ignore"):
         x = np.divide(left, right)
         if isinstance(x, np.ndarray):
             x[np.isinf(x)] = 1
@@ -180,5 +191,6 @@ def protected_div(left, right):
             x = 1
     return x
 
+
 MAX_HEIGHT = 8
-N_TREES = 2 #todo: only for test, need to be the same with original GPFC.py
+N_TREES = 2  # todo: only for test, need to be the same with original GPFC.py

@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
-from torch_scatter import scatter
 from torch.nn.utils.rnn import pad_sequence
 
 from torch_geometric.nn import (
@@ -28,7 +26,7 @@ class MyNN(nn.Module):
 
         self.ugformer_layers = torch.nn.ModuleList()
 
-        for _layer in range(self.num_layers):
+        for _layer in range(1):
             encoder_layers = TransformerEncoderLayer(
                 d_model=self.feature_dim_size,
                 nhead=self.num_heads,
@@ -39,9 +37,7 @@ class MyNN(nn.Module):
                 # bias=False,
             )
             self.ugformer_layers.append(
-                TransformerEncoder(
-                    encoder_layers, self.num_layers, enable_nested_tensor=True
-                )
+                TransformerEncoder(encoder_layers, 1, enable_nested_tensor=True)
             )
         for _ in range(self.num_layers):
             self.lst_gnn.append(
@@ -50,7 +46,7 @@ class MyNN(nn.Module):
                     out_channels=self.feature_dim_size,
                     heads=self.num_heads,
                     concat=False,
-                    dropout=0.0,
+                    dropout=0.1,
                 )
             )
 
@@ -118,22 +114,25 @@ class MyNN(nn.Module):
                 output_data = self.forward(batch_data)
                 target_data = batch_data.y.view(-1, 1)
                 training_loss_value = cost_func(output_data, target_data)
-                print("The training loss value is:", training_loss_value.item())
+                # print("The training loss value is:", training_loss_value.item())
                 training_loss_value.backward()
                 optimizer.step()
                 cumulation_training_loss += training_loss_value.item()
             training_loss.append(cumulation_training_loss / len(training_batch))
 
             cumulation_validation_loss = 0.0
-            self.eval()
-            with torch.no_grad():
-                for validation_batch_data in validation_batch:
-                    validation_outputs = self.forward(validation_batch_data)
-                    validation_loss_value = cost_func(
-                        validation_outputs, validation_batch_data.y.view(-1, 1)
-                    )
-                    cumulation_validation_loss += validation_loss_value.item()
-            validation_loss.append(cumulation_validation_loss / len(validation_batch))
+            # if is_validation:
+            #     self.eval()
+            #     with torch.no_grad():
+            #         for validation_batch_data in validation_batch:
+            #             validation_outputs = self.forward(validation_batch_data)
+            #             validation_loss_value = cost_func(
+            #                 validation_outputs, validation_batch_data.y.view(-1, 1)
+            #             )
+            #             cumulation_validation_loss += validation_loss_value.item()
+            #     validation_loss.append(
+            #         cumulation_validation_loss / len(validation_batch)
+            #     )
             # if cumulation_validation_loss / len(
             #     validation_batch
             # ) > cumulation_training_loss / len(training_batch):
@@ -144,14 +143,14 @@ class MyNN(nn.Module):
             #     print("Early Stop")
             #     break
             times += 1
-            print("The epoch time is:", times)
-            if times % 5 == 0:
-                print("**" * 10)
-                print("The epoch time is:", times)
-                print("The training loss value is:", training_loss_value.item())
-                print("The validation loss value is:", validation_loss_value.item())
-                if times % 5 == 0:
-                    for param_group in optimizer.param_groups:
-                        param_group["lr"] = param_group["lr"] * lr_deduction
-                        print("current lr:", param_group["lr"])
+            # print("The epoch time is:", times)
+            # if times % 5 == 0:
+            #     print("**" * 10)
+            #     print("The epoch time is:", times)
+            #     print("The training loss value is:", training_loss_value.item())
+            #     print("The validation loss value is:", validation_loss_value.item())
+            #     if times % 5 == 0:
+            #         for param_group in optimizer.param_groups:
+            #             param_group["lr"] = param_group["lr"] * lr_deduction
+            #             print("current lr:", param_group["lr"])
         return training_loss, validation_loss

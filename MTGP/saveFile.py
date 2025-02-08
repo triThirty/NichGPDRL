@@ -31,73 +31,93 @@ def save_individual(randomSeeds, dataSetName, individuals):
         file.write(json.dumps(individuals, indent=4))
 
 
-def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_gen):
-    individual_dict = {}
+def save_each_gen_best_individual_json_format(
+    randomSeeds, dataSetName, best_ind_all_gen
+):
+    individual_dict = []
 
-    for k, ind in enumerate(best_ind_all_gen):
-        ind_dict = {}
-        sequencing = ind[0]
-        routing = ind[1]
-        ind_dict["T0"] = str(sequencing)
-        ind_dict["T1"] = str(routing)
-        ind_dict["fitness"] = ind.fitness.values[0]
-        individual_dict[str(k)] = ind_dict
+    for key, ind in enumerate(best_ind_all_gen):
+        individual_dict.append(
+            {
+                "T0": str(ind[0]),
+                "T1": str(ind[1]),
+                "fitness": 0,
+            }
+        )
 
     with open(
-        f"./MTGP/train/scenario_{dataSetName}/{randomSeeds}_meng_individual_{dataSetName}_mss.json",
+        "./MTGP/train/scenario_"
+        + str(dataSetName)
+        + "/"
+        + str(randomSeeds)
+        + "_meng_individual_"
+        + dataSetName
+        + "_formula_format"
+        + ".json",
         "w",
-    ) as file:
-        file.write(json.dumps(individual_dict, indent=4))
+    ) as fileName_individual:
+        json.dump(individual_dict, fileName_individual)
 
-    # for gen in range(len(best_ind_all_gen)):
-    #     best_ind = best_ind_all_gen[gen]
-
-    #     sequencing = best_ind[0]
-    #     routing = best_ind[1]
-
-    #     individual = []
-    #     sequencing_list = []
-    #     for i in range(len(sequencing)):
-    #         sequencing_list.append(sequencing[i].name)
-
-    #     routing_list = []
-    #     for i in range(len(routing)):
-    #         routing_list.append(routing[i].name)
-
-    #     individual.append(sequencing_list)
-    #     individual.append(routing_list)
-
-    #     individual_dict.__setitem__(gen, individual)
-
-    # fileName_individual = open('./MTGP/train/' + str(randomSeeds) + '_meng_individual_' + dataSetName + '.pkl', "wb")
-    # pickle.dump(individual_dict, fileName_individual)
-    # with open(
-    #     "./MTGP/train/scenario_"
-    #     + str(dataSetName)
-    #     + "/"
-    #     + str(randomSeeds)
-    #     + "_meng_individual_"
-    #     + dataSetName
-    #     + ".pkl",
-    #     "wb",
-    # ) as fileName_individual:
-    #     pickle.dump(individual_dict, fileName_individual)
-
-    # return
-    # with open(
-    #     "./MTGP/train/scenario_"
-    #     + str(dataSetName)
-    #     + "/"
-    #     + str(randomSeeds)
-    #     + "_meng_individual_"
-    #     + dataSetName
-    #     + ".json",
-    #     "w",
-    # ) as file:
-    #     file.write(json.dumps(individual_dict, indent=4))
-
-    file.close()
     return
+
+
+def save_each_gen_best_individual_on_test_dataset(
+    randomSeeds, dataSetName, best_ind_all_gen_dict
+):
+    with open(
+        "./MTGP/train/scenario_"
+        + str(dataSetName)
+        + "/"
+        + str(randomSeeds)
+        + "_meng_individual_"
+        + dataSetName
+        + "_formula_format"
+        + ".json",
+        "w",
+    ) as fileName_individual:
+        json.dump(best_ind_all_gen_dict, fileName_individual)
+
+
+def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_gen):
+    individual_dict = []
+
+    for gen in range(len(best_ind_all_gen)):
+        best_ind = best_ind_all_gen[gen]
+
+        if len(best_ind) == 2:
+            sequencing = best_ind[0]
+            routing = best_ind[1]
+        else:
+            sequencing = best_ind[0]
+
+        individual = []
+        sequencing_list = []
+        for i in range(len(sequencing)):
+            sequencing_list.append(sequencing[i].name)
+
+        if len(best_ind) == 2:
+            routing_list = []
+            for i in range(len(routing)):
+                routing_list.append(routing[i].name)
+
+        individual.append(sequencing_list)
+        if len(best_ind) == 2:
+            individual.append(routing_list)
+
+        # individual_dict.__setitem__(gen, individual)
+        individual_dict.append(individual)
+
+    with open(
+        "./MTGP/train/scenario_"
+        + str(dataSetName)
+        + "/"
+        + str(randomSeeds)
+        + "_meng_individual_"
+        + dataSetName
+        + ".json",
+        "w",
+    ) as fileName_individual:
+        json.dump(individual_dict, fileName_individual)
 
 
 def clear_individual_each_gen_to_txt(

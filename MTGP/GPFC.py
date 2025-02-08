@@ -350,20 +350,22 @@ def GPFC_main(dataset_name, seed):
     hof = tools.HallOfFame(1)
     seedRotate = True  # added by mengxu 2022.10.13
     # seedRotate = False # added by mengxu 2022.10.13
-    pop, logbook, min_fitness, best_ind_all_gen, all_individuals = ea_simple_elitism.eaSimple(
-        pop,
-        toolbox,
-        CXPB,
-        MUTPB,
-        ELITISM,
-        NGEN,
-        seedRotate,
-        rd,
-        stats,
-        halloffame=hof,
-        verbose=True,
-        seed=seed,
-        dataset_name=dataset_name,
+    pop, logbook, min_fitness, best_ind_all_gen, all_individuals = (
+        ea_simple_elitism.eaSimple(
+            pop,
+            toolbox,
+            CXPB,
+            MUTPB,
+            ELITISM,
+            NGEN,
+            seedRotate,
+            rd,
+            stats,
+            halloffame=hof,
+            verbose=True,
+            seed=seed,
+            dataset_name=dataset_name,
+        )
     )
     best = hof[0]
     return min_fitness, best, best_ind_all_gen, all_individuals
@@ -394,9 +396,14 @@ def main(dataset_name, seed):
     np.random.seed(int(seed))
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(dataset_name, seed)
+    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(
+        dataset_name, seed
+    )
     end = time.time()
     running_time = end - start
+    saveFile.save_each_gen_best_individual_json_format(
+        seed, dataset_name, best_ind_all_gen
+    )
     saveFile.saveAllIndividuals(seed, dataset_name, all_individuals)
     saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)
     saveFile.saveMinFitness(seed, dataset_name, min_fitness)

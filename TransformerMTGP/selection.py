@@ -65,8 +65,8 @@ def selTournament(individuals, k, tournsize): # add by mengxu
     chosen = []
     for i in range(k):
         aspirants = selRandom(individuals, tournsize)
-        aspirants_fit = [np.sum(ind.fitness.values) for ind in aspirants]
-        best_index = np.argmin(aspirants_fit)
+        aspirants_fit = [np.sum(ind.score) for ind in aspirants]
+        best_index = np.argmax(aspirants_fit)
         chosen.append(aspirants[best_index])
     return chosen
 

@@ -7,7 +7,7 @@ from deap import tools
 from TransformerMTGP import saveFile
 from TransformerMTGP.selection import selElitistAndTournament
 from TransformerMTGP.niching.niching import niching_clear
-from TransformerMTGP.model.surrogate import surrogate_train
+from TransformerMTGP.model.surrogate import surrogate_train, surrogate_evaluate
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -26,13 +26,17 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
                     offspring[i - 1], offspring[i]
                 )
             del offspring[i - 1].fitness.values, offspring[i].fitness.values
+            offspring[i - 1].num_calculation = 0
+            offspring[i].num_calculation = 0
             i = i + 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
             (offspring[i],) = toolbox.mutate(offspring[i])
             del offspring[i].fitness.values
+            offspring[i].num_calculation = 0
             i = i + 1
         else:  # reproduction
             del offspring[i].fitness.values
+            offspring[i].num_calculation = 0
             i = i + 1
     return offspring
 
@@ -79,6 +83,7 @@ def eaSimple(
     seed=__debug__,
     dataset_name=__debug__,
     transformer_model=None,
+    optimizer=None,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -91,17 +96,19 @@ def eaSimple(
     min_fitness = []
     best_ind_all_gen = []  # add by mengxu
     # Evaluate the individuals with an invalid fitness
-    invalid_ind = [ind for ind in population if not ind.fitness.valid]
+    # invalid_ind = [ind for ind in population if not ind.fitness.valid]
+    invalid_ind = population
 
     rd["seed"] = randomSeed_ngen[0]
+    rd["num_iteration"] = 1
     fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-    # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
-        ind.fitness.values = fit
+        ind.fitness.values = fit[0]
+        ind.num_calculation = fit[1]
 
-    saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
-    # surrogate_train(invalid_ind, transformer_model)
-    # transformer_model.eval()
+    # saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
+    surrogate_train(invalid_ind, transformer_model, optimizer)
+    surrogate_evaluate(invalid_ind, transformer_model)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -131,53 +138,23 @@ def eaSimple(
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-            # rd['seed'] = np.random.randint(2000000000)
-        # Select the next generation individuals
-        sorted_elite = sortPopulation(toolbox, population)[
-            :elitism
-        ]  # modified by mengxu 2022.10.29
-        # sorted_elite = sorted(population, key=attrgetter("fitness"), reverse=True)[:elitism]
-
-        # if gen == 1:
-        # ELITISM = 10
-        # toolbox.register("select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM)
+        sorted_elite = sorted(
+            population, key=lambda x: x.score, reverse=True
+        )[:elitism]
 
         offspring = toolbox.select(population, len(population) - elitism)
 
-        # Vary the pool of individuals
-        # print('ori',offspring[0][0])
-        # print('ori',offspring[0][1])
-        # print('ori',offspring[0][2])
         offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
-        # print('after',offspring[0][0])
-        # print('after',offspring[0][1])
-        # print('after',offspring[0][2])
-        # exit()
-
-        # Evaluate the sorted_elite with an invalid fitness as we rotate seed, add by mengxu
-        invalid_elite_ind = [ind for ind in sorted_elite]
-        # invalid_elite_ind = sorted_elite #modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
-        for ind in invalid_elite_ind:
-            del ind.fitness.values
-        fitnesses_elite = toolbox.multiProcess(toolbox.evaluate, invalid_elite_ind, rd)
-        # fitnesses_elite = toolbox.map(toolbox.evaluate, invalid_elite_ind)
-        for ind, fit in zip(invalid_elite_ind, fitnesses_elite):
-            ind.fitness.values = fit
-
-        # Evaluate the individuals with an invalid fitness
-        invalid_ind = [ind for ind in offspring]
-        # invalid_ind = offspring #modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
-        for ind in invalid_ind:
-            del ind.fitness.values
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-        # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
-
-        saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
-        # Replace the current population by the offspring
-        population[:] = invalid_elite_ind + invalid_ind
-        # population[:] = sorted_elite+offspring
+        surrogate_evaluate(offspring, transformer_model)
+        population[:] = offspring + sorted_elite
+        rd["num_iteration"] = 1
+        rd["seed"] = np.random.randint(2000000000)
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+        for ind, fit in zip(population, fitnesses):
+            ind.fitness.values = fit[0]
+            ind.num_calculation = fit[1]
+        surrogate_train(population, transformer_model, optimizer)
+        surrogate_evaluate(population, transformer_model)
 
         # modified by mengxu
         if halloffame is not None:

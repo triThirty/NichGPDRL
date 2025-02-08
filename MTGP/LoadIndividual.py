@@ -5,6 +5,24 @@ import numpy as np
 import sys
 
 
+
+def load_individual_from_gen_json_format(randomSeeds, dataSetName):
+    with open(
+        sys.path[0]
+        + "/MTGP/train/scenario_"
+        + str(dataSetName)
+        + "/"
+        + str(randomSeeds)
+        + "_meng_individual_"
+        + dataSetName
+        + "_formula_format"
+        + ".json",
+        "r",
+    ) as fileName_individual:
+        dict = json.load(fileName_individual)
+
+    return dict
+
 def load_individual_from_gen(
     randomSeeds, dataSetName
 ):  # save individual as txt by mengxu
@@ -28,7 +46,7 @@ def load_individual_from_gen(
     # return dict
     with open(
         sys.path[0]
-        + "/NichingMTGP/train/scenario_"
+        + "/MTGP/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)

@@ -20,7 +20,7 @@ class ParallelToolbox(base.Toolbox):
 
     # created by mengxu 2022.11.28 for multiple processing
     def multiProcess(self, evaluate, invalid_ind, rd):
-        cores = cpu_count()
+        # cores = cpu_count()
         # print("cores: " + str(cores))
         pickle.dumps(invalid_ind)
         pickle.dumps(evaluate)

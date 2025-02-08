@@ -10,13 +10,14 @@ import numpy as np
 from tabulate import tabulate
 import pandas as pd
 from pandas import DataFrame
-import NichingMTGP.LoadIndividual as mtload
+# import NichingMTGP.LoadIndividual as mtload
+import TransformerMTGP.LoadIndividual as mtload
 import agent_machine
 import agent_workcenter
 import sequencing
 import routing
 import job_creation
-from NichingMTGP import saveFile
+from TransformerMTGP import saveFile
 
 # import breakdown_creation
 # import heterogeneity_creation
@@ -473,7 +474,7 @@ def main(dataset_name, seedOfRun, input_algo):
     # Do validation and obtain the best evolved rule
     best_MTGP_rule_index = 50
     # MTGP rule test, test the best rule obtained from all the generations
-    if input_algo == "NichingGP_all_gen_test":
+    if input_algo == "transformerGP_all_gen_test":
         dict_best_MTGP_individuals = mtload.load_individual_from_gen(
             seedOfRun, dataSetName
         )
@@ -489,13 +490,6 @@ def main(dataset_name, seedOfRun, input_algo):
             t0 = re.findall(r"[a-zA-Z_]+", ind["T0"])
             t1 = re.findall(r"[a-zA-Z_]+", ind["T1"])
             dict_best_MTGP_individuals.append([t0, t1])
-    elif input_algo == "GP_all_gen_test":
-        dict_best_MTGP_individuals = mtload.load_GP_individual_from_gen(
-            seedOfRun, dataSetName
-        )
-        dict_best_MTGP_individuals_dict = mtload.load_MTGP_individual_from_gen_json_format(
-            seedOfRun, dataSetName
-        )
 
     # # Do validation and obtain the best evolved rule
     # best_GPLS_rule_index = 51
@@ -691,15 +685,11 @@ def main(dataset_name, seedOfRun, input_algo):
     # for _, ind in dict_best_MTGP_individuals_dict.items():
     for ind in dict_best_MTGP_individuals_dict:
         ind["fitness"] = ind["fitness"] / iteration
-    if input_algo == "NichingGP_all_gen_test":
+    if input_algo == "transformerGP_all_gen_test":
         saveFile.save_each_gen_best_individual_on_test_dataset(
             seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
         )
     elif input_algo == "GP_all_individuals_test":
-        saveFile.save_all_individuals(
-            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict, with_fitness=True
-        )
-    elif input_algo == "GP_all_gen_test":
         saveFile.save_all_individuals(
             seedOfRun, dataSetName, dict_best_MTGP_individuals_dict, with_fitness=True
         )
@@ -755,7 +745,7 @@ def main(dataset_name, seedOfRun, input_algo):
             sys.path[0]
             + "/experiment_result/scenario_"
             + dataSetName
-            + "/GP_all_gen_test_"
+            + "/transformerGP_all_gen_test_"
             + dataSetName
             + "_run_"
             + str(seedOfRun)

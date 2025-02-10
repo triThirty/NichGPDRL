@@ -67,6 +67,10 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
+ind_archive_list = []
+# ind_archive_weights_list = []
+
+
 def eaSimple(
     population,
     toolbox,
@@ -84,6 +88,7 @@ def eaSimple(
     dataset_name=__debug__,
     transformer_model=None,
     optimizer=None,
+    start_gen=1,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -133,27 +138,40 @@ def eaSimple(
         population = nich.clearPopulation(toolbox, population)
 
     # Begin the generational process
-    for gen in range(1, ngen + 1):
+    ind_archive_list.extend(population)
+    for gen in range(start_gen, ngen + 1):
 
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-        sorted_elite = sorted(
-            population, key=lambda x: x.score, reverse=True
-        )[:elitism]
+        sorted_elite = sorted(population, key=lambda x: x.score, reverse=True)[:elitism]
 
         offspring = toolbox.select(population, len(population) - elitism)
 
         offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+        ind_archive_list.extend(offspring)
         surrogate_evaluate(offspring, transformer_model)
         population[:] = offspring + sorted_elite
+
         rd["num_iteration"] = 1
         rd["seed"] = np.random.randint(2000000000)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit[0]
             ind.num_calculation = fit[1]
-        surrogate_train(population, transformer_model, optimizer)
+        training_data = []
+        training_data[:] = population + random.choices(
+            ind_archive_list,
+            weights=[
+                1 / individual.fitness.values[0] for individual in ind_archive_list
+            ],
+            k=len(population),
+        )
+        if gen % 10 == 0:
+            for param_group in optimizer.param_groups:
+                param_group["lr"] = max(param_group["lr"] * 0.5, 1e-6)
+                print("current lr:", param_group["lr"])
+        surrogate_train(training_data, transformer_model, optimizer)
         surrogate_evaluate(population, transformer_model)
 
         # modified by mengxu

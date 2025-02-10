@@ -32,7 +32,7 @@ if __name__ == "__main__":
     algo = str(sys.argv[3])  # as the following
 
     # dataset_name = "HH"
-    # seed = 2
+    # seed = 4
     # algo = "MTGP"
     # algo = "TransformerMTGP"
     # algo = "GP_all_gen_test"

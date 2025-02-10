@@ -14,7 +14,7 @@ from Summer.src.classes.individual import Individual
 from Summer.util.functions import positional_encoding, list_net_loss
 
 
-lr_deduction = 1
+lr_deduction = 0.9
 epoch = 20
 train_batch_size = 20
 
@@ -38,7 +38,7 @@ def surrogate_train(population, model, optimizer):
         x_embedding = embedding_layer(indices)
         position_embedding = positional_encoding(combined_x.shape[0], 64)
 
-        x_pos_embedding = (x_embedding + position_embedding).detach()
+        x_pos_embedding = (x_embedding + position_embedding).clone().detach()
 
         combined_edge_index = torch.cat(
             [graph1.edge_index, graph2.edge_index + graph1.x.size(0)], dim=1
@@ -71,11 +71,11 @@ def surrogate_evaluate(population, model):
         x_embedding = embedding_layer(indices)
         position_embedding = positional_encoding(combined_x.shape[0], 64)
 
-        x_pos_embedding = (x_embedding + position_embedding).detach()
+        x_pos_embedding = (x_embedding + position_embedding).clone().detach()
 
         combined_edge_index = torch.cat(
             [graph1.edge_index, graph2.edge_index + graph1.x.size(0)], dim=1
         )
         ind_data = Data(x=x_pos_embedding, edge_index=combined_edge_index, y=graph1.y)
         output = model(ind_data, is_batch=False)
-        ind.score = output.detach().item()
+        ind.score = output.clone().detach().item()

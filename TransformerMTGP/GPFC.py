@@ -23,6 +23,7 @@ import TransformerMTGP.niching.RoutingPhenoCharacterisation as RoutingPhenoChara
 import TransformerMTGP.niching.SequencingPhenoCharacterisation as SequencingPhenoCharacterisation
 
 from Summer.model.model import MyNN
+from Summer.util.functions import load_checkpoint
 
 
 class shopfloor:
@@ -432,6 +433,7 @@ def evaluate(individual, rd, seed):
         true_fitness = true_fitness + 1 / (individual.num_calculation + 1) * (
             cumulative_tard[-1] - true_fitness
         )
+        individual.num_calculation += 1
     return [(true_fitness,), individual.num_calculation]
 
 
@@ -473,6 +475,7 @@ def GPFC_main(dataset_name, seed):
 
     transformer_model = MyNN(64, 1024, 1, 8, 3)
     adam = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
+    times = 1
 
     (
         pop,
@@ -498,6 +501,7 @@ def GPFC_main(dataset_name, seed):
         dataset_name=dataset_name,
         transformer_model=transformer_model,
         optimizer=adam,
+        start_gen=times,
     )
     best = hof[0]
 

@@ -133,9 +133,9 @@ def eaSimple(
 
     # Begin the generational process
     ind_archive_list.extend(population)
-    population = sorted(population, key=lambda x: x.fitness.values[0])[
-        : int(len(population) / 4)
-    ]
+    # population = sorted(population, key=lambda x: x.fitness.values[0])[
+    #     : int(len(population) / 4)
+    # ]
     for gen in range(start_gen, ngen + 1):
 
         # Added by mengxu to do seed rotation

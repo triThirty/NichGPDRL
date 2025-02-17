@@ -292,7 +292,7 @@ def GPFC_main(dataset_name, seed):
     toolbox.register("evaluate", eval_wrapper)
 
     rd["toolbox"] = toolbox
-    pop = toolbox.population(n=POP_SIZE*4)
+    pop = toolbox.population(n=POP_SIZE)
     stats = init_stats()
     hof = tools.HallOfFame(1)
     seedRotate = True  # added by mengxu 2022.10.13
@@ -319,7 +319,7 @@ def GPFC_main(dataset_name, seed):
     return min_fitness, best, best_ind_all_gen, all_individuals
 
 
-POP_SIZE = 50
+POP_SIZE = 200
 NGEN = 50
 CXPB = 0.8
 MUTPB = 0.15

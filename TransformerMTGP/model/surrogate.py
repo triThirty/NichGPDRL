@@ -15,7 +15,7 @@ from Summer.util.functions import positional_encoding, list_net_loss
 
 
 lr_deduction = 0.9
-epoch = 20
+epoch = 40
 train_batch_size = 20
 
 embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0)

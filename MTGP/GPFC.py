@@ -138,15 +138,6 @@ class shopfloor:
         """STEP 5: set sequencing or routing rules, and DRL"""
         # check if need to reset sequencing rule
         if "sequencing_rule" in kwargs:
-            # if 'tree_sequencing' in kwargs:
-            #     print(str(kwargs['tree_sequencing'])) #add by mengxu to check if this is right! 2022.10.15
-            #     order = "m.tree_sequencing = " + str(kwargs['tree_sequencing'])
-            #     try:
-            #         exec(order)
-            #     except:
-            #         if self.ifPrint:
-            #             print("Rule assigned to machine {} is invalid !".format(m.m_idx))
-            #         raise Exception
             if self.ifPrint:
                 print(
                     "Taking over: machines use {} sequencing rule".format(
@@ -203,7 +194,7 @@ def connectedness(cluster):
 
 def init_toolbox(toolbox, pset):
     REP.init_toolbox(toolbox, pset)
-    toolbox.register("select", selElitistAndTournament, tournsize=7, elitism=ELITISM)
+    toolbox.register("select", selElitistAndTournament, tournsize=4, elitism=ELITISM)
 
 
 def init_stats():
@@ -273,30 +264,8 @@ def evaluate(individual, rd, seed):
     return scores
 
 
-# def evaluate(individual, toolbox, data, labels):
-#     X = REP.process_data(individual, toolbox, data)
-#     # print(individual)
-#     # print(len(X))
-#     # exit()
-#     #model = KNeighborsClassifier(n_neighbors=5)
-#     model = LinearSVC()
-#     # model = SVC()##random_state=1,kernel='linear'
-#     # model = tree.DecisionTreeClassifier(random_state=1)  #
-#     # model = MLPClassifier(random_state=seed1)
-#     # model = GaussianNB()
-#     # model = LogisticRegression(random_state=seed1)
-#     # model = LinearDiscriminantAnalysis(solver="svd", store_covariance=True)
-#     # model =  RandomForestClassifier(random_state=seed1)##n_estimators=1000,
-#     #scores = cross_val_score(model, X, labels, cv=5)
-#     #return [1-np.mean(scores)]
-#     pre_label = cross_val_predict(model, X, labels, cv=5)
-#     scores = balanced_accuracy_score(labels, pre_label)
-#     return [1-scores]
-
-
 def eval_wrapper(*args, **kwargs):
     rd = kwargs["rd"]
-    # del kwargs["rd"]
     return evaluate(*args, **kwargs, seed=rd["seed"])
     # return evaluate(*args, **kwargs, toolbox=rd["toolbox"], seed=rd["seed"])
     # return evaluate(*args, **kwargs, toolbox=rd['toolbox'], data=rd['data'], labels=rd['labels'])
@@ -309,14 +278,6 @@ def init_data(rundata):
 
 
 def GPFC_main(dataset_name, seed):
-    # random.seed(int(seed))
-    ##################################loading the data
-    # folder1 = '/nfs/home/wangpe/split_73' + '/' + 'train' + str(dataset_name) + ".npy"
-    # folder1 = '/home/xume/IdeaProjects/DRL1/experiment_result_MTGP' + str(dataset_name) + ".npy"
-    # x_train = np.load(folder1)
-    # #label_to_see = list(set(x_train[:,0]))
-    # training_data_norm = preprocessing.normalize(x_train[:, 1:])
-
     rd["seed"] = seed
     rd["dataset_name"] = dataset_name
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
@@ -330,20 +291,6 @@ def GPFC_main(dataset_name, seed):
     init_toolbox(toolbox, pset)
     toolbox.register("evaluate", eval_wrapper)
 
-    # rd['data'] = spf # rd is global parameter and store the training instance
-    # rd['num_instances'] = 1 #each generation the num of instance is 1
-    # rd['num_features'] = num_features #I think this should be the number of terminals and functions
-    # spf.simulation()
-    # add by mengxu 2022.10.13 to add the training instances ===============================================
-
-    # original
-    # rd['data'] = training_data_norm # rd is global parameter and store the training instance, need to modify this part
-    # rd['labels'] = x_train[:, 0]
-    # #################################data information
-    # rd['num_classes'] = len(set(rd['labels']))
-    # rd['num_instances'] = rd['data'].shape[0]
-    # rd['num_features'] = rd['data'].shape[1]
-
     rd["toolbox"] = toolbox
     pop = toolbox.population(n=POP_SIZE)
     stats = init_stats()
@@ -356,6 +303,7 @@ def GPFC_main(dataset_name, seed):
             toolbox,
             CXPB,
             MUTPB,
+            REPPB,
             ELITISM,
             NGEN,
             seedRotate,
@@ -372,9 +320,10 @@ def GPFC_main(dataset_name, seed):
 
 
 POP_SIZE = 50
-NGEN = 100
+NGEN = 50
 CXPB = 0.8
-MUTPB = 0.2
+MUTPB = 0.15
+REPPB = 0.05
 ELITISM = 10
 MAX_HEIGHT = 8
 REP = mt  # individual representation {mt (multi-tree) or vt (vector-tree)}
@@ -385,7 +334,7 @@ rd = {}
 span = 1000
 m_no = 6
 wc_no = 3
-ins_each_gen = 2  # added by mengxu followed the advice of Meng 2022.11.01
+ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
 def main(dataset_name, seed):
@@ -396,9 +345,7 @@ def main(dataset_name, seed):
     np.random.seed(int(seed))
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(
-        dataset_name, seed
-    )
+    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(dataset_name, seed)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_json_format(

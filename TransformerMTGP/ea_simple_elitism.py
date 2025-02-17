@@ -105,7 +105,7 @@ def eaSimple(
     invalid_ind = population
 
     rd["seed"] = randomSeed_ngen[0]
-    rd["num_iteration"] = 1
+    rd["num_iteration"] = 2
     fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit[0]
@@ -131,14 +131,11 @@ def eaSimple(
     if verbose:
         print(logbook.stream)
 
-    # add by mengxu for niching 2023.10.18
-    if rd["use_niching"]:
-        nich = niching_clear(0, 1)
-        nich.initial_phenoCharacterisation(population[best_index])
-        population = nich.clearPopulation(toolbox, population)
-
     # Begin the generational process
     ind_archive_list.extend(population)
+    population = sorted(population, key=lambda x: x.fitness.values[0])[
+        : int(len(population) / 4)
+    ]
     for gen in range(start_gen, ngen + 1):
 
         # Added by mengxu to do seed rotation
@@ -161,16 +158,17 @@ def eaSimple(
             ind.num_calculation = fit[1]
         training_data = []
         training_data[:] = population + random.choices(
-            ind_archive_list,
+            ind_archive_list[-300:],
             weights=[
-                1 / individual.fitness.values[0] for individual in ind_archive_list
+                1 / individual.fitness.values[0]
+                for individual in ind_archive_list[-300:]
             ],
             k=len(population),
         )
-        if gen % 10 == 0:
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = max(param_group["lr"] * 0.5, 1e-6)
-                print("current lr:", param_group["lr"])
+        # if gen % 10 == 0 and gen != 50:
+        #     for param_group in optimizer.param_groups:
+        #         param_group["lr"] = max(param_group["lr"] * 0.5, 1e-6)
+        #         print("current lr:", param_group["lr"])
         surrogate_train(training_data, transformer_model, optimizer)
         surrogate_evaluate(population, transformer_model)
 

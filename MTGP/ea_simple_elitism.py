@@ -6,12 +6,14 @@ from MTGP import saveFile
 from MTGP.selection import selElitistAndTournament
 
 
-def varAnd(population, toolbox, cxpb, mutpb):
+def varAnd(population, toolbox, cxpb, mutpb, reppb):
     offspring = [toolbox.clone(ind) for ind in population]
-    new_cxpb = cxpb / (cxpb + mutpb)
+    new_cxpb = cxpb / (cxpb + mutpb + reppb)
+    new_mutpb = mutpb / (cxpb + mutpb + reppb) + new_cxpb
     i = 1
     while i < len(offspring):
-        if random.random() < new_cxpb:
+        randomValue = random.random()
+        if randomValue < new_cxpb:  # crossover
             if offspring[i - 1] == offspring[i]:
                 (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
                 (offspring[i],) = toolbox.mutate(offspring[i])
@@ -21,7 +23,7 @@ def varAnd(population, toolbox, cxpb, mutpb):
                 )
             del offspring[i - 1].fitness.values, offspring[i].fitness.values
             i = i + 2
-        else:
+        elif new_cxpb <= randomValue < new_mutpb:  # mutation
             (offspring[i],) = toolbox.mutate(offspring[i])
             del offspring[i].fitness.values
             i = i + 1
@@ -59,6 +61,7 @@ def eaSimple(
     toolbox,
     cxpb,
     mutpb,
+    reppb,
     elitism,
     ngen,
     seedRotate,
@@ -102,12 +105,6 @@ def eaSimple(
     if halloffame is not None:
         halloffame.update(population)
 
-    # original
-    # best_ind_all_gen.append(halloffame[0]) #add by mengxu
-    # p_one = halloffame[0]
-    # saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, 0)
-    # best_ind_all_gen.append(halloffame[0])  # add by mengxu
-
     record = stats.compile(population) if stats else {}
     logbook.record(gen=0, nevals=len(invalid_ind), **record)
     if verbose:
@@ -134,28 +131,13 @@ def eaSimple(
 
         offspring = toolbox.select(population, len(population) - elitism)
 
-        # Vary the pool of individuals
-        # print('ori',offspring[0][0])
-        # print('ori',offspring[0][1])
-        # print('ori',offspring[0][2])
-        offspring = varAnd(offspring, toolbox, cxpb, mutpb)
-        # print('after',offspring[0][0])
-        # print('after',offspring[0][1])
-        # print('after',offspring[0][2])
-        # exit()
-
-        # Evaluate the sorted_elite with an invalid fitness as we rotate seed, add by mengxu
-        # invalid_elite_ind = [ind for ind in sorted_elite if not ind.fitness.valid]
+        offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
         invalid_elite_ind = sorted_elite  # modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
         for ind in invalid_elite_ind:
             del ind.fitness.values
         fitnesses_elite = toolbox.multiProcess(toolbox.evaluate, invalid_elite_ind, rd)
-        # fitnesses_elite = toolbox.map(toolbox.evaluate, invalid_elite_ind)
         for ind, fit in zip(invalid_elite_ind, fitnesses_elite):
             ind.fitness.values = fit
-
-        # Evaluate the individuals with an invalid fitness
-        # invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
         invalid_ind = offspring  # modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
         for ind in invalid_ind:
             del ind.fitness.values
@@ -178,12 +160,6 @@ def eaSimple(
         if halloffame is not None:
             halloffame.clear()  # add by mengxu
             halloffame.update(population)
-            # sorted_pop = sorted(population, key=attrgetter("fitness"), reverse=True)
-            # halloffame.insert(sorted_pop[0])
-
-        # for store each generation best individual add by mengxu
-        # dataset_name = 'dataSet_DFJSS'
-        # print(seed)
 
         # add by mengxu 2022.10.26
         pop_fit = [ind.fitness.values[0] for ind in population]
@@ -192,10 +168,6 @@ def eaSimple(
         p_one = population[best_index]
         saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
 
-        # original
-        # p_one = halloffame[0]
-        # saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
-        # best_ind_all_gen.append(halloffame[0])  # add by mengxu
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}

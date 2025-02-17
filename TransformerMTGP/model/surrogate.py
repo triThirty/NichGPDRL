@@ -14,29 +14,36 @@ from Summer.src.classes.individual import Individual
 from Summer.util.functions import positional_encoding, list_net_loss
 
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 lr_deduction = 0.9
 epoch = 40
 train_batch_size = 20
 
-embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0)
+embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0).to(device)
 embedding_layer.load_state_dict(torch.load("./TransformerMTGP/model/embedding.pth"))
 # embedding_layer.eval()
 
 
 def surrogate_train(population, model, optimizer):
+    model.to(device)
     model.train()
     ind_list = []
     for id, ind in enumerate(population):
         i = Individual(str(ind[1]), str(ind[0]), id)
         i.true_fitness = torch.tensor(ind.fitness.values[0]).to(torch.float32)
-        graph2 = Data(x=i.sequence_data, y=i.true_fitness, edge_index=i.sequence_edge)
-        graph1 = Data(x=i.route_data, y=i.true_fitness, edge_index=i.route_edge)
+        graph2 = Data(
+            x=i.sequence_data, y=i.true_fitness, edge_index=i.sequence_edge
+        ).to(device)
+        graph1 = Data(x=i.route_data, y=i.true_fitness, edge_index=i.route_edge).to(
+            device
+        )
 
         combined_x = torch.cat([graph1.x, graph2.x], dim=0)
         indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1]
 
         x_embedding = embedding_layer(indices)
-        position_embedding = positional_encoding(combined_x.shape[0], 64)
+        position_embedding = positional_encoding(combined_x.shape[0], 64, device)
 
         x_pos_embedding = (x_embedding + position_embedding).clone().detach()
 
@@ -59,17 +66,18 @@ def surrogate_train(population, model, optimizer):
 
 
 def surrogate_evaluate(population, model):
+    model.to(device)
     model.eval()
     for ind in population:
         i = Individual(str(ind[1]), str(ind[0]))
-        graph2 = Data(x=i.sequence_data, edge_index=i.sequence_edge)
-        graph1 = Data(x=i.route_data, edge_index=i.route_edge)
+        graph2 = Data(x=i.sequence_data, edge_index=i.sequence_edge).to(device)
+        graph1 = Data(x=i.route_data, edge_index=i.route_edge).to(device)
 
         combined_x = torch.cat([graph1.x, graph2.x], dim=0)
-        indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1]
+        indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1].to(device)
 
-        x_embedding = embedding_layer(indices)
-        position_embedding = positional_encoding(combined_x.shape[0], 64)
+        x_embedding = embedding_layer(indices).to(device)
+        position_embedding = positional_encoding(combined_x.shape[0], 64, device)
 
         x_pos_embedding = (x_embedding + position_embedding).clone().detach()
 

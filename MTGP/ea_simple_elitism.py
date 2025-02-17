@@ -110,6 +110,9 @@ def eaSimple(
     if verbose:
         print(logbook.stream)
 
+    population = sorted(population, key=lambda x: x.fitness.values[0])[
+        : int(len(population) / 4)
+    ]
     # Begin the generational process
     for gen in range(1, ngen + 1):
 

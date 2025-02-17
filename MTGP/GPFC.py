@@ -292,7 +292,7 @@ def GPFC_main(dataset_name, seed):
     toolbox.register("evaluate", eval_wrapper)
 
     rd["toolbox"] = toolbox
-    pop = toolbox.population(n=POP_SIZE)
+    pop = toolbox.population(n=POP_SIZE*4)
     stats = init_stats()
     hof = tools.HallOfFame(1)
     seedRotate = True  # added by mengxu 2022.10.13

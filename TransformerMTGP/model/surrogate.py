@@ -17,7 +17,7 @@ from Summer.util.functions import positional_encoding, list_net_loss
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 lr_deduction = 0.9
-epoch = 40
+epoch = 30
 train_batch_size = 20
 
 embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0).to(device)

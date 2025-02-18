@@ -9,11 +9,8 @@ for dataset in "${datasets[@]}"; do
     for algo in "${algos[@]}"; do
         for seed in "${seeds[@]}"; do
             echo "Running: python main.py $dataset $seed $algo"
-            python main.py "$dataset" "$seed" "$algo" &
+            python main.py "$dataset" "$seed" "$algo"
         done
-        wait
     done
-    wait
 done
-wait
 echo "All done!"

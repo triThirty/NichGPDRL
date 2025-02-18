@@ -158,10 +158,10 @@ def eaSimple(
             ind.num_calculation = fit[1]
         training_data = []
         training_data[:] = population + random.choices(
-            ind_archive_list[-300:],
+            ind_archive_list[-600:],
             weights=[
                 1 / individual.fitness.values[0]
-                for individual in ind_archive_list[-300:]
+                for individual in ind_archive_list[-600:]
             ],
             k=len(population),
         )

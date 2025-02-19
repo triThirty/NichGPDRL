@@ -5,8 +5,6 @@ from deap import tools
 
 
 from TransformerMTGP import saveFile
-from TransformerMTGP.selection import selElitistAndTournament
-from TransformerMTGP.niching.niching import niching_clear
 from TransformerMTGP.model.surrogate import surrogate_train, surrogate_evaluate
 
 

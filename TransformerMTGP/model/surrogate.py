@@ -10,8 +10,8 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from Summer.src.classes.individual import Individual
-from Summer.util.functions import positional_encoding, list_net_loss
+from TransformerMTGP.src.classes.individual import Individual
+from TransformerMTGP.util.functions import positional_encoding, list_net_loss
 
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -22,7 +22,6 @@ train_batch_size = 20
 
 embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0).to(device)
 embedding_layer.load_state_dict(torch.load("./TransformerMTGP/model/embedding.pth"))
-# embedding_layer.eval()
 
 
 def surrogate_train(population, model, optimizer):

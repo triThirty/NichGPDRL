@@ -19,8 +19,7 @@ import agent_workcenter
 import sequencing
 import routing
 
-from Summer.model.model import MyNN
-from Summer.util.functions import load_checkpoint
+from TransformerMTGP.model.model import MyNN
 
 
 class shopfloor:

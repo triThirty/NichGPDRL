@@ -122,36 +122,13 @@ class MyNN(nn.Module):
                 )
             training_loss.append(cumulation_training_loss / len(training_batch))
 
-            # cumulation_validation_loss = 0.0
-            # self.eval()
-            # with torch.no_grad():
-            #     for validation_batch_data in validation_batch:
-            #         validation_outputs = self.forward(validation_batch_data)
-            #         validation_loss_value = cost_func(
-            #             validation_outputs, validation_batch_data.y.view(-1, 1)
-            #         )
-            #         cumulation_validation_loss += validation_loss_value.item()
-            # validation_loss.append(cumulation_validation_loss / len(validation_batch))
-            # if cumulation_validation_loss / len(
-            #     validation_batch
-            # ) > cumulation_training_loss / len(training_batch):
-            #     early_stopping_times += 1
-            # else:
-            #     early_stopping_times = 0
-            # if early_stopping_times == 5:
-            #     print("Early Stop")
-            #     break
             times += 1
-            # print("The epoch time is:", times)
             if times % 5 == 0:
                 print("The training loss value is:", training_loss_value.item())
-                # save_checkpoint(self, optimizer, times, training_loss_value.item())
-            #     print("**" * 10)
-            #     print("The epoch time is:", times)
-            #     print("The training loss value is:", training_loss_value.item())
-            #     print("The validation loss value is:", validation_loss_value.item())
-            # if times % 20 == 0:
-            #     for param_group in optimizer.param_groups:
-            #         param_group["lr"] = param_group["lr"] * lr_deduction
-            #         print("current lr:", param_group["lr"])
+            if times > epoch_times and sum(validation_loss[-5:]) / 5 > 2.0:
+                epoch_times += 10
+                print(f"Add 10 more epochs to {epoch_times}")
+            else:
+                epoch_times = epoch
+
         return training_loss, validation_loss

@@ -14,8 +14,8 @@ from TransformerMTGP.src.classes.individual import Individual
 from TransformerMTGP.util.functions import positional_encoding, list_net_loss
 
 
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
 lr_deduction = 0.9
 epoch = 30

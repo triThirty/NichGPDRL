@@ -317,7 +317,7 @@ def GPFC_main(dataset_name, seed):
     return min_fitness, best, best_ind_all_gen, top_inds_fitness_final_gen, top_inds_final_gen
 
 
-POP_SIZE = 200
+POP_SIZE = 50
 NGEN = 50
 CXPB = 0.8
 MUTPB = 0.15

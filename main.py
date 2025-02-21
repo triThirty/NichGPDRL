@@ -4,7 +4,6 @@ import torch
 
 import MTGP.GPFC as GPmain
 import NichingMTGP.GPFC as NichingGPmain
-import TransformerMTGP.GPFC as TransformerGPmain
 import numpy as np
 
 import main_experiment_GP_all_generations_test_results
@@ -61,6 +60,7 @@ if __name__ == "__main__":
             dataset_name, seed, "GP_all_gen_test"
         )
     elif algo == "TransformerMTGP":
+        import TransformerMTGP.GPFC as TransformerGPmain
         TransformerGPmain.main(dataset_name, seed)
     elif algo == "transformerGP_all_gen_test":
         main_experiment_transformerGP_all_generations_test_results.main(

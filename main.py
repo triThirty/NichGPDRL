@@ -1,4 +1,5 @@
 import sys
+import argparse
 
 import torch
 
@@ -26,9 +27,40 @@ import main_experiment_MTGP_all_generations_test_results
 sys.path
 
 if __name__ == "__main__":
-    dataset_name = str(sys.argv[1])  # HH or HL or LH or LL
-    seed = int(sys.argv[2])  # a random number, e.g., 0
-    algo = str(sys.argv[3])  # as the following
+    # dataset_name = str(sys.argv[1])  # HH or HL or LH or LL
+    # seed = int(sys.argv[2])  # a random number, e.g., 0
+    # algo = str(sys.argv[3])  # as the following
+    # is_pre_selection = bool(sys.argv[4])  # as the following
+
+    parser = argparse.ArgumentParser(description="Run the main experiment")
+    parser.add_argument(
+        "--dataset_name",
+        type=str,
+        help="The name of the dataset to run the experiment on",
+    )
+    parser.add_argument(
+        "--seed", type=int, help="The random seed to use for the experiment"
+    )
+
+    parser.add_argument(
+        "--algo",
+        type=str,
+        help="The algorithm to run the experiment with",
+    )
+
+    parser.add_argument(
+        "--num_pre_selection",
+        type=int,
+        help="If the pre-selection is used",
+        default=0,
+    )
+
+    args = parser.parse_args()
+
+    dataset_name = args.dataset_name
+    seed = args.seed
+    algo = args.algo
+    num_pre_selection = args.num_pre_selection
 
     # dataset_name = "HH"
     # seed = 2
@@ -61,7 +93,7 @@ if __name__ == "__main__":
         )
     elif algo == "TransformerMTGP":
         import TransformerMTGP.GPFC as TransformerGPmain
-        TransformerGPmain.main(dataset_name, seed)
+        TransformerGPmain.main(dataset_name, seed, num_pre_selection)
     elif algo == "transformerGP_all_gen_test":
         main_experiment_transformerGP_all_generations_test_results.main(
             dataset_name, seed, "transformerGP_all_gen_test"

@@ -87,6 +87,7 @@ def eaSimple(
     transformer_model=None,
     optimizer=None,
     start_gen=1,
+    num_pre_selection=0,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -146,8 +147,15 @@ def eaSimple(
 
         offspring = toolbox.select(population, len(population) - elitism)
 
+        # pre_selection_list = []
+        # for _ in range(num_pre_selection):
+        #     pre_selection_list.extend(varAnd(offspring, toolbox, cxpb, mutpb, reppb))
+
         offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+        # offspring = pre_selection_list + offspring
         surrogate_evaluate(offspring, transformer_model)
+        # if num_pre_selection > 0:
+        #     offspring = toolbox.select(offspring, len(population) - elitism)
         ind_archive_list.extend(offspring)
         population[:] = offspring + sorted_elite
 
@@ -158,14 +166,14 @@ def eaSimple(
             ind.fitness.values = fit[0]
             ind.num_calculation = fit[1]
         training_data = []
-        # training_data[:] = population + random.choices(
-        #     ind_archive_list[-400:],
-        #     weights=[
-        #         1 / individual.fitness.values[0]
-        #         for individual in ind_archive_list[-400:]
-        #     ],
-        #     k=len(population),
-        # )
+        training_data[:] = population + random.choices(
+            ind_archive_list[-300:],
+            weights=[
+                1 / individual.fitness.values[0]
+                for individual in ind_archive_list[-300:]
+            ],
+            k=len(population),
+        )
         training_data[:] = population
         surrogate_train(
             training_data,

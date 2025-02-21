@@ -100,18 +100,24 @@ def eaSimple(
     best_ind_all_gen = []  # add by mengxu
     # Evaluate the individuals with an invalid fitness
     # invalid_ind = [ind for ind in population if not ind.fitness.valid]
-    invalid_ind = population
+    # invalid_ind = population
 
     rd["seed"] = randomSeed_ngen[0]
-    rd["num_iteration"] = 2
-    fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-    for ind, fit in zip(invalid_ind, fitnesses):
+    rd["num_iteration"] = 1
+    fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+    for ind, fit in zip(population, fitnesses):
         ind.fitness.values = fit[0]
         ind.num_calculation = fit[1]
 
     # saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
-    surrogate_train(invalid_ind, transformer_model, optimizer)
-    surrogate_evaluate(invalid_ind, transformer_model)
+    surrogate_train(
+        population,
+        transformer_model,
+        optimizer,
+        toolbox=toolbox,
+        rd=rd,
+    )
+    surrogate_evaluate(population, transformer_model)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -125,15 +131,12 @@ def eaSimple(
         halloffame.update(population)
 
     record = stats.compile(population) if stats else {}
-    logbook.record(gen=0, nevals=len(invalid_ind), **record)
+    logbook.record(gen=0, nevals=len(population), **record)
     if verbose:
         print(logbook.stream)
 
     # Begin the generational process
     ind_archive_list.extend(population)
-    # population = sorted(population, key=lambda x: x.fitness.values[0])[
-    #     : int(len(population) / 4)
-    # ]
     for gen in range(start_gen, ngen + 1):
 
         # Added by mengxu to do seed rotation
@@ -144,8 +147,8 @@ def eaSimple(
         offspring = toolbox.select(population, len(population) - elitism)
 
         offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
-        ind_archive_list.extend(offspring)
         surrogate_evaluate(offspring, transformer_model)
+        ind_archive_list.extend(offspring)
         population[:] = offspring + sorted_elite
 
         rd["num_iteration"] = 1
@@ -155,19 +158,22 @@ def eaSimple(
             ind.fitness.values = fit[0]
             ind.num_calculation = fit[1]
         training_data = []
-        training_data[:] = population + random.choices(
-            ind_archive_list[-400:],
-            weights=[
-                1 / individual.fitness.values[0]
-                for individual in ind_archive_list[-400:]
-            ],
-            k=len(population),
+        # training_data[:] = population + random.choices(
+        #     ind_archive_list[-400:],
+        #     weights=[
+        #         1 / individual.fitness.values[0]
+        #         for individual in ind_archive_list[-400:]
+        #     ],
+        #     k=len(population),
+        # )
+        training_data[:] = population
+        surrogate_train(
+            training_data,
+            transformer_model,
+            optimizer,
+            toolbox=toolbox,
+            rd=rd,
         )
-        # if gen % 10 == 0 and gen != 50:
-        #     for param_group in optimizer.param_groups:
-        #         param_group["lr"] = max(param_group["lr"] * 0.5, 1e-6)
-        #         print("current lr:", param_group["lr"])
-        surrogate_train(training_data, transformer_model, optimizer)
         surrogate_evaluate(population, transformer_model)
 
         # modified by mengxu
@@ -181,12 +187,6 @@ def eaSimple(
         best_ind_all_gen.append(population[best_index])  # add by mengxu
         p_one = population[best_index]
         saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
-
-        # add by mengxu 2023.10.18 for niching---------------------------
-        if rd["use_niching"]:
-            nich.calculate_phenoCharacterisation(population[best_index])
-            population = nich.clearPopulation(toolbox, population)
-        # add by mengxu 2023.10.18 for niching---------------------------
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}

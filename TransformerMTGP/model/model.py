@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from torch.nn.utils.rnn import pad_sequence
+import numpy as np
 
 from torch_geometric.nn import (
     global_add_pool,
@@ -100,6 +101,9 @@ class MyNN(nn.Module):
         validation_batch,
         epoch,
         lr_deduction=0.9,
+        toolbox=None,
+        population=None,
+        rd=None,
     ):
         times = 0
         early_stopping_times = 0
@@ -127,6 +131,13 @@ class MyNN(nn.Module):
                 print("The training loss value is:", training_loss_value.item())
             if times > epoch_times and sum(training_loss[-5:]) / 5 > 1.8:
                 epoch_times += 10
-                print(f"The average loss value of latest 5 epochs is {sum(training_loss[-5:]) / 5}. Add 10 more epochs to {epoch_times}")
+                print(
+                    f"The average loss value of latest 5 epochs is {sum(training_loss[-5:]) / 5}. Add 10 more epochs to {epoch_times}"
+                )
+                rd["seed"] = np.random.randint(2000000000)
+                fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+                for ind, fit in zip(population, fitnesses):
+                    ind.fitness.values = fit[0]
+                    ind.num_calculation = fit[1]
 
         return training_loss, validation_loss

@@ -28,7 +28,7 @@ class ParallelToolbox(base.Toolbox):
         pickle.dumps(invalid_ind)
         pickle.dumps(evaluate)
         partial_evaluate = partial(evaluate, rd=rd)
-        fitnesses = Pool().map(partial_evaluate, invalid_ind)
+        fitnesses = Pool(processes=2).map(partial_evaluate, invalid_ind)
         # fitnesses = []
         # for ind in invalid_ind:
         #     evaluate(ind)

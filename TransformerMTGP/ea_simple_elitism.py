@@ -89,6 +89,7 @@ def eaSimple(
     start_gen=1,
     num_pre_selection=0,
     device="cuda",
+    reduce_scheduler=None,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -119,6 +120,7 @@ def eaSimple(
         toolbox=toolbox,
         rd=rd,
         device=device,
+        reduce_scheduler=reduce_scheduler,
     )
     surrogate_evaluate(population, transformer_model, device)
 
@@ -184,6 +186,7 @@ def eaSimple(
             toolbox=toolbox,
             rd=rd,
             device=device,
+            reduce_scheduler=reduce_scheduler,
         )
         surrogate_evaluate(population, transformer_model, device)
 

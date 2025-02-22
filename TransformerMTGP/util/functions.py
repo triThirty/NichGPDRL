@@ -44,3 +44,10 @@ def load_checkpoint(model, optimizer, filename="checkpoint.pth"):
     loss = checkpoint["loss"]
     print(f"Checkpoint loaded: Resuming from epoch {epoch} with loss {loss}")
     return epoch, loss
+
+
+def lr_lambda(epoch):
+    if epoch < warmup_epochs:
+        return epoch / warmup_epochs
+    else:
+        return 0.5 * (1 + math.cos((epoch - warmup_epochs) / (num_epochs - warmup_epochs) * math.pi))

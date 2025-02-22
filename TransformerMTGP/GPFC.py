@@ -20,6 +20,7 @@ import sequencing
 import routing
 
 from TransformerMTGP.model.model import MyNN
+from TransformerMTGP.util.functions import lr_lambda
 
 
 class shopfloor:
@@ -196,7 +197,9 @@ def connectedness(cluster):
 
 def init_toolbox(toolbox, pset):
     REP.init_toolbox(toolbox, pset)
-    toolbox.register("select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM)
+    toolbox.register(
+        "select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM
+    )
 
 
 def init_stats():
@@ -282,8 +285,18 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device):
     seedRotate = True  # added by mengxu 2022.10.13
     # seedRotate = False # added by mengxu 2022.10.13
 
-    transformer_model = MyNN(64, 1024, 1, 8, 3)
+    transformer_model = MyNN(64, 1024, 1, 8, 3, 1e-3)
     adam = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
+    reduce_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        adam,
+        mode="min",
+        factor=0.5,
+        patience=3,
+        verbose=True,
+        threshold=1e-1,
+        min_lr=1e-5,
+    )
+
     times = 1
 
     (
@@ -313,10 +326,17 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device):
         start_gen=times,
         num_pre_selection=num_pre_selection,
         device=device,
+        reduce_scheduler=reduce_scheduler,
     )
     best = hof[0]
 
-    return min_fitness, best, best_ind_all_gen, top_inds_fitness_final_gen, top_inds_final_gen
+    return (
+        min_fitness,
+        best,
+        best_ind_all_gen,
+        top_inds_fitness_final_gen,
+        top_inds_final_gen,
+    )
 
 
 POP_SIZE = 50
@@ -351,7 +371,13 @@ def main(dataset_name, seed, num_pre_selection, device):
     np.random.seed(int(seed))
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, top_inds_fitness_final_gen, top_inds_final_gen, = GPFC_main(dataset_name, seed, num_pre_selection, device)
+    (
+        min_fitness,
+        p_one,
+        best_ind_all_gen,
+        top_inds_fitness_final_gen,
+        top_inds_final_gen,
+    ) = GPFC_main(dataset_name, seed, num_pre_selection, device)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)

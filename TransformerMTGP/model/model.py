@@ -11,8 +11,10 @@ from torch_geometric.nn import (
 
 
 class MyNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_heads, num_layers):
+    def __init__(self, input_size, hidden_size, output_size, num_heads, num_layers, lr):
         super(MyNN, self).__init__()
+
+        self.lr = lr
 
         self.feature_dim_size = input_size
         self.ff_hidden_size = hidden_size
@@ -102,12 +104,15 @@ class MyNN(nn.Module):
         toolbox=None,
         population=None,
         rd=None,
+        reduce_scheduler=None,
     ):
         times = 0
         early_stopping_times = 0
         epoch_times = epoch
         validation_loss = []
         training_loss = []
+        for param_group in optimizer.param_groups:
+            param_group["lr"] = self.lr
         while times <= epoch_times:
             cumulation_training_loss = 0.0
             self.train()
@@ -127,6 +132,8 @@ class MyNN(nn.Module):
             times += 1
             if times % 5 == 0:
                 print("The training loss value is:", training_loss_value.item())
+            if epoch_times > epoch:
+                reduce_scheduler.step(training_loss[-1])
             if epoch_times > 200:
                 continue
             elif times > epoch_times and sum(training_loss[-5:]) / 5 > 1.5:

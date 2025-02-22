@@ -88,6 +88,7 @@ def eaSimple(
     optimizer=None,
     start_gen=1,
     num_pre_selection=0,
+    device="cuda",
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -117,8 +118,9 @@ def eaSimple(
         optimizer,
         toolbox=toolbox,
         rd=rd,
+        device=device,
     )
-    surrogate_evaluate(population, transformer_model)
+    surrogate_evaluate(population, transformer_model, device)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -153,7 +155,7 @@ def eaSimple(
 
         offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
         # offspring = pre_selection_list + offspring
-        surrogate_evaluate(offspring, transformer_model)
+        surrogate_evaluate(offspring, transformer_model, device)
         # if num_pre_selection > 0:
         #     offspring = toolbox.select(offspring, len(population) - elitism)
         ind_archive_list.extend(offspring)
@@ -181,8 +183,9 @@ def eaSimple(
             optimizer,
             toolbox=toolbox,
             rd=rd,
+            device=device,
         )
-        surrogate_evaluate(population, transformer_model)
+        surrogate_evaluate(population, transformer_model, device)
 
         # modified by mengxu
         if halloffame is not None:

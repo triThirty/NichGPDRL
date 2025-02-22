@@ -55,12 +55,20 @@ if __name__ == "__main__":
         default=0,
     )
 
+    parser.add_argument(
+        "--device",
+        type=str,
+        help="The device to run the experiment on",
+        default="cuda",
+    )
+
     args = parser.parse_args()
 
     dataset_name = args.dataset_name
     seed = args.seed
     algo = args.algo
     num_pre_selection = args.num_pre_selection
+    device = args.device
 
     # dataset_name = "HH"
     # seed = 2
@@ -93,7 +101,8 @@ if __name__ == "__main__":
         )
     elif algo == "TransformerMTGP":
         import TransformerMTGP.GPFC as TransformerGPmain
-        TransformerGPmain.main(dataset_name, seed, num_pre_selection)
+        device = torch.device(device)
+        TransformerGPmain.main(dataset_name, seed, num_pre_selection, device)
     elif algo == "transformerGP_all_gen_test":
         main_experiment_transformerGP_all_generations_test_results.main(
             dataset_name, seed, "transformerGP_all_gen_test"

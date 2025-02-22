@@ -259,7 +259,7 @@ def init_data(rundata):
     rd = rundata
 
 
-def GPFC_main(dataset_name, seed, num_pre_selection):
+def GPFC_main(dataset_name, seed, num_pre_selection, device):
     rd["use_niching"] = use_niching
     rd["seed"] = seed
     rd["dataset_name"] = dataset_name
@@ -312,6 +312,7 @@ def GPFC_main(dataset_name, seed, num_pre_selection):
         optimizer=adam,
         start_gen=times,
         num_pre_selection=num_pre_selection,
+        device=device,
     )
     best = hof[0]
 
@@ -342,7 +343,7 @@ wc_no = 3
 ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
-def main(dataset_name, seed, num_pre_selection):
+def main(dataset_name, seed, num_pre_selection, device):
     # if __name__ == "__main__":
     #     dataset_name = str(sys.argv[1])
     #     seed = int(sys.argv[2])
@@ -350,7 +351,7 @@ def main(dataset_name, seed, num_pre_selection):
     np.random.seed(int(seed))
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, top_inds_fitness_final_gen, top_inds_final_gen, = GPFC_main(dataset_name, seed, num_pre_selection)
+    min_fitness, p_one, best_ind_all_gen, top_inds_fitness_final_gen, top_inds_final_gen, = GPFC_main(dataset_name, seed, num_pre_selection, device)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)

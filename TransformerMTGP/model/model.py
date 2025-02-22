@@ -9,8 +9,6 @@ from torch_geometric.nn import (
     GATConv,
 )
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 
 class MyNN(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, num_heads, num_layers):

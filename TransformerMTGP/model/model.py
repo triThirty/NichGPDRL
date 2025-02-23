@@ -33,7 +33,7 @@ class MyNN(nn.Module):
                 nhead=self.num_heads,
                 norm_first=True,
                 dim_feedforward=self.ff_hidden_size,
-                dropout=0.3,
+                dropout=0.5,
                 batch_first=True,
                 # bias=False,
             )
@@ -47,7 +47,7 @@ class MyNN(nn.Module):
                     out_channels=self.feature_dim_size,
                     heads=self.num_heads,
                     concat=False,
-                    dropout=0.3,
+                    dropout=0.5,
                 )
             )
 
@@ -138,8 +138,8 @@ class MyNN(nn.Module):
             times += 1
             if times % 5 == 0:
                 print("The training loss value is:", training_loss_value.item())
-            if epoch_times > epoch:
-                reduce_scheduler.step(training_loss[-1])
+            # if epoch_times > epoch:
+            #     reduce_scheduler.step(training_loss[-1])
             if epoch_times > 200:
                 continue
             elif times > epoch_times and sum(training_loss[-5:]) / 5 > 1.5:

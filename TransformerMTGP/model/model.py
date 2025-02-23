@@ -32,7 +32,7 @@ class MyNN(nn.Module):
                 nhead=self.num_heads,
                 norm_first=True,
                 dim_feedforward=self.ff_hidden_size,
-                dropout=0.1,
+                dropout=0.3,
                 batch_first=True,
                 # bias=False,
             )
@@ -46,18 +46,19 @@ class MyNN(nn.Module):
                     out_channels=self.feature_dim_size,
                     heads=self.num_heads,
                     concat=False,
-                    dropout=0.1,
+                    dropout=0.3,
                 )
             )
 
         self.predictions = torch.nn.ModuleList()
         self.predictions.append(nn.Linear(self.feature_dim_size, self.feature_dim_size))
-        # self.predictions.append(nn.LayerNorm(self.feature_dim_size))
+        self.predictions.append(nn.BatchNorm1d(self.feature_dim_size))
         for _ in range(3):
             self.predictions.append(nn.LeakyReLU())
             self.predictions.append(
                 nn.Linear(self.feature_dim_size, self.feature_dim_size)
             )
+            self.predictions.append(nn.BatchNorm1d(self.feature_dim_size))
         self.predictions.append(nn.LeakyReLU())
         self.final = torch.nn.ModuleList()
         self.final.append(nn.Linear(self.feature_dim_size, self.output_size))

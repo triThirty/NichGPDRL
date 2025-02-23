@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.nn import TransformerEncoder, TransformerEncoderLayer
 from torch.nn.utils.rnn import pad_sequence
 import numpy as np
+import torch.nn.utils.parametrizations as P
 
 from torch_geometric.nn import (
     global_add_pool,
@@ -51,17 +52,21 @@ class MyNN(nn.Module):
             )
 
         self.predictions = torch.nn.ModuleList()
-        self.predictions.append(nn.Linear(self.feature_dim_size, self.feature_dim_size))
+        self.predictions.append(
+            P.spectral_norm(nn.Linear(self.feature_dim_size, self.feature_dim_size))
+        )
         self.predictions.append(nn.BatchNorm1d(self.feature_dim_size))
         for _ in range(3):
             self.predictions.append(nn.LeakyReLU())
             self.predictions.append(
-                nn.Linear(self.feature_dim_size, self.feature_dim_size)
+                P.spectral_norm(nn.Linear(self.feature_dim_size, self.feature_dim_size))
             )
             self.predictions.append(nn.BatchNorm1d(self.feature_dim_size))
         self.predictions.append(nn.LeakyReLU())
         self.final = torch.nn.ModuleList()
-        self.final.append(nn.Linear(self.feature_dim_size, self.output_size))
+        self.final.append(
+            P.spectral_norm(nn.Linear(self.feature_dim_size, self.output_size))
+        )
 
     def forward(self, batch_data, is_batch=True):
         if is_batch:

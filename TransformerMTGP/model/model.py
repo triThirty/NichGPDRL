@@ -141,11 +141,11 @@ class MyNN(nn.Module):
                 print(
                     f"The average loss value of latest 5 epochs is {sum(training_loss[-5:]) / 5}. Add 10 more epochs to {epoch_times}"
                 )
-                # if epoch_times > 100:
-                #     rd["seed"] = np.random.randint(2000000000)
-                #     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
-                #     for ind, fit in zip(population, fitnesses):
-                #         ind.fitness.values = fit[0]
-                #         ind.num_calculation = fit[1]
+                if epoch_times > 100:
+                    rd["seed"] = np.random.randint(2000000000)
+                    fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+                    for ind, fit in zip(population, fitnesses):
+                        ind.fitness.values = fit[0]
+                        ind.num_calculation = fit[1]
 
         return training_loss, validation_loss

@@ -32,10 +32,10 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
             del offspring[i].fitness.values
             offspring[i].num_calculation = 0
             i = i + 1
-        else:  # reproduction
-            del offspring[i].fitness.values
-            offspring[i].num_calculation = 0
-            i = i + 1
+        # else:  # reproduction
+        #     del offspring[i].fitness.values
+        #     offspring[i].num_calculation = 0
+        #     i = i + 1
     return offspring
 
 
@@ -112,7 +112,6 @@ def eaSimple(
         ind.fitness.values = fit[0]
         ind.num_calculation = fit[1]
 
-    # saveFile.save_all_individuals(seed, dataset_name, invalid_ind)
     surrogate_train(
         population,
         transformer_model,
@@ -123,6 +122,7 @@ def eaSimple(
         reduce_scheduler=reduce_scheduler,
     )
     surrogate_evaluate(population, transformer_model, device)
+    saveFile.save_all_individuals(seed, dataset_name, population)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -189,6 +189,7 @@ def eaSimple(
             reduce_scheduler=reduce_scheduler,
         )
         surrogate_evaluate(population, transformer_model, device)
+        saveFile.save_all_individuals(seed, dataset_name, population)
 
         # modified by mengxu
         if halloffame is not None:

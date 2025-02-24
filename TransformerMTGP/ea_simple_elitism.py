@@ -69,6 +69,23 @@ ind_archive_list = []
 # ind_archive_weights_list = []
 
 
+def hash_individual(ind):
+    return hash(str(ind[0]) + str(ind[1]))
+
+
+def remove_duplicates(population):
+    unique_pop = []
+    seen = set()
+
+    for ind in population:
+        h = hash_individual(ind)
+        if h not in seen:
+            seen.add(h)
+            unique_pop.append(ind)
+
+    return unique_pop
+
+
 def eaSimple(
     population,
     toolbox,
@@ -141,7 +158,7 @@ def eaSimple(
         print(logbook.stream)
 
     # Begin the generational process
-    ind_archive_list.extend(population)
+    ind_archive_list.extend(remove_duplicates(population))
     for gen in range(start_gen, ngen + 1):
 
         # Added by mengxu to do seed rotation
@@ -160,7 +177,7 @@ def eaSimple(
         surrogate_evaluate(offspring, transformer_model, device)
         # if num_pre_selection > 0:
         #     offspring = toolbox.select(offspring, len(population) - elitism)
-        ind_archive_list.extend(offspring)
+        ind_archive_list.extend(remove_duplicates(offspring))
         population[:] = offspring + sorted_elite
 
         rd["num_iteration"] = 1

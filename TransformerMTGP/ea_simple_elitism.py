@@ -158,46 +158,31 @@ def eaSimple(
         print(logbook.stream)
 
     # Begin the generational process
-    ind_archive_list.extend(remove_duplicates(population))
     for gen in range(start_gen, ngen + 1):
 
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-        sorted_elite = sorted(population, key=lambda x: x.score, reverse=True)[:elitism]
+        sorted_elite = sorted(population, key=lambda x: x.score, reverse=True)[
+            :elitism
+        ]
 
         offspring = toolbox.select(population, len(population) - elitism)
 
-        # pre_selection_list = []
-        # for _ in range(num_pre_selection):
-        #     pre_selection_list.extend(varAnd(offspring, toolbox, cxpb, mutpb, reppb))
-
-        offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
-        # offspring = pre_selection_list + offspring
-        surrogate_evaluate(offspring, transformer_model, device)
-        # if num_pre_selection > 0:
-        #     offspring = toolbox.select(offspring, len(population) - elitism)
-        ind_archive_list.extend(remove_duplicates(offspring))
-        population[:] = offspring + sorted_elite
+        pop_intermediate = sorted_elite
+        while len(pop_intermediate) < len(population):
+            offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+            pop_intermediate.extend(offspring_intermediate)
+            pop_intermediate = remove_duplicates(pop_intermediate)
+        population[:] = pop_intermediate[: len(population)]
 
         rd["num_iteration"] = 1
         rd["seed"] = np.random.randint(2000000000)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit[0]
-            ind.num_calculation = fit[1]
-        training_data = []
-        training_data[:] = population + random.choices(
-            ind_archive_list[-300:],
-            weights=[
-                1 / individual.fitness.values[0]
-                for individual in ind_archive_list[-300:]
-            ],
-            k=len(population),
-        )
-        training_data[:] = population
         surrogate_train(
-            training_data,
+            population,
             transformer_model,
             optimizer,
             toolbox=toolbox,

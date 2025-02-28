@@ -140,13 +140,13 @@ class MyNN(nn.Module):
                 print("The training loss value is:", training_loss_value.item())
             # if epoch_times > epoch:
             #     reduce_scheduler.step(training_loss[-1])
-            if epoch_times > 200:
-                continue
-            elif times > epoch_times and sum(training_loss[-5:]) / 5 > 1.5:
-                epoch_times += 20
-                print(
-                    f"The average loss value of latest 5 epochs is {sum(training_loss[-5:]) / 5}. Add 10 more epochs to {epoch_times}"
-                )
+            # if epoch_times > 200:
+            #     continue
+            # elif times > epoch_times and sum(training_loss[-5:]) / 5 > 1.5:
+            #     epoch_times += 20
+            #     print(
+            #         f"The average loss value of latest 5 epochs is {sum(training_loss[-5:]) / 5}. Add 10 more epochs to {epoch_times}"
+            #     )
                 # if epoch_times > 100:
                 #     rd["seed"] = np.random.randint(2000000000)
                 #     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)

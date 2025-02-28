@@ -17,7 +17,7 @@ from TransformerMTGP.util.functions import positional_encoding, list_net_loss
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 lr_deduction = 0.9
-epoch = 30
+epoch = 100
 train_batch_size = 20
 
 

@@ -14,14 +14,40 @@ def positional_encoding(seq_len, embed_dim, device):
     return pe
 
 
-def list_net_loss(output, target):
-    scores = output.view(-1)
-    sorted_indices = torch.argsort(target.view(-1), descending=True, dim=-1)
-    sorted_scores = torch.gather(scores, dim=-1, index=sorted_indices)
-    loss = -torch.sum(
-        sorted_scores - torch.logcumsumexp(sorted_scores, dim=-1), dim=-1
-    ) / scores.size(0)
-    return loss
+def list_net_loss(scores, labels, margin=1.0, lambda_var=0.1):
+    """
+    scores: 模型预测分数 [batch_size]
+    labels: 样本标签 [batch_size]
+    margin: Ranking Loss的间隔参数
+    lambda_var: 组内方差正则化系数
+    """
+    loss = 0.0
+    scores = -scores
+    n = scores.shape[0]
+
+    # 计算组内方差正则化
+    unique_labels = torch.unique(labels)
+    var_loss = 0.0
+    for l in unique_labels:
+        group_mask = labels == l
+        group_scores = scores[group_mask]
+        if len(group_scores) > 1:
+            var_loss += torch.var(group_scores)
+    var_loss *= lambda_var
+
+    # 计算Pairwise对比损失
+    for i in range(n):
+        for j in range(i + 1, n):
+            if labels[i] == labels[j]:
+                # 相同标签：强制分数接近
+                loss += (scores[i] - scores[j]) ** 2
+            else:
+                # 不同标签：使用Margin Ranking Loss
+                sign = 1.0 if labels[i] > labels[j] else -1.0
+                diff = (scores[i] - scores[j]) * sign
+                loss += torch.relu(margin - diff)
+
+    return loss / (n * (n - 1) / 2) + var_loss
 
 
 # 保存的 checkpoint
@@ -50,4 +76,7 @@ def lr_lambda(epoch):
     if epoch < warmup_epochs:
         return epoch / warmup_epochs
     else:
-        return 0.5 * (1 + math.cos((epoch - warmup_epochs) / (num_epochs - warmup_epochs) * math.pi))
+        return 0.5 * (
+            1
+            + math.cos((epoch - warmup_epochs) / (num_epochs - warmup_epochs) * math.pi)
+        )

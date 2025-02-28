@@ -163,9 +163,9 @@ def eaSimple(
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-        sorted_elite = sorted(population, key=lambda x: x.score, reverse=True)[
-            :elitism
-        ]
+        sorted_elite = sorted(
+            population, key=lambda x: x.fitness.values[0], reverse=False
+        )[:elitism]
 
         offspring = toolbox.select(population, len(population) - elitism)
 

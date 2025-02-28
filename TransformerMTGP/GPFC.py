@@ -215,13 +215,11 @@ def init_stats():
 def evaluate(individual, rd, seed):
     # add by mengxu 2022.10.13 to add the training instances ===============================================
     # create the environment instance for simulation
-    if individual.num_calculation >= 20:
-        return [(individual.fitness.values[0],), individual.num_calculation]
     dataset_name = rd["dataset_name"]
     # create the shop floor instance
     rule_R = "GP_evolve_R"
     rule_S = "GP_evolve_S"
-    true_fitness = individual.fitness.values[0] if individual.fitness.valid else 0
+    fitness = 0
     for i in range(rd.get("num_iteration", 50)):
         seed += 1000
         env = simpy.Environment()
@@ -242,11 +240,9 @@ def evaluate(individual, rd, seed):
         output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
             spf.job_creator.tardiness_output()
         )
-        true_fitness = true_fitness + 1 / (individual.num_calculation + 1) * (
-            cumulative_tard[-1] - true_fitness
-        )
-        individual.num_calculation += 1
-    return [(true_fitness,), individual.num_calculation]
+        fitness = fitness + cumulative_tard[-1]
+    fitness = fitness / rd.get("num_iteration", 50)
+    return [(fitness,), 0]
 
 
 def eval_wrapper(*args, **kwargs):

@@ -163,24 +163,46 @@ def eaSimple(
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-        sorted_elite = sorted(
-            population, key=lambda x: x.fitness.values[0], reverse=False
-        )[:elitism]
+        sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
 
         offspring = toolbox.select(population, len(population) - elitism)
 
-        pop_intermediate = sorted_elite
-        while len(pop_intermediate) < len(population):
+        pop_intermediate = []
+        while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
             pop_intermediate.extend(offspring_intermediate)
-            pop_intermediate = remove_duplicates(pop_intermediate)
-        population[:] = pop_intermediate[: len(population)]
+            pop_intermediate = remove_duplicates(sorted_elite + pop_intermediate)[
+                elitism:
+            ]
+        pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
+
+        surrogate_evaluate(pop_intermediate, transformer_model, device)
+        population = (
+            sorted_elite
+            + sorted(pop_intermediate, key=lambda x: x.score, reverse=True)[
+                : len(population) - elitism
+            ]
+        )
 
         rd["num_iteration"] = 1
         rd["seed"] = np.random.randint(2000000000)
+        surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit[0]
+
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
+        for ind, fit in zip(pop_intermediate, fitnesses):
+            ind.fitness.values = fit[0]
+
+        sorted_intermediate = sorted(
+            pop_intermediate, key=lambda x: x.fitness.values[0]
+        )[: len(population) - elitism]
+
+        print("Best intermediate individual     ", "Best surrogate individual")
+        for k, ind in enumerate(sorted_intermediate):
+            print(ind.fitness.values[0], " --- " ,population[elitism:][k].fitness.values[0])
+
         surrogate_train(
             population,
             transformer_model,

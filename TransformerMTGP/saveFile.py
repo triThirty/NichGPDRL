@@ -3,7 +3,9 @@ import numpy as np
 import json
 
 
-def save_all_individuals(randomSeeds, dataSetName, individuals, with_fitness=False):
+def save_all_individuals(
+    randomSeeds, dataSetName, individuals, gen, with_fitness=False
+):
     try:
         with open(
             "./TransformerMTGP/train/scenario_"
@@ -39,6 +41,7 @@ def save_all_individuals(randomSeeds, dataSetName, individuals, with_fitness=Fal
                 "fitness": ind.fitness.values[0],
                 "num_calculation": ind.num_calculation,
                 "score:": ind.score,
+                "gen": gen,
             }
             individuals_list.append(individual_dict)
     else:
@@ -49,6 +52,63 @@ def save_all_individuals(randomSeeds, dataSetName, individuals, with_fitness=Fal
         + "/"
         + str(randomSeeds)
         + "_all_individual_"
+        + dataSetName
+        + "_formula_format"
+        + ".json",
+        "w",
+    ) as file:
+        json.dump(individuals_list, file)
+
+
+def save_all_intermedia_individuals(
+    randomSeeds, dataSetName, individuals, gen, with_fitness=False
+):
+    try:
+        with open(
+            "./TransformerMTGP/train/scenario_"
+            + str(dataSetName)
+            + "/"
+            + str(randomSeeds)
+            + "_all_inter_pop_"
+            + dataSetName
+            + "_formula_format"
+            + ".json",
+            "r",
+        ) as file:
+            individuals_list = json.load(file)
+    except FileNotFoundError:
+        individuals_list = []
+        with open(
+            "./TransformerMTGP/train/scenario_"
+            + str(dataSetName)
+            + "/"
+            + str(randomSeeds)
+            + "_all_inter_pop_"
+            + dataSetName
+            + "_formula_format"
+            + ".json",
+            "w",
+        ) as file:
+            json.dump(individuals_list, file)
+    if not with_fitness:
+        for key, ind in enumerate(individuals):
+            individual_dict = {
+                "T0": str(ind[0]),
+                "T1": str(ind[1]),
+                "fitness": ind.fitness.values[0],
+                "num_calculation": ind.num_calculation,
+                # "score:": ind.score,
+                "gen": gen,
+            }
+            individuals_list.append(individual_dict)
+    else:
+        individuals_list = individuals
+    with open(
+        "./TransformerMTGP/train/scenario_"
+        + str(dataSetName)
+        + "/"
+        + str(randomSeeds)
+        + "_all_inter_pop_"
         + dataSetName
         + "_formula_format"
         + ".json",

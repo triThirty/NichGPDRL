@@ -137,7 +137,7 @@ def eaSimple(
         reduce_scheduler=reduce_scheduler,
     )
     surrogate_evaluate(population, transformer_model, device)
-    saveFile.save_all_individuals(seed, dataset_name, population)
+    saveFile.save_all_individuals(seed, dataset_name, population, 0)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -192,13 +192,21 @@ def eaSimple(
         for ind, fit in zip(pop_intermediate, fitnesses):
             ind.fitness.values = fit
 
+        saveFile.save_all_intermedia_individuals(
+            seed, dataset_name, pop_intermediate, gen
+        )
+
         sorted_intermediate = sorted(
             pop_intermediate, key=lambda x: x.fitness.values[0]
         )[: len(population) - elitism]
 
         print("Best intermediate individual     ", "Best surrogate individual")
         for k, ind in enumerate(sorted_intermediate):
-            print(ind.fitness.values[0], " --- " ,population[elitism:][k].fitness.values[0])
+            print(
+                ind.fitness.values[0],
+                " --- ",
+                population[elitism:][k].fitness.values[0],
+            )
 
         surrogate_train(
             population,
@@ -210,7 +218,7 @@ def eaSimple(
             reduce_scheduler=reduce_scheduler,
         )
         surrogate_evaluate(population, transformer_model, device)
-        saveFile.save_all_individuals(seed, dataset_name, population)
+        saveFile.save_all_individuals(seed, dataset_name, population, gen)
 
         # modified by mengxu
         if halloffame is not None:

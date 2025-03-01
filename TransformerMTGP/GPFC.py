@@ -19,9 +19,6 @@ import agent_workcenter
 import sequencing
 import routing
 
-from TransformerMTGP.model.model import MyNN
-from TransformerMTGP.util.functions import lr_lambda
-
 
 class shopfloor:
     def __init__(self, env, span, m_no, wc_no, sequencing_tree, routing_tree, **kwargs):
@@ -305,18 +302,6 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device):
     seedRotate = True  # added by mengxu 2022.10.13
     # seedRotate = False # added by mengxu 2022.10.13
 
-    transformer_model = MyNN(64, 1024, 1, 8, 3, 1e-3)
-    adam = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
-    reduce_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-        adam,
-        mode="min",
-        factor=0.5,
-        patience=3,
-        verbose=True,
-        threshold=1e-1,
-        min_lr=1e-5,
-    )
-
     times = 1
 
     (
@@ -341,12 +326,9 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device):
         verbose=True,
         seed=seed,
         dataset_name=dataset_name,
-        transformer_model=transformer_model,
-        optimizer=adam,
         start_gen=times,
         num_pre_selection=num_pre_selection,
         device=device,
-        reduce_scheduler=reduce_scheduler,
     )
     best = hof[0]
 

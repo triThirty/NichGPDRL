@@ -25,10 +25,7 @@ def surrogate_train(
     population,
     model,
     optimizer,
-    toolbox=None,
-    rd=None,
     device=None,
-    reduce_scheduler=None,
 ):
     embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0).to(device)
     embedding_layer.load_state_dict(torch.load("./TransformerMTGP/model/embedding.pth"))
@@ -68,11 +65,6 @@ def surrogate_train(
         training_loader,
         training_loader,
         epoch=epoch,
-        lr_deduction=lr_deduction,
-        toolbox=toolbox,
-        population=population,
-        rd=rd,
-        reduce_scheduler=reduce_scheduler,
     )
 
 

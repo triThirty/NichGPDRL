@@ -12,10 +12,8 @@ from torch_geometric.nn import (
 
 
 class MyNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_heads, num_layers, lr):
+    def __init__(self, input_size, hidden_size, output_size, num_heads, num_layers):
         super(MyNN, self).__init__()
-
-        self.lr = lr
 
         self.feature_dim_size = input_size
         self.ff_hidden_size = hidden_size
@@ -106,19 +104,11 @@ class MyNN(nn.Module):
         training_batch,
         validation_batch,
         epoch,
-        lr_deduction=0.9,
-        toolbox=None,
-        population=None,
-        rd=None,
-        reduce_scheduler=None,
     ):
         times = 0
-        early_stopping_times = 0
         epoch_times = epoch
         validation_loss = []
         training_loss = []
-        for param_group in optimizer.param_groups:
-            param_group["lr"] = self.lr
         while times <= epoch_times:
             cumulation_training_loss = 0.0
             self.train()
@@ -138,20 +128,4 @@ class MyNN(nn.Module):
             times += 1
             if times % 5 == 0:
                 print("The training loss value is:", training_loss_value.item())
-            # if epoch_times > epoch:
-            #     reduce_scheduler.step(training_loss[-1])
-            # if epoch_times > 200:
-            #     continue
-            # elif times > epoch_times and sum(training_loss[-5:]) / 5 > 1.5:
-            #     epoch_times += 20
-            #     print(
-            #         f"The average loss value of latest 5 epochs is {sum(training_loss[-5:]) / 5}. Add 10 more epochs to {epoch_times}"
-            #     )
-                # if epoch_times > 100:
-                #     rd["seed"] = np.random.randint(2000000000)
-                #     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
-                #     for ind, fit in zip(population, fitnesses):
-                #         ind.fitness.values = fit[0]
-                #         ind.num_calculation = fit[1]
-
         return training_loss, validation_loss

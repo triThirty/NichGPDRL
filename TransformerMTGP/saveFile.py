@@ -97,7 +97,7 @@ def save_all_intermedia_individuals(
                 "T1": str(ind[1]),
                 "fitness": ind.fitness.values[0],
                 "num_calculation": ind.num_calculation,
-                # "score:": ind.score,
+                "score:": ind.score,
                 "gen": gen,
             }
             individuals_list.append(individual_dict)

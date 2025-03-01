@@ -2,10 +2,12 @@ import random
 
 import numpy as np
 from deap import tools
+import torch
 
 
 from TransformerMTGP import saveFile
 from TransformerMTGP.model.surrogate import surrogate_train, surrogate_evaluate
+from TransformerMTGP.model.model import MyNN
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -101,12 +103,9 @@ def eaSimple(
     verbose=__debug__,
     seed=__debug__,
     dataset_name=__debug__,
-    transformer_model=None,
-    optimizer=None,
     start_gen=1,
     num_pre_selection=0,
     device="cuda",
-    reduce_scheduler=None,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -127,14 +126,13 @@ def eaSimple(
     for ind, fit in zip(population, fitnesses):
         ind.fitness.values = fit
 
+    transformer_model = MyNN(64, 1024, 1, 8, 3)
+    optimizer = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
     surrogate_train(
         population,
         transformer_model,
         optimizer,
-        toolbox=toolbox,
-        rd=rd,
         device=device,
-        reduce_scheduler=reduce_scheduler,
     )
     surrogate_evaluate(population, transformer_model, device)
     saveFile.save_all_individuals(seed, dataset_name, population, 0)
@@ -208,14 +206,13 @@ def eaSimple(
                 population[elitism:][k].fitness.values[0],
             )
 
+        transformer_model = MyNN(64, 1024, 1, 8, 3)
+        optimizer = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
         surrogate_train(
             population,
             transformer_model,
             optimizer,
-            toolbox=toolbox,
-            rd=rd,
             device=device,
-            reduce_scheduler=reduce_scheduler,
         )
         surrogate_evaluate(population, transformer_model, device)
         saveFile.save_all_individuals(seed, dataset_name, population, gen)

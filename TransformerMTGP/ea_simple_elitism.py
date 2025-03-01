@@ -125,8 +125,7 @@ def eaSimple(
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
     for ind, fit in zip(population, fitnesses):
-        ind.fitness.values = fit[0]
-        ind.num_calculation = fit[1]
+        ind.fitness.values = fit
 
     surrogate_train(
         population,
@@ -187,11 +186,11 @@ def eaSimple(
         surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
-            ind.fitness.values = fit[0]
+            ind.fitness.values = fit
 
         fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
         for ind, fit in zip(pop_intermediate, fitnesses):
-            ind.fitness.values = fit[0]
+            ind.fitness.values = fit
 
         sorted_intermediate = sorted(
             pop_intermediate, key=lambda x: x.fitness.values[0]

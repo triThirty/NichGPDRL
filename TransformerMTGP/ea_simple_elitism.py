@@ -123,7 +123,6 @@ def eaSimple(
     # invalid_ind = population
 
     rd["seed"] = randomSeed_ngen[0]
-    rd["num_iteration"] = 1
     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
     for ind, fit in zip(population, fitnesses):
         ind.fitness.values = fit[0]
@@ -184,8 +183,7 @@ def eaSimple(
             ]
         )
 
-        rd["num_iteration"] = 1
-        rd["seed"] = np.random.randint(2000000000)
+        rd["seed"] = randomSeed_ngen[gen]
         surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):

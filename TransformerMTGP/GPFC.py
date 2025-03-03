@@ -197,6 +197,12 @@ def init_toolbox(toolbox, pset):
     toolbox.register(
         "select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM
     )
+    toolbox.register(
+        "score_base_select",
+        ScoreBasedselElitistAndTournament,
+        tournsize=TOURNAMENT_SIZE,
+        elitism=ELITISM,
+    )
 
 
 def init_stats():

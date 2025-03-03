@@ -67,10 +67,6 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
-ind_archive_list = []
-# ind_archive_weights_list = []
-
-
 def hash_individual(ind):
     return hash(str(ind[0]) + str(ind[1]))
 
@@ -173,12 +169,20 @@ def eaSimple(
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         surrogate_evaluate(pop_intermediate, transformer_model, device)
-        population = (
-            sorted_elite
-            + sorted(pop_intermediate, key=lambda x: x.score, reverse=True)[
-                : len(population) - elitism
-            ]
-        )
+        # population = (
+        #     sorted_elite
+        #     + sorted(pop_intermediate, key=lambda x: x.score, reverse=True)[
+        #         : len(population) - elitism
+        #     ]
+        # )
+        score_elite = []
+        while len(score_elite) < len(population) - elitism:
+            score_elite.extend(
+                toolbox.score_base_select(pop_intermediate, len(population) - elitism)
+            )
+
+            score_elite[:] = remove_duplicates(score_elite)
+        population = sorted_elite + score_elite[: len(population) - elitism]
 
         rd["seed"] = randomSeed_ngen[gen]
         surrogate_evaluate(population, transformer_model, device)

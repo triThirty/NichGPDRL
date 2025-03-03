@@ -34,7 +34,7 @@ def sel_least_complex(individuals, complexity_func):
 #     return tools.selBest(individuals, elitism) + tools.selTournament(individuals, k - elitism, tournsize)
 
 
-def selRandom(individuals, k): # add by mengxu
+def selRandom(individuals, k):  # add by mengxu
     """Select *k* individuals at random from the input *individuals* with
     replacement. The list returned contains references to the input
     *individuals*.
@@ -48,7 +48,8 @@ def selRandom(individuals, k): # add by mengxu
     """
     return [random.choice(individuals) for i in range(k)]
 
-def selTournament(individuals, k, tournsize): # add by mengxu
+
+def selTournament(individuals, k, tournsize):  # add by mengxu
     """Select the best individual among *tournsize* randomly chosen
     individuals, *k* times. The list returned contains
     references to the input *individuals*.
@@ -70,6 +71,21 @@ def selTournament(individuals, k, tournsize): # add by mengxu
         chosen.append(aspirants[best_index])
     return chosen
 
+
 def selElitistAndTournament(individuals, k, tournsize, elitism):
-    return selTournament(individuals, k, tournsize) # modified by mengxu
+    return selTournament(individuals, k, tournsize)  # modified by mengxu
     # return tools.selBest(individuals, elitism) + tools.selTournament(individuals, k - elitism, tournsize) #original
+
+
+def scoreBasedTournament(individuals, k, tournsize):
+    chosen = []
+    for i in range(k):
+        aspirants = selRandom(individuals, tournsize)
+        aspirants_fit = [ind.score for ind in aspirants]
+        best_index = np.argmax(aspirants_fit)
+        chosen.append(aspirants[best_index])
+    return chosen
+
+
+def ScoreBasedselElitistAndTournament(individuals, k, tournsize, elitism):
+    return scoreBasedTournament(individuals, k, tournsize)  # modified by mengxu

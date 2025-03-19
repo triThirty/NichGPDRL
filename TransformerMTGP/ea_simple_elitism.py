@@ -106,16 +106,12 @@ def eaSimple(
     # initialise the random seed of each generation
     randomSeed_ngen = []
     for i in range((ngen + 1)):
-        # for i in range((ngen+1)*ins_each_gen): # the *ins_each_gen is added by mengxu followed the advice of Meng 2022.11.01
         randomSeed_ngen.append(np.random.randint(2000000000))
 
     logbook = tools.Logbook()
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
     min_fitness = []
     best_ind_all_gen = []  # add by mengxu
-    # Evaluate the individuals with an invalid fitness
-    # invalid_ind = [ind for ind in population if not ind.fitness.valid]
-    # invalid_ind = population
 
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
@@ -169,12 +165,6 @@ def eaSimple(
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         surrogate_evaluate(pop_intermediate, transformer_model, device)
-        # population = (
-        #     sorted_elite
-        #     + sorted(pop_intermediate, key=lambda x: x.score, reverse=True)[
-        #         : len(population) - elitism
-        #     ]
-        # )
         score_elite = []
         while len(score_elite) < len(population) - elitism:
             score_elite.extend(
@@ -190,25 +180,25 @@ def eaSimple(
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
 
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
-        for ind, fit in zip(pop_intermediate, fitnesses):
-            ind.fitness.values = fit
+        # fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
+        # for ind, fit in zip(pop_intermediate, fitnesses):
+        #     ind.fitness.values = fit
 
-        saveFile.save_all_intermedia_individuals(
-            seed, dataset_name, pop_intermediate, gen
-        )
+        # saveFile.save_all_intermedia_individuals(
+        #     seed, dataset_name, pop_intermediate, gen
+        # )
 
-        sorted_intermediate = sorted(
-            pop_intermediate, key=lambda x: x.fitness.values[0]
-        )[: len(population) - elitism]
+        # sorted_intermediate = sorted(
+        #     pop_intermediate, key=lambda x: x.fitness.values[0]
+        # )[: len(population) - elitism]
 
-        print("Best intermediate individual     ", "Best surrogate individual")
-        for k, ind in enumerate(sorted_intermediate):
-            print(
-                ind.fitness.values[0],
-                " --- ",
-                population[elitism:][k].fitness.values[0],
-            )
+        # print("Best intermediate individual     ", "Best surrogate individual")
+        # for k, ind in enumerate(sorted_intermediate):
+        #     print(
+        #         ind.fitness.values[0],
+        #         " --- ",
+        #         population[elitism:][k].fitness.values[0],
+        #     )
 
         transformer_model = MyNN(64, 1024, 1, 8, 3)
         optimizer = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)

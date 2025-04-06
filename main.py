@@ -4,6 +4,7 @@ import argparse
 import torch
 
 import MTGP.GPFC as GPmain
+import MTGP_KNN.GPFC as KnnGPmain
 import NichingMTGP.GPFC as NichingGPmain
 import numpy as np
 
@@ -23,6 +24,7 @@ import main_training_S_GPrule
 import main_training_S_online_learning
 import main_experiment_transformerGP_all_generations_test_results
 import main_experiment_MTGP_all_generations_test_results
+import main_experiment_knn_MTGP_all_generations_test_results
 
 sys.path
 
@@ -88,6 +90,9 @@ if __name__ == "__main__":
     if algo == "MTGP":
         print("----------MTGP----------")
         GPmain.main(dataset_name, seed)
+    elif algo == "KnnMTGP":
+        print("----------KnnMTGP----------")
+        KnnGPmain.main(dataset_name, seed)
     elif algo == "NichingMTGP":
         print("----------niching MTGP----------")
         NichingGPmain.main(dataset_name, seed)
@@ -99,8 +104,13 @@ if __name__ == "__main__":
         main_experiment_MTGP_all_generations_test_results.main(
             dataset_name, seed, "GP_all_gen_test"
         )
+    elif algo == "Knn_GP_all_gen_test":
+        main_experiment_knn_MTGP_all_generations_test_results.main(
+            dataset_name, seed, "Knn_GP_all_gen_test"
+        )
     elif algo == "TransformerMTGP":
         import TransformerMTGP.GPFC as TransformerGPmain
+
         device = torch.device(device)
         TransformerGPmain.main(dataset_name, seed, num_pre_selection, device)
     elif algo == "transformerGP_all_gen_test":

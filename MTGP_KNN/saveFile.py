@@ -6,7 +6,7 @@ import numpy as np
 
 def save_individual(randomSeeds, dataSetName, individuals):
     # with open(
-    #     "./MTGP/train/scenario_"
+    #     "./MTGP_KNN/train/scenario_"
     #     + str(dataSetName)
     #     + "/"
     #     + str(randomSeeds)
@@ -19,7 +19,7 @@ def save_individual(randomSeeds, dataSetName, individuals):
     # file.close()
     # return
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -46,7 +46,7 @@ def save_each_gen_best_individual_json_format(
         )
 
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -65,7 +65,7 @@ def save_each_gen_best_individual_on_test_dataset(
     randomSeeds, dataSetName, best_ind_all_gen_dict
 ):
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -108,7 +108,7 @@ def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_ge
         individual_dict.append(individual)
 
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -123,11 +123,11 @@ def save_each_gen_best_individual_meng(randomSeeds, dataSetName, best_ind_all_ge
 def clear_individual_each_gen_to_txt(
     randomSeeds, dataSetName
 ):  # save individual as txt by mengxu
-    # file = open('./MTGP/train/scenario_' + str(dataSetName) + '/' + str(randomSeeds) + '_' + dataSetName+'_each_gen.txt', 'w') # 'w' represent coverage, 'a' denotes not coverage
+    # file = open('./MTGP_KNN/train/scenario_' + str(dataSetName) + '/' + str(randomSeeds) + '_' + dataSetName+'_each_gen.txt', 'w') # 'w' represent coverage, 'a' denotes not coverage
     # file.write("Best individuals from each gen:\n")
     # file.close()
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -144,7 +144,7 @@ def save_individual_each_gen_to_txt(
     randomSeeds, dataSetName, individuals, gen
 ):  # save individual as txt by mengxu
     file = open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -168,7 +168,7 @@ def clear_individual_each_gen_to_txt(
     randomSeeds, dataSetName
 ):  # save individual as txt by mengxu
     # file = open(
-    #     "./MTGP/train/scenario_"
+    #     "./MTGP_KNN/train/scenario_"
     #     + str(dataSetName)
     #     + "/"
     #     + str(randomSeeds)
@@ -180,11 +180,11 @@ def clear_individual_each_gen_to_txt(
     # file.write("Best individuals from each gen:\n")
     # file.close()
     # return
-    if not os.path.exists("./MTGP/train/scenario_" + str(dataSetName)):
-        os.makedirs("./MTGP/train/scenario_" + str(dataSetName))
+    if not os.path.exists("./MTGP_KNN/train/scenario_" + str(dataSetName)):
+        os.makedirs("./MTGP_KNN/train/scenario_" + str(dataSetName))
 
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -200,7 +200,7 @@ def save_individual_each_gen_to_txt(
     randomSeeds, dataSetName, individuals, gen
 ):  # save individual as txt by mengxu
     file = open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -222,7 +222,7 @@ def save_individual_each_gen_to_txt(
 
 def save_archive(randomSeeds, dataSetName, individuals):
     # with open(
-    #     "./MTGP/train/scenario_"
+    #     "./MTGP_KNN/train/scenario_"
     #     + str(dataSetName)
     #     + "/"
     #     + str(randomSeeds)
@@ -235,7 +235,7 @@ def save_archive(randomSeeds, dataSetName, individuals):
     # file.close()
     # return
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -249,7 +249,7 @@ def save_archive(randomSeeds, dataSetName, individuals):
 
 def save_pop(randomSeeds, dataSetName, individuals):
     # with open(
-    #     "./MTGP/train/scenario_"
+    #     "./MTGP_KNN/train/scenario_"
     #     + str(dataSetName)
     #     + "/"
     #     + str(randomSeeds)
@@ -262,7 +262,7 @@ def save_pop(randomSeeds, dataSetName, individuals):
     # file.close()
     # return
     with open(
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -276,7 +276,7 @@ def save_pop(randomSeeds, dataSetName, individuals):
 
 def saveMinFitness(randomSeeds, dataSetName, min_fitness):
     fileName1 = (
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -289,7 +289,7 @@ def saveMinFitness(randomSeeds, dataSetName, min_fitness):
 
 def saveRunningTime(randomSeeds, dataSetName, running_time):
     fileName1 = (
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -400,7 +400,7 @@ def saveRunningTime(randomSeeds, dataSetName, running_time):
 
 def saveAllIndividuals(randomSeeds, dataSetName, individuals):
     fileName1 = (
-        "./MTGP/train/scenario_"
+        "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)

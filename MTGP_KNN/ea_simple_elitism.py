@@ -2,8 +2,13 @@ from operator import attrgetter
 import random
 from deap import tools
 import numpy as np
-from MTGP import saveFile
-from MTGP.selection import selElitistAndTournament
+from MTGP_KNN import saveFile
+from MTGP_KNN.selection import selElitistAndTournament
+from MTGP_KNN.util.decistion_situation_generator import (
+    compute_phenotype,
+    KNN_train,
+    predict,
+)
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -56,6 +61,23 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
+def hash_individual(ind):
+    return hash(str(ind.decision_vector))
+
+
+def remove_duplicates(population):
+    unique_pop = []
+    seen = set()
+
+    for ind in population:
+        h = hash_individual(ind)
+        if h not in seen:
+            seen.add(h)
+            unique_pop.append(ind)
+
+    return unique_pop
+
+
 def eaSimple(
     population,
     toolbox,
@@ -71,6 +93,7 @@ def eaSimple(
     verbose=__debug__,
     seed=__debug__,
     dataset_name=__debug__,
+    num_pre_selection=3,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -87,9 +110,15 @@ def eaSimple(
 
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-    # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
+
+    # for ind in population:
+    compute_phenotype(population, rd["decision_situations"])
+
+    decision_matrix = [ind.decision_vector for ind in population]
+    fitness_matrix = [ind.fitness.values[0] for ind in population]
+    knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
 
     # all_individuals.append(invalid_ind)
     all_individuals = [item for item in invalid_ind]
@@ -134,30 +163,38 @@ def eaSimple(
 
         offspring = toolbox.select(population, len(population) - elitism)
 
-        offspring = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
-        invalid_elite_ind = sorted_elite  # modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
-        for ind in invalid_elite_ind:
-            del ind.fitness.values
-        fitnesses_elite = toolbox.multiProcess(toolbox.evaluate, invalid_elite_ind, rd)
-        for ind, fit in zip(invalid_elite_ind, fitnesses_elite):
+        pop_intermediate = []
+        while len(pop_intermediate) < len(population) * num_pre_selection:
+            offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+            compute_phenotype(offspring_intermediate, rd["decision_situations"])
+            pop_intermediate.extend(offspring_intermediate)
+            pop_intermediate = remove_duplicates(sorted_elite + pop_intermediate)[
+                elitism:
+            ]
+        pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
+
+        # for ind in pop_intermediate:
+        # compute_phenotype(pop_intermediate, rd["decision_situations"])
+
+        predict(knn_model, pop_intermediate)
+
+        score_elite = []
+        while len(score_elite) < len(population) - elitism:
+            score_elite.extend(
+                toolbox.select(pop_intermediate, len(population) - elitism)
+            )
+
+            score_elite[:] = remove_duplicates(score_elite)
+        population = sorted_elite + score_elite[: len(population) - elitism]
+
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+        for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
-        invalid_ind = offspring  # modified by mengxu, as we rotate seed, no matter it is valid or not valid, we need to re-evaluate
-        for ind in invalid_ind:
-            del ind.fitness.values
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-        # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
-        for ind, fit in zip(invalid_ind, fitnesses):
-            ind.fitness.values = fit
+        
+        decision_matrix = [ind.decision_vector for ind in population]
+        fitness_matrix = [ind.fitness.values[0] for ind in population]
+        knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
 
-        all_individuals.extend(invalid_ind)
-
-        # Update the hall of fame with the generated individuals
-        # if halloffame is not None:
-        #     halloffame.update(offspring)
-
-        # Replace the current population by the offspring
-        population[:] = invalid_elite_ind + invalid_ind
-        # population[:] = sorted_elite+offspring
 
         # modified by mengxu
         if halloffame is not None:
@@ -170,7 +207,6 @@ def eaSimple(
         best_ind_all_gen.append(population[best_index])  # add by mengxu
         p_one = population[best_index]
         saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
-
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}

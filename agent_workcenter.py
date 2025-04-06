@@ -200,8 +200,9 @@ class workcenter:
                                             # todo: this is not right, need to modify, this should be the OWT
                                             WKR, NOR, self.weight_list[0], (self.env.now - self.release_time_list[0]),
                                             estimated_slack_time]
-                        routingDecision = RoutingDecisionSituation.RoutingDecisionSituation(routing_data_all)
-                        self.RoutingDecisionSituationList.append(routingDecision)
+                        # routingDecision = RoutingDecisionSituation.RoutingDecisionSituation(routing_data_all)
+                        # self.RoutingDecisionSituationList.append(routingDecision)
+                        self.RoutingDecisionSituationList["routing"].append(routing_data_all)
                 elif self.GPrule_action or self.GPrule_ensemble:
                     selected_machine_index = self.job_routing(self.queue[0], self.routing_data,
                                                               current_pt, estimated_slack_time, self.wc_idx,

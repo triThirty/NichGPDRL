@@ -10,6 +10,7 @@ import numpy as np
 from tabulate import tabulate
 import pandas as pd
 from pandas import DataFrame
+
 # import NichingMTGP.LoadIndividual as mtload
 import MTGP_KNN.LoadIndividual as mtload
 import agent_machine
@@ -683,14 +684,9 @@ def main(dataset_name, seedOfRun, input_algo):
     # for _, ind in dict_best_MTGP_individuals_dict.items():
     for ind in dict_best_MTGP_individuals_dict:
         ind["fitness"] = ind["fitness"] / iteration
-    if input_algo == "GP_all_gen_test":
-        saveFile.save_each_gen_best_individual_on_test_dataset(
-            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
-        )
-    elif input_algo == "GP_all_individuals_test":
-        saveFile.save_all_individuals(
-            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict, with_fitness=True
-        )
+    saveFile.save_each_gen_best_individual_on_test_dataset(
+        seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
+    )
     # title = benchmark + MTGP + ['Integrated_DRL']
     title = benchmark + MTGP
 
@@ -743,7 +739,7 @@ def main(dataset_name, seedOfRun, input_algo):
             sys.path[0]
             + "/experiment_result/scenario_"
             + dataSetName
-            + "/transformerGP_all_gen_test_"
+            + "/Knn_MTGP_all_gen_test_"
             + dataSetName
             + "_run_"
             + str(seedOfRun)

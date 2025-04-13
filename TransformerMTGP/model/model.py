@@ -12,8 +12,12 @@ from torch_geometric.nn import (
 
 
 class MyNN(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, num_heads, num_layers):
+    def __init__(
+        self, input_size, hidden_size, output_size, num_heads, num_layers, shared_emb
+    ):
         super(MyNN, self).__init__()
+
+        self.embedding_layer = shared_emb
 
         self.feature_dim_size = input_size
         self.ff_hidden_size = hidden_size
@@ -66,18 +70,34 @@ class MyNN(nn.Module):
             P.spectral_norm(nn.Linear(self.feature_dim_size, self.output_size))
         )
 
+    # split_x: the primitive set index
     def forward(self, batch_data, is_batch=True):
         if is_batch:
             num_nodes_per_graph = batch_data.batch.bincount().tolist()
             split_x = torch.split(batch_data.x, num_nodes_per_graph)
+            split_segement_ids = torch.split(
+                batch_data.segement_ids, num_nodes_per_graph
+            )
+            split_x = pad_sequence(split_x, batch_first=True)
+            split_segement_ids = pad_sequence(split_segement_ids, batch_first=True)
+            post_processed_data = self.embedding_layer(split_x, split_segement_ids)
+            self.src_key_padding_mask = self.src_mask(split_x)
         else:
-            split_x = [batch_data.x]
-        padded_dataset = pad_sequence(split_x, batch_first=True)
-        self.src_key_padding_mask = self.src_mask(padded_dataset)
+            split_x = batch_data.x
+            post_processed_data = self.embedding_layer(
+                split_x, batch_data.segement_ids, is_batch=is_batch
+            )
+            self.src_key_padding_mask = None
         for layer in self.ugformer_layers:
-            x = layer(padded_dataset, src_key_padding_mask=self.src_key_padding_mask)
+            x = layer(
+                post_processed_data, src_key_padding_mask=self.src_key_padding_mask
+            )
 
-        filtered_x = x[~self.src_key_padding_mask]
+        if is_batch:
+            valid_mask = ~self.src_key_padding_mask
+            filtered_x = x[valid_mask]
+        else:
+            filtered_x = x.squeeze(0)
         batch_data.x = filtered_x
 
         x = batch_data.x
@@ -94,7 +114,8 @@ class MyNN(nn.Module):
         return x
 
     def src_mask(self, x):
-        padding_mask = torch.all(x == 0, dim=-1)
+        # padding_mask = torch.all(x == 0, dim=-1)
+        padding_mask = x == 0
         return padding_mask
 
     def mytraining(
@@ -129,3 +150,29 @@ class MyNN(nn.Module):
             if times % 5 == 0:
                 print("The training loss value is:", training_loss_value.item())
         return training_loss, validation_loss
+
+
+class SharedEmbeddings(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.token_emb = nn.Embedding(17, 64, padding_idx=0)
+        self.pos_emb = nn.Embedding(500, 64)
+        self.seg_emb = nn.Embedding(3, 64, padding_idx=0)
+        self.LayerNorm = nn.LayerNorm(64)
+        self.dropout = nn.Dropout(0.3)
+
+    def forward(self, input_ids, segment_ids, is_batch=True):
+        if is_batch:
+            seq_len = input_ids.size(1)
+        else:
+            seq_len = input_ids.size(0)
+        position_ids = torch.arange(
+            seq_len, dtype=torch.long, device=input_ids.device
+        ).unsqueeze(0)
+
+        token_emb = self.token_emb(input_ids)
+        pos_emb = self.pos_emb(position_ids)
+        seg_emb = self.seg_emb(segment_ids)
+
+        embeddings = token_emb + pos_emb + seg_emb
+        return self.dropout(self.LayerNorm(embeddings))

@@ -27,8 +27,8 @@ def surrogate_train(
     optimizer,
     device=None,
 ):
-    embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0).to(device)
-    embedding_layer.load_state_dict(torch.load("./TransformerMTGP/model/embedding.pth"))
+    embedding_layer = torch.nn.Embedding(17, 64, padding_idx=0).to(device)
+    # embedding_layer.load_state_dict(torch.load("./TransformerMTGP/model/embedding.pth"))
 
     model.to(device)
     model.train()
@@ -46,7 +46,7 @@ def surrogate_train(
         combined_x = torch.cat([graph1.x, graph2.x], dim=0)
         indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1]
 
-        x_embedding = embedding_layer(indices)
+        x_embedding = embedding_layer(indices + 1)
         position_embedding = positional_encoding(combined_x.shape[0], 64, device)
 
         x_pos_embedding = (x_embedding + position_embedding).clone().detach()
@@ -58,6 +58,57 @@ def surrogate_train(
             Data(x=x_pos_embedding, edge_index=combined_edge_index, y=graph1.y)
         )
     # training_dataset, validation_dataset = train_test_split(ind_list, test_size=0.0)
+    training_loader = DataLoader(ind_list, batch_size=train_batch_size, shuffle=True)
+    training_loss, validation_loss = model.mytraining(
+        list_net_loss,
+        optimizer,
+        training_loader,
+        training_loader,
+        epoch=epoch,
+    )
+
+
+def new_surrogate_train(
+    population,
+    model,
+    optimizer,
+    device=None,
+):
+    model.to(device)
+    model.train()
+    ind_list = []
+    for id, ind in enumerate(population):
+        i = Individual(str(ind[1]), str(ind[0]), id)
+        i.true_fitness = torch.tensor(ind.fitness.values[0]).to(torch.float32)
+        graph2 = Data(
+            x=i.sequence_data, y=i.true_fitness, edge_index=i.sequence_edge
+        ).to(device)
+        graph1 = Data(x=i.route_data, y=i.true_fitness, edge_index=i.route_edge).to(
+            device
+        )
+
+        combined_x = torch.cat([graph1.x, graph2.x], dim=0)
+        segement_ids = torch.tensor(
+            [1] * graph1.x.size(0) + [2] * graph2.x.size(0), dtype=torch.long
+        ).to(device)
+        indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1] + 1
+
+        # x_embedding = embedding_layer(indices)
+        # position_embedding = positional_encoding(combined_x.shape[0], 64, device)
+
+        # x_pos_embedding = (x_embedding + position_embedding).clone().detach()
+
+        combined_edge_index = torch.cat(
+            [graph1.edge_index, graph2.edge_index + graph1.x.size(0)], dim=1
+        )
+        ind_list.append(
+            Data(
+                x=indices,
+                edge_index=combined_edge_index,
+                y=graph1.y,
+                segement_ids=segement_ids,
+            )
+        )
     training_loader = DataLoader(ind_list, batch_size=train_batch_size, shuffle=True)
     training_loss, validation_loss = model.mytraining(
         list_net_loss,
@@ -80,16 +131,25 @@ def surrogate_evaluate(population, model, device):
         graph1 = Data(x=i.route_data, edge_index=i.route_edge).to(device)
 
         combined_x = torch.cat([graph1.x, graph2.x], dim=0)
-        indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1].to(device)
+        # indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1].to(device)
+        segement_ids = torch.tensor(
+            [1] * graph1.x.size(0) + [2] * graph2.x.size(0), dtype=torch.long
+        ).to(device)
+        indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1] + 1
 
-        x_embedding = embedding_layer(indices).to(device)
-        position_embedding = positional_encoding(combined_x.shape[0], 64, device)
+        # x_embedding = embedding_layer(indices).to(device)
+        # position_embedding = positional_encoding(combined_x.shape[0], 64, device)
 
-        x_pos_embedding = (x_embedding + position_embedding).clone().detach()
+        # x_pos_embedding = (x_embedding + position_embedding).clone().detach()
 
         combined_edge_index = torch.cat(
             [graph1.edge_index, graph2.edge_index + graph1.x.size(0)], dim=1
         )
-        ind_data = Data(x=x_pos_embedding, edge_index=combined_edge_index, y=graph1.y)
+        ind_data = Data(
+            x=indices,
+            edge_index=combined_edge_index,
+            y=graph1.y,
+            segement_ids=segement_ids,
+        )
         output = model(ind_data, is_batch=False)
         ind.score = output.clone().detach().item()

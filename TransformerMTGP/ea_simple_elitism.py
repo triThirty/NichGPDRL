@@ -6,8 +6,12 @@ import torch
 
 
 from TransformerMTGP import saveFile
-from TransformerMTGP.model.surrogate import surrogate_train, surrogate_evaluate
-from TransformerMTGP.model.model import MyNN
+from TransformerMTGP.model.surrogate import (
+    surrogate_train,
+    surrogate_evaluate,
+    new_surrogate_train,
+)
+from TransformerMTGP.model.model import MyNN, SharedEmbeddings
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -118,9 +122,15 @@ def eaSimple(
     for ind, fit in zip(population, fitnesses):
         ind.fitness.values = fit
 
-    transformer_model = MyNN(64, 1024, 1, 8, 3)
-    optimizer = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
-    surrogate_train(
+    shared_emb = SharedEmbeddings()
+    transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
+    optimizer = torch.optim.Adam(
+        params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
+        lr=1e-3,
+    )
+
+    new_surrogate_train(
+        # surrogate_train(
         population,
         transformer_model,
         optimizer,
@@ -200,9 +210,12 @@ def eaSimple(
         #         population[elitism:][k].fitness.values[0],
         #     )
 
-        transformer_model = MyNN(64, 1024, 1, 8, 3)
-        optimizer = torch.optim.Adam(transformer_model.parameters(), lr=1e-3)
-        surrogate_train(
+        transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
+        optimizer = torch.optim.Adam(
+            params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
+            lr=1e-3,
+        )
+        new_surrogate_train(
             population,
             transformer_model,
             optimizer,

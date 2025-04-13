@@ -156,7 +156,7 @@ class SharedEmbeddings(nn.Module):
     def __init__(self):
         super().__init__()
         self.token_emb = nn.Embedding(17, 64, padding_idx=0)
-        self.pos_emb = nn.Embedding(500, 64)
+        self.pos_emb = nn.Embedding(5000, 64)
         self.seg_emb = nn.Embedding(3, 64, padding_idx=0)
         self.LayerNorm = nn.LayerNorm(64)
         self.dropout = nn.Dropout(0.3)

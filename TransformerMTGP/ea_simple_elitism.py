@@ -13,6 +13,8 @@ from TransformerMTGP.model.surrogate import (
 )
 from TransformerMTGP.model.model import MyNN, SharedEmbeddings
 
+from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
     offspring = [toolbox.clone(ind) for ind in population]
@@ -71,8 +73,25 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
+def phyno_hash_individual(ind):
+    return hash(str(ind.decision_vector))
+
+
 def hash_individual(ind):
     return hash(str(ind[0]) + str(ind[1]))
+
+
+def phyno_remove_duplicates(population):
+    unique_pop = []
+    seen = set()
+
+    for ind in population:
+        h = phyno_hash_individual(ind)
+        if h not in seen:
+            seen.add(h)
+            unique_pop.append(ind)
+
+    return unique_pop
 
 
 def remove_duplicates(population):
@@ -122,6 +141,8 @@ def eaSimple(
     for ind, fit in zip(population, fitnesses):
         ind.fitness.values = fit
 
+    compute_phenotype(population, rd["decision_situations"])
+
     shared_emb = SharedEmbeddings()
     transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
     optimizer = torch.optim.Adam(
@@ -168,8 +189,12 @@ def eaSimple(
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+            compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
             pop_intermediate = remove_duplicates(sorted_elite + pop_intermediate)[
+                elitism:
+            ]
+            pop_intermediate = phyno_remove_duplicates(sorted_elite + pop_intermediate)[
                 elitism:
             ]
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]

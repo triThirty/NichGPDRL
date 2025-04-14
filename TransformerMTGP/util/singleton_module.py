@@ -6,6 +6,17 @@ if TYPE_CHECKING:
     from src.classes.individual import Individual
 
 
+def compute_phenotype(pop, decision_situations):
+    for ind in pop:
+        decision_vector = []
+        for situation in decision_situations:
+            selected_machine_index = GP_evolve_R(ind[0], *situation[0])
+            decision_vector.append(selected_machine_index)
+            job_position = GP_evolve_S(situation[1], ind[1])
+            decision_vector.append(job_position)
+        ind.decision_vector = decision_vector
+
+
 # Set seed
 # rng = np.random.default_rng(233)
 rng = np.random.default_rng()

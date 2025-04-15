@@ -158,8 +158,8 @@ class SharedEmbeddings(nn.Module):
         self.token_emb = nn.Embedding(17, 64, padding_idx=0)
         self.pos_emb = nn.Embedding(5000, 64)
         self.seg_emb = nn.Embedding(3, 64, padding_idx=0)
-        self.LayerNorm = nn.LayerNorm(64)
-        self.dropout = nn.Dropout(0.3)
+        # self.LayerNorm = nn.LayerNorm(64)
+        # self.dropout = nn.Dropout(0.3)
 
     def forward(self, input_ids, segment_ids, is_batch=True):
         if is_batch:
@@ -175,4 +175,5 @@ class SharedEmbeddings(nn.Module):
         seg_emb = self.seg_emb(segment_ids)
 
         embeddings = token_emb + pos_emb + seg_emb
-        return self.dropout(self.LayerNorm(embeddings))
+        # return self.dropout(self.LayerNorm(embeddings))
+        return embeddings

@@ -3,11 +3,8 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-MTGP/train/
-NichingMTGP/train
-TransformerMTGP/train
 experiment_result/
-*./train
+*/train
 *.sh
 
 

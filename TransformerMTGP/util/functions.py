@@ -14,7 +14,7 @@ def positional_encoding(seq_len, embed_dim, device):
     return pe
 
 
-def list_net_loss(scores, labels, margin=1.0, lambda_var=0.1):
+def list_net_loss(scores, labels, margin=0.0, lambda_var=0.1):
     """
     scores: 模型预测分数 [batch_size]
     labels: 样本标签 [batch_size]

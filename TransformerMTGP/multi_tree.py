@@ -155,10 +155,36 @@ def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
 
 
+def mutUniform(individual, expr, pset, mutate_point):
+    """Randomly select a point in the tree *individual*, then replace the
+    subtree at that point as a root by the expression generated using method
+    :func:`expr`.
+
+    :param individual: The tree to be mutated.
+    :param expr: A function object that can generate an expression when
+                 called.
+    :returns: A tuple of one tree.
+    """
+    # index = random.randrange(len(individual))
+    index = mutate_point
+    slice_ = individual.searchSubtree(index)
+    type_ = individual[index].ret
+    individual[slice_] = expr(pset=pset, type_=type_)
+    return (individual,)
+
+
 def xmut(ind, expr):
-    i1 = random.randrange(len(ind))
-    indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
+    mutate_point = 0
+    if len(ind[0]) > ind.minimal_score_node_index:
+        i1 = 0
+        mutate_point = ind.minimal_score_node_index
+    else:
+        i1 = 1
+        mutate_point = ind.minimal_score_node_index - len(ind[0])
+    # i1 = random.randrange(len(ind))
+    indx = mutUniform(ind[i1], expr, pset=ind.pset, mutate_point=mutate_point)
     ind[i1] = indx[0]
+    del ind.minimal_score_node_index
     return (ind,)
 
 

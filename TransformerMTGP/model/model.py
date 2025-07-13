@@ -1,13 +1,22 @@
 import torch
 import torch.nn as nn
-from torch.nn import TransformerEncoder, TransformerEncoderLayer
+
 from torch.nn.utils.rnn import pad_sequence
-import numpy as np
 import torch.nn.utils.parametrizations as P
 
 from torch_geometric.nn import (
     global_add_pool,
     GATConv,
+)
+
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+
+from TransformerMTGP.model.transformer import (
+    TransformerEncoder,
+    TransformerEncoderLayer,
 )
 
 
@@ -89,7 +98,7 @@ class MyNN(nn.Module):
             )
             self.src_key_padding_mask = None
         for layer in self.ugformer_layers:
-            x = layer(
+            x, minimal_score_index = layer(
                 post_processed_data, src_key_padding_mask=self.src_key_padding_mask
             )
 
@@ -111,7 +120,10 @@ class MyNN(nn.Module):
 
         x = self.final[0](x)
 
-        return x
+        if is_batch:
+            return x
+        else:
+            return x, minimal_score_index
 
     def src_mask(self, x):
         # padding_mask = torch.all(x == 0, dim=-1)

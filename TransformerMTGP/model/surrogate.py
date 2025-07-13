@@ -1,5 +1,10 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+from networkx.drawing.nx_agraph import graphviz_layout
+
 import torch
 from torch_geometric.data import Data
+from torch_geometric.utils import to_networkx
 
 # from sklearn.model_selection import train_test_split
 from torch_geometric.loader import DataLoader
@@ -131,16 +136,10 @@ def surrogate_evaluate(population, model, device):
         graph1 = Data(x=i.route_data, edge_index=i.route_edge).to(device)
 
         combined_x = torch.cat([graph1.x, graph2.x], dim=0)
-        # indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1].to(device)
         segement_ids = torch.tensor(
             [1] * graph1.x.size(0) + [2] * graph2.x.size(0), dtype=torch.long
         ).to(device)
         indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1] + 1
-
-        # x_embedding = embedding_layer(indices).to(device)
-        # position_embedding = positional_encoding(combined_x.shape[0], 64, device)
-
-        # x_pos_embedding = (x_embedding + position_embedding).clone().detach()
 
         combined_edge_index = torch.cat(
             [graph1.edge_index, graph2.edge_index + graph1.x.size(0)], dim=1
@@ -151,5 +150,23 @@ def surrogate_evaluate(population, model, device):
             y=graph1.y,
             segement_ids=segement_ids,
         )
-        output = model(ind_data, is_batch=False)
+        output, minimal_score_node_index = model(ind_data, is_batch=False)
         ind.score = output.clone().detach().item()
+        ind.minimal_score_node_index = minimal_score_node_index.clone().detach().item()
+
+        # G = to_networkx(ind_data, to_undirected=False)
+        # node_colors = [
+        #     "red" if i == ind.minimal_score_node_index else "skyblue" for i in G.nodes
+        # ]
+        # pos = graphviz_layout(G, prog="dot")
+        # plt.figure(figsize=(8, 6))
+        # nx.draw(
+        #     G,
+        #     pos,
+        #     with_labels=True,
+        #     # labels=node_labels,
+        #     node_color=node_colors,
+        #     node_size=200,
+        # )
+        # plt.title("GNN Input Graph")
+        # plt.show()

@@ -174,6 +174,7 @@ def mutUniform(individual, expr, pset, mutate_point):
 
 
 def xmut(ind, expr):
+    print("The mutated point is:", ind.minimal_score_node_index)
     mutate_point = 0
     if len(ind[0]) > ind.minimal_score_node_index:
         i1 = 0

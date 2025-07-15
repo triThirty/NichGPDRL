@@ -111,8 +111,8 @@ class MyNN(nn.Module):
         batch_data.x = filtered_x
 
         x = batch_data.x
-        for layer in self.lst_gnn:
-            x = x + layer(x, batch_data.edge_index)
+        # for layer in self.lst_gnn:
+        #     x = x + layer(x, batch_data.edge_index)
 
         x = global_add_pool(x, batch_data.batch)
 

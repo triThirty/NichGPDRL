@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from networkx.drawing.nx_agraph import graphviz_layout
-
+import numpy as np
 import torch
 from torch_geometric.data import Data
 from torch_geometric.utils import to_networkx
@@ -150,14 +150,30 @@ def surrogate_evaluate(population, model, device):
             y=graph1.y,
             segement_ids=segement_ids,
         )
-        output, minimal_score_node_index = model(ind_data, is_batch=False)
+        # output, minimal_score_node_index, max_score_node_index = model(ind_data, is_batch=False)
+        output, score_vector = model(ind_data, is_batch=False)
         ind.score = output.clone().detach().item()
-        ind.minimal_score_node_index = minimal_score_node_index.clone().detach().item()
+        # ind.minimal_score_node_index = minimal_score_node_index.clone().detach().item()
+        # ind.max_score_node_index = max_score_node_index.clone().detach().item()
+        ind.score_vector = score_vector.clone().detach().cpu().numpy()
+
+        mask1 = ind_data.segement_ids == 1
+        mask2 = ind_data.segement_ids == 2
+        l_score_vector = ind.score_vector[mask1.numpy()]
+        r_score_vector = ind.score_vector[mask2.numpy()]
+
+        ind.l_min = np.argmin(l_score_vector)
+        ind.l_max = np.argmax(l_score_vector)
+        ind.r_min = np.argmin(r_score_vector)
+        ind.r_max = np.argmax(r_score_vector)
 
         # G = to_networkx(ind_data, to_undirected=False)
-        # node_colors = [
-        #     "red" if i == ind.minimal_score_node_index else "skyblue" for i in G.nodes
-        # ]
+        # node_colors = ["skyblue" for i in G.nodes]
+        # node_colors[ind.l_min] = "red"
+        # node_colors[ind.l_max] = "green"
+        # node_colors[ind.r_min + graph1.x.size(0)] = "red"
+        # node_colors[ind.r_max + graph1.x.size(0)] = "green"
+        # # node_colors[ind.max_score_node_index] = "green"
         # pos = graphviz_layout(G, prog="dot")
         # plt.figure(figsize=(8, 6))
         # nx.draw(

@@ -496,9 +496,11 @@ class TransformerEncoder(Module):
         seq_len = _get_seq_len(src, batch_first)
         is_causal = _detect_is_causal_mask(mask, is_causal, seq_len)
 
-        minimal_score_index = 0
+        # minimal_score_index = 0
+        # max_score_index = 0
         for mod in self.layers:
-            output, minimal_score_index = mod(
+            # output, minimal_score_index, max_score_index = mod(
+            output, score_vector = mod(
                 output,
                 src_mask=mask,
                 is_causal=is_causal,
@@ -511,7 +513,8 @@ class TransformerEncoder(Module):
         if self.norm is not None:
             output = self.norm(output)
 
-        return output, minimal_score_index
+        # return output, minimal_score_index, max_score_index
+        return output, score_vector
 
 
 class TransformerEncoderLayer(Module):
@@ -640,7 +643,10 @@ class TransformerEncoderLayer(Module):
             self.activation_relu_or_gelu = 0
         self.activation = activation
 
-        self.minimal_score_index = None
+        # self.minimal_score_index = None
+        # self.max_score_index = None
+
+        self.score_vector = None
 
     def __setstate__(self, state):
         super().__setstate__(state)
@@ -799,7 +805,8 @@ class TransformerEncoderLayer(Module):
             )
             x = self.norm2(x + self._ff_block(x))
 
-        return x, self.minimal_score_index
+        # return x, self.minimal_score_index, self.max_score_index
+        return x, self.score_vector
 
     # self-attention block
     def _sa_block(
@@ -824,7 +831,13 @@ class TransformerEncoderLayer(Module):
         # TODO: modify by me
         # weights.fill_diagonal_(0.0)
         if weights.shape[0] == 1:
-            self.minimal_score_index = torch.argmin(weights.squeeze(0).fill_diagonal_(0.0).sum(0))
+            # self.minimal_score_index = torch.argmin(
+            #     weights.squeeze(0).fill_diagonal_(0.0).sum(0)
+            # )
+            # self.max_score_index = torch.argmax(
+            #     weights.squeeze(0).fill_diagonal_(0.0).sum(0)
+            # )
+            self.score_vector = weights.squeeze(0).fill_diagonal_(0.0).sum(0)
         # TODO: end of modification
         return self.dropout1(x)
 

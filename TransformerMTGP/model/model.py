@@ -98,7 +98,8 @@ class MyNN(nn.Module):
             )
             self.src_key_padding_mask = None
         for layer in self.ugformer_layers:
-            x, minimal_score_index = layer(
+            # x, minimal_score_index, max_score_index = layer(
+            x, score_vector = layer(
                 post_processed_data, src_key_padding_mask=self.src_key_padding_mask
             )
 
@@ -110,8 +111,8 @@ class MyNN(nn.Module):
         batch_data.x = filtered_x
 
         x = batch_data.x
-        # for layer in self.lst_gnn:
-        #     x = x + layer(x, batch_data.edge_index)
+        for layer in self.lst_gnn:
+            x = x + layer(x, batch_data.edge_index)
 
         x = global_add_pool(x, batch_data.batch)
 
@@ -123,7 +124,7 @@ class MyNN(nn.Module):
         if is_batch:
             return x
         else:
-            return x, minimal_score_index
+            return x, score_vector
 
     def src_mask(self, x):
         # padding_mask = torch.all(x == 0, dim=-1)

@@ -2,6 +2,7 @@ import copy
 import random
 import numpy as np
 
+from collections import defaultdict
 from deap import gp, creator
 from deap import tools
 
@@ -127,13 +128,56 @@ def wrap(func, *args, **kwargs):
     return new_inds
 
 
+__type__ = object
+
+
+def cxOnePoint(ind1, ind2):
+    """Randomly select crossover point in each individual and exchange each
+    subtree with the point as root between each individual.
+
+    :param ind1: First tree participating in the crossover.
+    :param ind2: Second tree participating in the crossover.
+    :returns: A tuple of two trees.
+    """
+    if len(ind1) < 2 or len(ind2) < 2:
+        # No crossover on single node tree
+        return ind1, ind2
+
+    # List all available primitive types in each individual
+    types1 = defaultdict(list)
+    types2 = defaultdict(list)
+    if ind1.root.ret == __type__:
+        # Not STGP optimization
+        types1[__type__] = list(range(1, len(ind1)))
+        types2[__type__] = list(range(1, len(ind2)))
+        common_types = [__type__]
+    else:
+        for idx, node in enumerate(ind1[1:], 1):
+            types1[node.ret].append(idx)
+        for idx, node in enumerate(ind2[1:], 1):
+            types2[node.ret].append(idx)
+        common_types = set(types1.keys()).intersection(set(types2.keys()))
+
+    if len(common_types) > 0:
+        type_ = random.choice(list(common_types))
+
+        index1 = random.choice(types1[type_])
+        index2 = random.choice(types2[type_])
+
+        slice1 = ind1.searchSubtree(index1)
+        slice2 = ind2.searchSubtree(index2)
+        ind1[slice1], ind2[slice2] = ind2[slice2], ind1[slice1]
+
+    return ind1, ind2
+
+
 # the following is modified by mengxu
 def xmate(ind1, ind2):
     if len(ind1) == 2:
         i1 = random.randrange(len(ind1))
         # i2 = random.randrange(len(ind2))
         # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
-        ind1[i1], ind2[i1] = gp.cxOnePoint(ind1[i1], ind2[i1])
+        ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
 
         # exchange the other tree
         i2 = 1 - i1  # only for individual with two tree
@@ -155,7 +199,25 @@ def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
 
 
-def mutUniform(individual, expr, pset, mutate_point):
+# def mutUniform(individual, expr, pset, mutate_point):
+#     """Randomly select a point in the tree *individual*, then replace the
+#     subtree at that point as a root by the expression generated using method
+#     :func:`expr`.
+
+#     :param individual: The tree to be mutated.
+#     :param expr: A function object that can generate an expression when
+#                  called.
+#     :returns: A tuple of one tree.
+#     """
+#     # index = random.randrange(len(individual))
+#     index = mutate_point
+#     slice_ = individual.searchSubtree(index)
+#     type_ = individual[index].ret
+#     individual[slice_] = expr(pset=pset, type_=type_)
+#     return (individual,)
+
+
+def mutUniform(individual, expr, pset):
     """Randomly select a point in the tree *individual*, then replace the
     subtree at that point as a root by the expression generated using method
     :func:`expr`.
@@ -166,27 +228,41 @@ def mutUniform(individual, expr, pset, mutate_point):
     :returns: A tuple of one tree.
     """
     # index = random.randrange(len(individual))
-    index = mutate_point
-    slice_ = individual.searchSubtree(index)
-    type_ = individual[index].ret
-    individual[slice_] = expr(pset=pset, type_=type_)
+    ind = individual[0]
+    index = individual.l_min
+    slice_ = ind.searchSubtree(index)
+    type_ = ind[index].ret
+    ind[slice_] = expr(pset=pset, type_=type_)
+    individual[0] = ind
+
+    ind = individual[1]
+    index = individual.r_min
+    slice_ = ind.searchSubtree(index)
+    type_ = ind[index].ret
+    ind[slice_] = expr(pset=pset, type_=type_)
+    individual[1] = ind
+    del individual.l_min
+    del individual.l_max
+    del individual.r_min
+    del individual.r_max
     return (individual,)
 
 
 def xmut(ind, expr):
-    print("The mutated point is:", ind.minimal_score_node_index)
-    mutate_point = 0
-    if len(ind[0]) > ind.minimal_score_node_index:
-        i1 = 0
-        mutate_point = ind.minimal_score_node_index
-    else:
-        i1 = 1
-        mutate_point = ind.minimal_score_node_index - len(ind[0])
+    # print("The mutated point is:", ind.minimal_score_node_index)
+    # mutate_point = 0
+    # if len(ind[0]) > ind.minimal_score_node_index:
+    #     i1 = 0
+    #     mutate_point = ind.minimal_score_node_index
+    # else:
+    #     i1 = 1
+    #     mutate_point = ind.minimal_score_node_index - len(ind[0])
     # i1 = random.randrange(len(ind))
-    indx = mutUniform(ind[i1], expr, pset=ind.pset, mutate_point=mutate_point)
-    ind[i1] = indx[0]
-    del ind.minimal_score_node_index
-    return (ind,)
+    # indx = mutUniform(ind[i1], expr, pset=ind.pset, mutate_point=mutate_point)
+    ind = mutUniform(ind, expr, pset=ind.pset)
+    # ind[i1] = indx[0]
+    # return (ind,)
+    return ind
 
 
 def lim_xmut(ind, expr):

@@ -159,8 +159,8 @@ def surrogate_evaluate(population, model, device):
 
         mask1 = ind_data.segement_ids == 1
         mask2 = ind_data.segement_ids == 2
-        l_score_vector = ind.score_vector[mask1.numpy()]
-        r_score_vector = ind.score_vector[mask2.numpy()]
+        l_score_vector = ind.score_vector[mask1.clone().detach().cpu().numpy()]
+        r_score_vector = ind.score_vector[mask2.clone().detach().cpu().numpy()]
 
         ind.l_min = np.argmin(l_score_vector)
         ind.l_max = np.argmax(l_score_vector)

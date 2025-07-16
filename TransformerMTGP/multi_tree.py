@@ -229,14 +229,14 @@ def mutUniform(individual, expr, pset):
     """
     # index = random.randrange(len(individual))
     ind = individual[0]
-    index = individual.l_min
+    index = individual.l_max
     slice_ = ind.searchSubtree(index)
     type_ = ind[index].ret
     ind[slice_] = expr(pset=pset, type_=type_)
     individual[0] = ind
 
     ind = individual[1]
-    index = individual.r_min
+    index = individual.r_max
     slice_ = ind.searchSubtree(index)
     type_ = ind[index].ret
     ind[slice_] = expr(pset=pset, type_=type_)

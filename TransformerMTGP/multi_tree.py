@@ -171,17 +171,73 @@ def cxOnePoint(ind1, ind2):
     return ind1, ind2
 
 
+def newcxOnePoint(ind1, ind2):
+    """Randomly select crossover point in each individual and exchange each
+    subtree with the point as root between each individual.
+
+    :param ind1: First tree participating in the crossover.
+    :param ind2: Second tree participating in the crossover.
+    :returns: A tuple of two trees.
+    """
+    for i in range(len(ind1)):
+
+        tree_1 = ind1[i]
+        tree_2 = ind2[i]
+
+        if len(tree_1) < 2 or len(tree_2) < 2:
+            # No crossover on single node tree
+            return ind1, ind2
+
+        # List all available primitive types in each individual
+        types1 = defaultdict(list)
+        types2 = defaultdict(list)
+        if tree_1.root.ret == __type__:
+            # Not STGP optimization
+            types1[__type__] = list(range(1, len(tree_1)))
+            types2[__type__] = list(range(1, len(tree_2)))
+            common_types = [__type__]
+        else:
+            for idx, node in enumerate(tree_1[1:], 1):
+                types1[node.ret].append(idx)
+            for idx, node in enumerate(tree_2[1:], 1):
+                types2[node.ret].append(idx)
+            common_types = set(types1.keys()).intersection(set(types2.keys()))
+
+        if len(common_types) > 0:
+            if i == 0:
+                index1 = ind1.l_min
+                index2 = ind2.l_max
+            else:
+                index1 = ind1.r_min
+                index2 = ind2.r_max
+
+            slice1 = tree_1.searchSubtree(index1)
+            slice2 = tree_2.searchSubtree(index2)
+            tree_1[slice1], tree_2[slice2] = tree_2[slice2], tree_1[slice1]
+
+    return ind1, ind2
+
+
 # the following is modified by mengxu
 def xmate(ind1, ind2):
     if len(ind1) == 2:
-        i1 = random.randrange(len(ind1))
-        # i2 = random.randrange(len(ind2))
-        # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
-        ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
+        # i1 = random.randrange(len(ind1))
+        # # i2 = random.randrange(len(ind2))
+        # # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
+        # ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
 
-        # exchange the other tree
-        i2 = 1 - i1  # only for individual with two tree
-        ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+        # # exchange the other tree
+        # i2 = 1 - i1  # only for individual with two tree
+        # ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+        ind1, ind2 = newcxOnePoint(ind1, ind2)
+        del ind1.l_min
+        del ind1.l_max
+        del ind1.r_min
+        del ind1.r_max
+        del ind2.l_min
+        del ind2.l_max
+        del ind2.r_min
+        del ind2.r_max
     else:
         if len(ind1) == 2:
             ind1[0], ind2[0] = gp.cxOnePoint(ind1[0], ind2[0])

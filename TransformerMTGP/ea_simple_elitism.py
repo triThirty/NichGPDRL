@@ -22,7 +22,7 @@ from TransformerMTGP.util.functions import (
 )
 
 
-def varAnd(population, toolbox, cxpb, mutpb, reppb):
+def varAnd(population, toolbox, cxpb, mutpb, reppb, transformer_model, device):
     offspring = [toolbox.clone(ind) for ind in population]
     new_cxpb = cxpb / (cxpb + mutpb + reppb)
     new_mutpb = mutpb / (cxpb + mutpb + reppb) + new_cxpb
@@ -34,6 +34,7 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
                 (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
                 (offspring[i],) = toolbox.mutate(offspring[i])
             else:
+                # print("Crossover", offspring[i].l_min)
                 offspring[i - 1], offspring[i] = toolbox.mate(
                     offspring[i - 1], offspring[i]
                 )
@@ -42,14 +43,12 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
             offspring[i].num_calculation = 0
             i = i + 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
+            # print("Mutation", offspring[i].l_min)
             (offspring[i],) = toolbox.mutate(offspring[i])
             del offspring[i].fitness.values
             offspring[i].num_calculation = 0
+            surrogate_evaluate([offspring[i]], transformer_model, device)
             i = i + 1
-        # else:  # reproduction
-        #     del offspring[i].fitness.values
-        #     offspring[i].num_calculation = 0
-        #     i = i + 1
     return offspring
 
 
@@ -193,8 +192,11 @@ def eaSimple(
         offspring = toolbox.select(population, len(population) - elitism)
 
         pop_intermediate = []
+        # print("Generation", gen, "seed", rd["seed"])
         while len(pop_intermediate) < len(population) * num_pre_selection:
-            offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+            offspring_intermediate = varAnd(
+                offspring, toolbox, cxpb, mutpb, reppb, transformer_model, device
+            )
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
             pop_intermediate = remove_duplicates(

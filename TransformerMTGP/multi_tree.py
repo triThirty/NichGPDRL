@@ -221,10 +221,12 @@ def newcxOnePoint(ind1, ind2):
 # the following is modified by mengxu
 def xmate(ind1, ind2):
     if len(ind1) == 2:
-        # i1 = random.randrange(len(ind1))
-        # # i2 = random.randrange(len(ind2))
-        # # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
-        # ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
+        randomValue = random.random()
+        if randomValue < 0.8:  # crossover
+            i1 = random.randrange(len(ind1))
+            # i2 = random.randrange(len(ind2))
+            # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
+            ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
 
         # # exchange the other tree
         # i2 = 1 - i1  # only for individual with two tree

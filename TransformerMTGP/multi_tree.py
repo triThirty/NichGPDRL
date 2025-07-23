@@ -249,20 +249,13 @@ def mutUniform(individual, expr, pset):
 
 
 def xmut(ind, expr):
-    # print("The mutated point is:", ind.minimal_score_node_index)
-    # mutate_point = 0
-    # if len(ind[0]) > ind.minimal_score_node_index:
-    #     i1 = 0
-    #     mutate_point = ind.minimal_score_node_index
-    # else:
-    #     i1 = 1
-    #     mutate_point = ind.minimal_score_node_index - len(ind[0])
-    # i1 = random.randrange(len(ind))
-    # indx = mutUniform(ind[i1], expr, pset=ind.pset, mutate_point=mutate_point)
-    ind = mutUniform(ind, expr, pset=ind.pset)
-    # ind[i1] = indx[0]
-    # return (ind,)
-    return ind
+    # ind = mutUniform(ind, expr, pset=ind.pset)
+    # return ind
+
+    i1 = random.randrange(len(ind))
+    indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
+    ind[i1] = indx[0]
+    return (ind,)
 
 
 def lim_xmut(ind, expr):

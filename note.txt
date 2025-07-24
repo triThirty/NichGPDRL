@@ -1,0 +1,5 @@
+no GNN Conv and the loss func margin is 0, no mutation change
+cuda9:
+knn and HH HL
+cuda8:
+LH LL

@@ -222,7 +222,7 @@ def newcxOnePoint(ind1, ind2):
 def xmate(ind1, ind2):
     if len(ind1) == 2:
         randomValue = random.random()
-        if randomValue < 0.2:  # crossover
+        if randomValue < 0.9:  # crossover
             i1 = random.randrange(len(ind1))
             # i2 = random.randrange(len(ind2))
             # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover

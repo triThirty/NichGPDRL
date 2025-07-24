@@ -1,5 +1,11 @@
-no GNN Conv and the loss func margin is 0, no mutation change
-cuda9:
-knn and HH HL
-cuda8:
-LH LL
+22/7/2025:
+this is the simple GNN + max score based mutation and crossover:
+0.5 -> 840 
+0.8 -> 840 
+0.1 -> 814
+
+23/7/2025:
+test on HL LH LL
+
+final:
+10% score-based crossover + mutation is out-performance than other algorithms

@@ -194,19 +194,15 @@ def eaSimple(
 
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
-            print("***********")
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
-            print("After extend:", pop_intermediate[0][0])
             pop_intermediate = remove_duplicates(
                 sorted_elite + deepcopy(pop_intermediate)
             )[elitism:]
-            print("After geno removal:", pop_intermediate[0][0])
             pop_intermediate = phyno_remove_duplicates(
                 sorted_elite + deepcopy(pop_intermediate)
             )[elitism:]
-            print("After pheno removal:", pop_intermediate[0][0])
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         # surrogate_evaluate(pop_intermediate, transformer_model, device)

@@ -40,7 +40,7 @@ def save_all_individuals(
                 "T1": str(ind[1]),
                 "fitness": ind.fitness.values[0],
                 "num_calculation": ind.num_calculation,
-                "score:": ind.score,
+                "score": getattr(ind, "score", 0),
                 "gen": gen,
             }
             individuals_list.append(individual_dict)

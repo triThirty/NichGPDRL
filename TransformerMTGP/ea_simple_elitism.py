@@ -143,21 +143,21 @@ def eaSimple(
 
     compute_phenotype(population, rd["decision_situations"])
 
-    shared_emb = SharedEmbeddings()
-    transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
-    optimizer = torch.optim.Adam(
-        params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
-        lr=1e-3,
-    )
+    # shared_emb = SharedEmbeddings()
+    # transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
+    # optimizer = torch.optim.Adam(
+    #     params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
+    #     lr=1e-3,
+    # )
 
-    new_surrogate_train(
-        # surrogate_train(
-        population,
-        transformer_model,
-        optimizer,
-        device=device,
-    )
-    surrogate_evaluate(population, transformer_model, device)
+    # new_surrogate_train(
+    #     # surrogate_train(
+    #     population,
+    #     transformer_model,
+    #     optimizer,
+    #     device=device,
+    # )
+    # surrogate_evaluate(population, transformer_model, device)
     saveFile.save_all_individuals(seed, dataset_name, population, 0)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
@@ -199,18 +199,20 @@ def eaSimple(
             ]
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
-        surrogate_evaluate(pop_intermediate, transformer_model, device)
-        score_elite = []
-        while len(score_elite) < len(population) - elitism:
-            score_elite.extend(
-                toolbox.score_base_select(pop_intermediate, len(population) - elitism)
-            )
+        # surrogate_evaluate(pop_intermediate, transformer_model, device)
+        # score_elite = []
+        # while len(score_elite) < len(population) - elitism:
+        #     score_elite.extend(
+        #         toolbox.score_base_select(pop_intermediate, len(population) - elitism)
+        #     )
 
-            score_elite[:] = remove_duplicates(score_elite)
-        population = sorted_elite + score_elite[: len(population) - elitism]
+        #     score_elite[:] = remove_duplicates(score_elite)
+        score_elite = random.choices(pop_intermediate, k=len(population) - elitism)
+        # population = sorted_elite + score_elite[: len(population) - elitism]
+        population = sorted_elite + score_elite
 
         rd["seed"] = randomSeed_ngen[gen]
-        surrogate_evaluate(population, transformer_model, device)
+        # surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
@@ -235,18 +237,18 @@ def eaSimple(
         #         population[elitism:][k].fitness.values[0],
         #     )
 
-        transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
-        optimizer = torch.optim.Adam(
-            params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
-            lr=1e-3,
-        )
-        new_surrogate_train(
-            population,
-            transformer_model,
-            optimizer,
-            device=device,
-        )
-        surrogate_evaluate(population, transformer_model, device)
+        # transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
+        # optimizer = torch.optim.Adam(
+        #     params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
+        #     lr=1e-3,
+        # )
+        # new_surrogate_train(
+        #     population,
+        #     transformer_model,
+        #     optimizer,
+        #     device=device,
+        # )
+        # surrogate_evaluate(population, transformer_model, device)
         saveFile.save_all_individuals(seed, dataset_name, population, gen)
 
         # modified by mengxu

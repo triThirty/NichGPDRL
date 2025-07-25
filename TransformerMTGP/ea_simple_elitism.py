@@ -3,6 +3,7 @@ import random
 import numpy as np
 from deap import tools
 import torch
+from copy import deepcopy
 
 
 from TransformerMTGP import saveFile
@@ -14,6 +15,11 @@ from TransformerMTGP.model.surrogate import (
 from TransformerMTGP.model.model import MyNN, SharedEmbeddings
 
 from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+
+from TransformerMTGP.util.functions import (
+    remove_duplicates,
+    phyno_remove_duplicates,
+)
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -73,38 +79,38 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
-def phyno_hash_individual(ind):
-    return hash(str(ind.decision_vector))
+# def phyno_hash_individual(ind):
+#     return hash(str(ind.decision_vector))
 
 
-def hash_individual(ind):
-    return hash(str(ind[0]) + str(ind[1]))
+# def hash_individual(ind):
+#     return hash(str(ind[0]) + str(ind[1]))
 
 
-def phyno_remove_duplicates(population):
-    unique_pop = []
-    seen = set()
+# def phyno_remove_duplicates(population):
+#     unique_pop = []
+#     seen = set()
 
-    for ind in population:
-        h = phyno_hash_individual(ind)
-        if h not in seen:
-            seen.add(h)
-            unique_pop.append(ind)
+#     for i, ind in enumerate(population):
+#         h = phyno_hash_individual(ind)
+#         if h not in seen:
+#             seen.add(h)
+#             unique_pop.append(ind)
 
-    return unique_pop
+#     return unique_pop
 
 
-def remove_duplicates(population):
-    unique_pop = []
-    seen = set()
+# def remove_duplicates(population):
+#     unique_pop = []
+#     seen = set()
 
-    for ind in population:
-        h = hash_individual(ind)
-        if h not in seen:
-            seen.add(h)
-            unique_pop.append(ind)
+#     for ind in population:
+#         h = hash_individual(ind)
+#         if h not in seen:
+#             seen.add(h)
+#             unique_pop.append(ind)
 
-    return unique_pop
+#     return unique_pop
 
 
 def eaSimple(
@@ -188,15 +194,19 @@ def eaSimple(
 
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
+            print("***********")
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
-            pop_intermediate = remove_duplicates(sorted_elite + pop_intermediate)[
-                elitism:
-            ]
-            pop_intermediate = phyno_remove_duplicates(sorted_elite + pop_intermediate)[
-                elitism:
-            ]
+            print("After extend:", pop_intermediate[0][0])
+            pop_intermediate = remove_duplicates(
+                sorted_elite + deepcopy(pop_intermediate)
+            )[elitism:]
+            print("After geno removal:", pop_intermediate[0][0])
+            pop_intermediate = phyno_remove_duplicates(
+                sorted_elite + deepcopy(pop_intermediate)
+            )[elitism:]
+            print("After pheno removal:", pop_intermediate[0][0])
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         # surrogate_evaluate(pop_intermediate, transformer_model, device)

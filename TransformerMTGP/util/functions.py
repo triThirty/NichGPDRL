@@ -80,3 +80,37 @@ def lr_lambda(epoch):
             1
             + math.cos((epoch - warmup_epochs) / (num_epochs - warmup_epochs) * math.pi)
         )
+
+
+def phyno_hash_individual(ind):
+    return hash(str(ind.decision_vector))
+
+
+def hash_individual(ind):
+    return hash(str(ind[0]) + str(ind[1]))
+
+
+def phyno_remove_duplicates(population):
+    unique_pop = []
+    seen = set()
+
+    for i, ind in enumerate(population):
+        h = phyno_hash_individual(ind)
+        if h not in seen:
+            seen.add(h)
+            unique_pop.append(ind)
+
+    return unique_pop
+
+
+def remove_duplicates(population):
+    unique_pop = []
+    seen = set()
+
+    for ind in population:
+        h = hash_individual(ind)
+        if h not in seen:
+            seen.add(h)
+            unique_pop.append(ind)
+
+    return unique_pop

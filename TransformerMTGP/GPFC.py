@@ -20,6 +20,12 @@ import agent_workcenter
 import sequencing
 import routing
 
+from TransformerMTGP.util.functions import (
+    remove_duplicates,
+    phyno_remove_duplicates,
+)
+from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+
 
 class shopfloor:
     def __init__(self, env, span, m_no, wc_no, sequencing_tree, routing_tree, **kwargs):
@@ -477,6 +483,16 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device):
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)
+
+    compute_phenotype(pop, rd["decision_situations"])
+    pop = remove_duplicates(pop)
+    pop = phyno_remove_duplicates(pop)
+    while len(pop) < POP_SIZE:
+        new_ind = toolbox.individual()
+        compute_phenotype([new_ind], rd["decision_situations"])
+        pop.append(new_ind)
+        pop = remove_duplicates(pop)
+        pop = phyno_remove_duplicates(pop)
 
     times = 1
 

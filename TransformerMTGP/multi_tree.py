@@ -228,18 +228,19 @@ def xmate(ind1, ind2):
             # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
             ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
 
-        # # exchange the other tree
-        # i2 = 1 - i1  # only for individual with two tree
-        # ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
-        ind1, ind2 = newcxOnePoint(ind1, ind2)
-        del ind1.l_min
-        del ind1.l_max
-        del ind1.r_min
-        del ind1.r_max
-        del ind2.l_min
-        del ind2.l_max
-        del ind2.r_min
-        del ind2.r_max
+            # exchange the other tree
+            i2 = 1 - i1  # only for individual with two tree
+            ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+        else:
+            ind1, ind2 = newcxOnePoint(ind1, ind2)
+            del ind1.l_min
+            del ind1.l_max
+            del ind1.r_min
+            del ind1.r_max
+            del ind2.l_min
+            del ind2.l_max
+            del ind2.r_min
+            del ind2.r_max
     else:
         if len(ind1) == 2:
             ind1[0], ind2[0] = gp.cxOnePoint(ind1[0], ind2[0])
@@ -307,13 +308,20 @@ def mutUniform(individual, expr, pset):
 
 
 def xmut(ind, expr):
-    # ind = mutUniform(ind, expr, pset=ind.pset)
-    # return ind
-
-    i1 = random.randrange(len(ind))
-    indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
-    ind[i1] = indx[0]
-    return (ind,)
+    # print("The mutated point is:", ind.minimal_score_node_index)
+    # mutate_point = 0
+    # if len(ind[0]) > ind.minimal_score_node_index:
+    #     i1 = 0
+    #     mutate_point = ind.minimal_score_node_index
+    # else:
+    #     i1 = 1
+    #     mutate_point = ind.minimal_score_node_index - len(ind[0])
+    # i1 = random.randrange(len(ind))
+    # indx = mutUniform(ind[i1], expr, pset=ind.pset, mutate_point=mutate_point)
+    ind = mutUniform(ind, expr, pset=ind.pset)
+    # ind[i1] = indx[0]
+    # return (ind,)
+    return ind
 
 
 def lim_xmut(ind, expr):

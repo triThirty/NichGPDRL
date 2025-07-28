@@ -2,6 +2,7 @@ import sys
 import argparse
 
 import torch
+import random
 
 import MTGP.GPFC as GPmain
 import MTGP_KNN.GPFC as KnnGPmain
@@ -25,6 +26,7 @@ import main_training_S_online_learning
 import main_experiment_transformerGP_all_generations_test_results
 import main_experiment_MTGP_all_generations_test_results
 import main_experiment_knn_MTGP_all_generations_test_results
+import os
 
 sys.path
 
@@ -37,11 +39,46 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the main experiment")
     parser.add_argument(
         "--dataset_name",
-        type=str,
+        type=str or list,
         help="The name of the dataset to run the experiment on",
+        default=["HH", "HL", "LH", "LL"],
     )
     parser.add_argument(
-        "--seed", type=int, help="The random seed to use for the experiment"
+        "--seed",
+        type=int or list,
+        help="The random seed to use for the experiment",
+        default=[
+            0,
+            1,
+            2,
+            4,
+            8,
+            16,
+            32,
+            40,
+            64,
+            128,
+            256,
+            512,
+            1024,
+            10,
+            20,
+            30,
+            50,
+            999,
+            123,
+            2025,
+            30000,
+            10000,
+            20000,
+            11000,
+            23333,
+            920083,
+            908461,
+            234815,
+            882415,
+            794609,
+        ],
     )
 
     parser.add_argument(
@@ -54,7 +91,7 @@ if __name__ == "__main__":
         "--num_pre_selection",
         type=int,
         help="If the pre-selection is used",
-        default=0,
+        default=3,
     )
 
     parser.add_argument(
@@ -66,108 +103,117 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    dataset_name = args.dataset_name
-    seed = args.seed
+    ds = args.dataset_name
+    s = args.seed
     algo = args.algo
     num_pre_selection = args.num_pre_selection
     device = args.device
 
-    # dataset_name = "HH"
-    # seed = 2
-    # algo = "MTGP"
-    # algo = "TransformerMTGP"
-    # algo = "GP_all_gen_test"
-    # algo = "NichingMTGP"
-    torch.manual_seed(seed)
-    np.random.seed(seed)
+    if isinstance(s, list):
+        for seed in s:
+            torch.manual_seed(seed)
+            np.random.seed(seed)
+            random.seed(seed)
+            os.environ["PYTHONHASHSEED"] = str(seed)
+            if device == "cuda":
+                torch.cuda.manual_seed(seed)
+                torch.cuda.manual_seed_all(seed)
 
-    # algo = 'transformerGP_all_gen_test'
-    # algo = 'GP_all_gen_test'
+                torch.backends.cudnn.deterministic = True
+                torch.backends.cudnn.benchmark = False
 
-    import os
+            if isinstance(ds, list):
+                for dataset_name in ds:
+                    print(f"Main process ID: {os.getpid()}")
+                    if algo == "MTGP":
+                        print("----------MTGP----------")
+                        GPmain.main(dataset_name, seed)
+                    elif algo == "KnnMTGP":
+                        print("----------KnnMTGP----------")
+                        KnnGPmain.main(dataset_name, seed)
+                    elif algo == "NichingMTGP":
+                        print("----------niching MTGP----------")
+                        NichingGPmain.main(dataset_name, seed)
+                    elif algo == "NichingGP_all_gen_test":
+                        main_experiment_GP_all_generations_test_results.main(
+                            dataset_name, seed, "NichingGP_all_gen_test"
+                        )
+                    elif algo == "GP_all_gen_test":
+                        main_experiment_MTGP_all_generations_test_results.main(
+                            dataset_name, seed, "GP_all_gen_test"
+                        )
+                    elif algo == "Knn_GP_all_gen_test":
+                        main_experiment_knn_MTGP_all_generations_test_results.main(
+                            dataset_name, seed, "Knn_GP_all_gen_test"
+                        )
+                    elif algo == "TransformerMTGP":
+                        import TransformerMTGP.GPFC as TransformerGPmain
 
-    print(f"Main process ID: {os.getpid()}")
-    if algo == "MTGP":
-        print("----------MTGP----------")
-        GPmain.main(dataset_name, seed)
-    elif algo == "KnnMTGP":
-        print("----------KnnMTGP----------")
-        KnnGPmain.main(dataset_name, seed)
-    elif algo == "NichingMTGP":
-        print("----------niching MTGP----------")
-        NichingGPmain.main(dataset_name, seed)
-    elif algo == "NichingGP_all_gen_test":
-        main_experiment_GP_all_generations_test_results.main(
-            dataset_name, seed, "NichingGP_all_gen_test"
-        )
-    elif algo == "GP_all_gen_test":
-        main_experiment_MTGP_all_generations_test_results.main(
-            dataset_name, seed, "GP_all_gen_test"
-        )
-    elif algo == "Knn_GP_all_gen_test":
-        main_experiment_knn_MTGP_all_generations_test_results.main(
-            dataset_name, seed, "Knn_GP_all_gen_test"
-        )
-    elif algo == "TransformerMTGP":
-        import TransformerMTGP.GPFC as TransformerGPmain
-
-        device = torch.device(device)
-        TransformerGPmain.main(dataset_name, seed, num_pre_selection, device)
-    elif algo == "transformerGP_all_gen_test":
-        main_experiment_transformerGP_all_generations_test_results.main(
-            dataset_name, seed, "transformerGP_all_gen_test"
-        )
-    elif algo == "MTGP_DRL_best_gen_test_for_CIM_paper":
-        main_experiment_GP_all_generations_test_results.main(
-            dataset_name, seed, "MTGP_DRL_best_gen_test_for_CIM_paper"
-        )
-    elif algo == "NichingMTGP_DRL_test":
-        main_experiment_NichingMTGP_Integrated_DRL.main(dataset_name, seed)
-    elif algo == "intermediate_DRL_R_S_single_agent_test":
-        main_experiment_NichingMTGP_Integrated_DRL_R_S_single_agent_with_intermediate.main(
-            dataset_name, seed
-        )
-    elif algo == "intermediate_DRL_R_test":
-        main_experiment_NichingMTGP_Integrated_DRL_R_with_intermediate.main(
-            dataset_name, seed
-        )
-    elif algo == "intermediate_DRL_S_test":
-        main_experiment_NichingMTGP_Integrated_DRL_S_with_intermediate.main(
-            dataset_name, seed
-        )
-    elif algo == "manualRule_test":
-        main_experiment_manualRule_using_validation.main(dataset_name, seed)
-    elif algo == "RL_test":
-        main_experiment_Integrated_DRL.main(dataset_name, seed)
-    elif (
-        algo == "GP_sequencing_RL_routing_test"
-    ):  # add by mengxu for revise the paper 2023.08.18
-        main_experiment_Integrated_DRL.main(dataset_name, seed)
-    elif algo == "RL_R":
-        main_training_R.training(dataset_name, seed)
-    elif algo == "RL_S":
-        main_training_S.training(dataset_name, seed)
-    elif algo == "RL_R_30":
-        # for 30 times training of RL_R
-        all_dataset_name = ["LH"]
-        for dataset_name in all_dataset_name:
-            for i in range(22, 30):
-                seed = i
-                main_training_R.training(dataset_name, seed)
-    elif algo == "RL_S_30":
-        # for 30 times training of RL_S
-        all_dataset_name = ["LL"]
-        for dataset_name in all_dataset_name:
-            for i in range(7, 11):
-                seed = i
-                main_training_S.training(dataset_name, seed)
-    elif algo == "GPRL_R_S":
-        main_training_R_S_GPrule.training(dataset_name, seed)
-    elif algo == "GPRL_R":
-        main_training_R_GPrule.training(dataset_name, seed)
-    elif algo == "GPRL_S":
-        main_training_S_GPrule.training(dataset_name, seed)
-    elif algo == "GPRL_S_online":
-        main_training_S_online_learning.training(dataset_name, seed)
-    elif algo == "GPRL_single_agent":
-        main_training_R_S_GPrule_single_agent.training(dataset_name, seed)
+                        device = torch.device(device)
+                        TransformerGPmain.main(
+                            dataset_name, seed, num_pre_selection, device
+                        )
+                    elif algo == "transformerGP_all_gen_test":
+                        main_experiment_transformerGP_all_generations_test_results.main(
+                            dataset_name, seed, "transformerGP_all_gen_test"
+                        )
+                    elif algo == "MTGP_DRL_best_gen_test_for_CIM_paper":
+                        main_experiment_GP_all_generations_test_results.main(
+                            dataset_name, seed, "MTGP_DRL_best_gen_test_for_CIM_paper"
+                        )
+                    elif algo == "NichingMTGP_DRL_test":
+                        main_experiment_NichingMTGP_Integrated_DRL.main(
+                            dataset_name, seed
+                        )
+                    elif algo == "intermediate_DRL_R_S_single_agent_test":
+                        main_experiment_NichingMTGP_Integrated_DRL_R_S_single_agent_with_intermediate.main(
+                            dataset_name, seed
+                        )
+                    elif algo == "intermediate_DRL_R_test":
+                        main_experiment_NichingMTGP_Integrated_DRL_R_with_intermediate.main(
+                            dataset_name, seed
+                        )
+                    elif algo == "intermediate_DRL_S_test":
+                        main_experiment_NichingMTGP_Integrated_DRL_S_with_intermediate.main(
+                            dataset_name, seed
+                        )
+                    elif algo == "manualRule_test":
+                        main_experiment_manualRule_using_validation.main(
+                            dataset_name, seed
+                        )
+                    elif algo == "RL_test":
+                        main_experiment_Integrated_DRL.main(dataset_name, seed)
+                    elif (
+                        algo == "GP_sequencing_RL_routing_test"
+                    ):  # add by mengxu for revise the paper 2023.08.18
+                        main_experiment_Integrated_DRL.main(dataset_name, seed)
+                    elif algo == "RL_R":
+                        main_training_R.training(dataset_name, seed)
+                    elif algo == "RL_S":
+                        main_training_S.training(dataset_name, seed)
+                    elif algo == "RL_R_30":
+                        # for 30 times training of RL_R
+                        all_dataset_name = ["LH"]
+                        for dataset_name in all_dataset_name:
+                            for i in range(22, 30):
+                                seed = i
+                                main_training_R.training(dataset_name, seed)
+                    elif algo == "RL_S_30":
+                        # for 30 times training of RL_S
+                        all_dataset_name = ["LL"]
+                        for dataset_name in all_dataset_name:
+                            for i in range(7, 11):
+                                seed = i
+                                main_training_S.training(dataset_name, seed)
+                    elif algo == "GPRL_R_S":
+                        main_training_R_S_GPrule.training(dataset_name, seed)
+                    elif algo == "GPRL_R":
+                        main_training_R_GPrule.training(dataset_name, seed)
+                    elif algo == "GPRL_S":
+                        main_training_S_GPrule.training(dataset_name, seed)
+                    elif algo == "GPRL_S_online":
+                        main_training_S_online_learning.training(dataset_name, seed)
+                    elif algo == "GPRL_single_agent":
+                        main_training_R_S_GPrule_single_agent.training(
+                            dataset_name, seed
+                        )

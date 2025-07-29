@@ -86,7 +86,7 @@ def lf(x):  # add by mengxu 2022.11.08
     return 1 / (1 + np.exp(-x))
 
 
-def init_toolbox(toolbox, pset):
+def init_toolbox(toolbox, pset, score_based_algo):
     creator.create(
         "Individual",
         list,
@@ -109,8 +109,12 @@ def init_toolbox(toolbox, pset):
     # toolbox.register("mate", xmate)
     # toolbox.register("mutate", xmut, expr=toolbox.expr_mut)
 
-    toolbox.register("mate", lim_xmate)
-    toolbox.register("mutate", lim_xmut, expr=toolbox.expr_mut)
+    if score_based_algo:
+        toolbox.register("mate", newlim_xmate)
+        toolbox.register("mutate", newlim_xmut, expr=toolbox.expr_mut)
+    else:
+        toolbox.register("mate", lim_xmate)
+        toolbox.register("mutate", lim_xmut, expr=toolbox.expr_mut)
 
 
 def maxheight(v):
@@ -218,6 +222,34 @@ def newcxOnePoint(ind1, ind2):
     return ind1, ind2
 
 
+def newxmate(ind1, ind2):
+    if len(ind1) == 2:
+        randomValue = random.random()
+        if randomValue < 0.9:  # crossover
+            i1 = random.randrange(len(ind1))
+            # i2 = random.randrange(len(ind2))
+            # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
+            ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
+
+            # exchange the other tree
+            i2 = 1 - i1  # only for individual with two tree
+            ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+        else:
+            ind1, ind2 = newcxOnePoint(ind1, ind2)
+            del ind1.l_min
+            del ind1.l_max
+            del ind1.r_min
+            del ind1.r_max
+            del ind2.l_min
+            del ind2.l_max
+            del ind2.r_min
+            del ind2.r_max
+    else:
+        if len(ind1) == 2:
+            ind1[0], ind2[0] = gp.cxOnePoint(ind1[0], ind2[0])
+    return ind1, ind2
+
+
 # the following is modified by mengxu
 def xmate(ind1, ind2):
     if len(ind1) == 2:
@@ -244,6 +276,10 @@ def xmate(ind1, ind2):
 
 def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
+
+
+def newlim_xmate(ind1, ind2):
+    return wrap(newxmate, ind1, ind2)
 
 
 # def mutUniform(individual, expr, pset, mutate_point):
@@ -305,9 +341,26 @@ def xmut(ind, expr):
     return (ind,)
 
 
+def newxmut(ind, expr):
+    # ind = mutUniform(ind, expr, pset=ind.pset)
+    # return ind
+
+    # i1 = random.randrange(len(ind))
+    ind = mutUniform(ind, expr, pset=ind.pset)
+    # ind[i1] = indx[0]
+    return ind
+
+
 def lim_xmut(ind, expr):
     # have to put expr=expr otherwise it tries to use it as an individual
     res = wrap(xmut, ind, expr=expr)
+    # print(res)
+    return res
+
+
+def newlim_xmut(ind, expr):
+    # have to put expr=expr otherwise it tries to use it as an individual
+    res = wrap(newxmut, ind, expr=expr)
     # print(res)
     return res
 

@@ -1,0 +1,4 @@
+defaults:
+  - /defaults/base@_here_
+
+model_type: "Transformer"

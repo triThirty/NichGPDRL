@@ -88,6 +88,14 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--enable_score_based_algo",
+        # type=bool,
+        action="store_true",
+        help="If enabkle the score-based algorithm",
+        default=False,
+    )
+
+    parser.add_argument(
         "--num_pre_selection",
         type=int,
         help="If the pre-selection is used",
@@ -105,6 +113,7 @@ if __name__ == "__main__":
 
     ds = args.dataset_name
     s = args.seed
+    score_based_algo = args.enable_score_based_algo
     algo = args.algo
     num_pre_selection = args.num_pre_selection
     device = args.device
@@ -151,7 +160,11 @@ if __name__ == "__main__":
 
                         device = torch.device(device)
                         TransformerGPmain.main(
-                            dataset_name, seed, num_pre_selection, device
+                            dataset_name,
+                            seed,
+                            num_pre_selection,
+                            device,
+                            score_based_algo,
                         )
                     elif algo == "transformerGP_all_gen_test":
                         main_experiment_transformerGP_all_generations_test_results.main(

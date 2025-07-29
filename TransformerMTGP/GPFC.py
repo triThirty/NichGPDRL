@@ -2,29 +2,27 @@ import simpy
 from deap import base
 from deap import creator
 from deap import gp
-import TransformerMTGP.multi_tree as mt
-from TransformerMTGP import ea_simple_elitism
-from TransformerMTGP.ParallelToolbox import ParallelToolbox
-from TransformerMTGP.selection import *
-import sys
-from TransformerMTGP import saveFile
+import multi_tree as mt
+import ea_simple_elitism
+from ParallelToolbox import ParallelToolbox
+from selection import *
+import saveFile
 import time
-import random
 
 # import torch
 
 import numpy as np
-import job_creation
-import agent_machine
-import agent_workcenter
-import sequencing
-import routing
+import NichGPDRL.util.job_creation
+import NichGPDRL.util.agent_machine
+import NichGPDRL.util.agent_workcenter
+import NichGPDRL.util.sequencing
+import NichGPDRL.util.routing
 
-from TransformerMTGP.util.functions import (
+from NichGPDRL.TransformerMTGP.util.functions import (
     remove_duplicates,
     phyno_remove_duplicates,
 )
-from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+from NichGPDRL.MTGP_KNN.util.decistion_situation_generator import compute_phenotype
 
 
 class shopfloor:
@@ -343,8 +341,8 @@ def connectedness(cluster):
     print(cluster)
 
 
-def init_toolbox(toolbox, pset):
-    REP.init_toolbox(toolbox, pset)
+def init_toolbox(toolbox, pset, config):
+    REP.init_toolbox(toolbox, pset, config.exp.score_based_algo)
     toolbox.register(
         "select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM
     )
@@ -436,7 +434,7 @@ def init_data(rundata):
     rd = rundata
 
 
-def GPFC_main(dataset_name, seed, num_pre_selection, device):
+def GPFC_main(dataset_name, seed, num_pre_selection, device, config):
     rd["use_niching"] = use_niching
     rd["seed"] = seed
     rd["dataset_name"] = dataset_name
@@ -448,7 +446,7 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device):
     creator.create("FitnessMin", base.Fitness, weights=weights)
     # set up toolbox
     toolbox = ParallelToolbox()  # base.Toolbox()
-    init_toolbox(toolbox, pset)
+    init_toolbox(toolbox, pset, config)
     toolbox.register("evaluate", eval_wrapper)
 
     rd["toolbox"] = toolbox
@@ -557,12 +555,17 @@ wc_no = 3
 ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
-def main(dataset_name, seed, num_pre_selection, device):
+# def main(dataset_name, seed, num_pre_selection, device, *args):
+def main(config, *args):
     # if __name__ == "__main__":
     #     dataset_name = str(sys.argv[1])
     #     seed = int(sys.argv[2])
-    random.seed(int(seed))
-    np.random.seed(int(seed))
+    # random.seed(int(seed))
+    # np.random.seed(int(seed))
+    seed = config.exp.seeds
+    dataset_name = config.exp.scenarios
+    num_pre_selection = config.exp.num_pre_selection
+    device = config.exp.device
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
     (
@@ -571,7 +574,7 @@ def main(dataset_name, seed, num_pre_selection, device):
         best_ind_all_gen,
         top_inds_fitness_final_gen,
         top_inds_final_gen,
-    ) = GPFC_main(dataset_name, seed, num_pre_selection, device)
+    ) = GPFC_main(dataset_name, seed, num_pre_selection, device, config)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)

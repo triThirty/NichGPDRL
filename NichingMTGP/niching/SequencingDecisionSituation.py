@@ -1,4 +1,4 @@
-import NichingMTGP.niching.DecisionSituation as DecisionSituation
+import NichGPDRL.NichingMTGP.niching.DecisionSituation as DecisionSituation
 
 class SequencingDecisionSituation(DecisionSituation.DecisionSituation):
     def __init__(self, data, **kwargs):

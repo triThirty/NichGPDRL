@@ -6,17 +6,17 @@ import torch
 from copy import deepcopy
 
 
-from TransformerMTGP import saveFile
-from TransformerMTGP.model.surrogate import (
+import saveFile
+from model.surrogate import (
     surrogate_train,
     surrogate_evaluate,
     new_surrogate_train,
 )
-from TransformerMTGP.model.model import MyNN, SharedEmbeddings
+from model.model import MyNN, SharedEmbeddings
 
-from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+from NichGPDRL.MTGP_KNN.util.decistion_situation_generator import compute_phenotype
 
-from TransformerMTGP.util.functions import (
+from util.functions import (
     remove_duplicates,
     phyno_remove_duplicates,
 )

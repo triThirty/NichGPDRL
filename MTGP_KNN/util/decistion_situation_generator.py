@@ -2,8 +2,8 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 
 # from MTGP_KNN.GPFC import evaluate, shopfloor
-from sequencing import GP_evolve_S
-from routing import GP_evolve_R
+from NichGPDRL.util.sequencing import GP_evolve_S
+from NichGPDRL.util.routing import GP_evolve_R
 
 
 def compute_phenotype(pop, decision_situations):

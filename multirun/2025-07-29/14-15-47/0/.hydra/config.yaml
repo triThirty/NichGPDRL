@@ -1,0 +1,45 @@
+exp:
+  defaults:
+    scenarios:
+    - name: HH
+      description: High-High scenario
+    - name: HL
+      description: High-Low scenario
+    - name: LH
+      description: Low-High scenario
+    - name: LL
+      description: Low-Low scenario
+    seeds:
+    - 0
+    - 1
+    - 2
+    - 4
+    - 8
+    - 16
+    - 32
+    - 40
+    - 64
+    - 128
+    - 256
+    - 512
+    - 1024
+    - 10
+    - 20
+    - 30
+    - 50
+    - 999
+    - 123
+    - 2025
+    - 30000
+    - 10000
+    - 20000
+    - 11000
+    - 23333
+    - 920083
+    - 908461
+    - 234815
+    - 882415
+    - 794609
+    device: cuda
+    num_pre_selection: 3
+  model_type: Transformer

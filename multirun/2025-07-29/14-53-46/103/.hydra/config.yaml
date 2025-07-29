@@ -1,0 +1,9 @@
+exp:
+  defaults:
+    scenarios: LL
+    seeds: 10
+    device: cuda
+    num_pre_selection: 3
+  exp.defaults.scenarios: HH
+  exp.defaults.seeds: 0
+  model_type: Transformer

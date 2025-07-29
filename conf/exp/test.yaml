@@ -1,0 +1,8 @@
+defaults:
+  - /defaults/base@_here_
+
+scenarios: HL
+seeds: 0
+device: "cpu"
+score_based_algo: True
+model_type: "test"

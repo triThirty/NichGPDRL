@@ -1,17 +1,17 @@
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent))
+# sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from collections import deque
 import re
 from typing import TYPE_CHECKING
 
-from src.classes.base_individual import BaseIndividual
-from src.classes.job import Job
-from src.classes.operation import Operation
-from src.classes.operation_option import OperationOption
-from util.singleton_module import settings
+from TransformerMTGP.src.classes.base_individual import BaseIndividual
+from TransformerMTGP.src.classes.job import Job
+from TransformerMTGP.src.classes.operation import Operation
+from TransformerMTGP.src.classes.operation_option import OperationOption
+from TransformerMTGP.util.singleton_module import settings
 
 if TYPE_CHECKING:
     from src.classes.work_center import WorkCenter

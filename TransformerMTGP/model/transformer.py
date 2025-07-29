@@ -338,7 +338,7 @@ class TransformerEncoder(Module):
 
         enc_layer = "encoder_layer"
         why_not_sparsity_fast_path = ""
-        if not isinstance(encoder_layer, torch.nn.TransformerEncoderLayer):
+        if not isinstance(encoder_layer, TransformerEncoderLayer):
             why_not_sparsity_fast_path = f"{enc_layer} was not TransformerEncoderLayer"
         elif encoder_layer.norm_first:
             why_not_sparsity_fast_path = f"{enc_layer}.norm_first was True"

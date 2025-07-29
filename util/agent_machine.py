@@ -6,8 +6,8 @@ import random
 import numpy as np
 import torch
 from tabulate import tabulate
-import NichGPDRL.util.sequencing
-import NichGPDRL.NichingMTGP.niching.SequencingDecisionSituation as SequencingDecisionSituation
+import util.sequencing as sequencing
+# import NichingMTGP.niching.SequencingDecisionSituation as SequencingDecisionSituation
 
 """
 this is the simulation model of machine

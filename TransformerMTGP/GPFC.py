@@ -2,8 +2,8 @@ import simpy
 from deap import base
 from deap import creator
 from deap import gp
-import multi_tree as mt
-import ea_simple_elitism
+import TransformerMTGP.multi_tree as mt
+import TransformerMTGP.ea_simple_elitism as ea_simple_elitism
 from ParallelToolbox import ParallelToolbox
 from selection import *
 import saveFile
@@ -12,17 +12,17 @@ import time
 # import torch
 
 import numpy as np
-import NichGPDRL.util.job_creation
-import NichGPDRL.util.agent_machine
-import NichGPDRL.util.agent_workcenter
-import NichGPDRL.util.sequencing
-import NichGPDRL.util.routing
+import util.job_creation as job_creation
+import util.agent_machine as agent_machine
+import util.agent_workcenter as agent_workcenter
+import util.sequencing as sequencing
+import util.routing as routing
 
-from NichGPDRL.TransformerMTGP.util.functions import (
+from TransformerMTGP.util.functions import (
     remove_duplicates,
     phyno_remove_duplicates,
 )
-from NichGPDRL.MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
 
 
 class shopfloor:

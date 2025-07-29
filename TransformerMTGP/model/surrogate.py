@@ -10,13 +10,13 @@ from torch_geometric.utils import to_networkx
 from torch_geometric.loader import DataLoader
 from torch.optim import Adam
 
-import sys
-from pathlib import Path
+# import sys
+# from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+# sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from src.classes.individual import Individual
-from util.functions import positional_encoding, list_net_loss
+from TransformerMTGP.src.classes.individual import Individual
+from TransformerMTGP.util.functions import positional_encoding, list_net_loss
 
 
 # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

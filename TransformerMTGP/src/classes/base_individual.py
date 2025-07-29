@@ -7,7 +7,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from util.singleton_module import pset
+from TransformerMTGP.util.singleton_module import pset
 
 
 if TYPE_CHECKING:

@@ -4,7 +4,7 @@ import GPFC as TransformerGPmain
 import torch
 import random
 import hydra
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 import numpy as np
 
 
@@ -36,3 +36,5 @@ def my_app(cfg: DictConfig) -> None:
 
 if __name__ == "__main__":
     my_app()
+    # for path in sys.path:
+    #     print(path)

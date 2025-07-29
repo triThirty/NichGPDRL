@@ -49,7 +49,7 @@ class MyNN(nn.Module):
                 # bias=False,
             )
             self.ugformer_layers.append(
-                TransformerEncoder(encoder_layers, 1, enable_nested_tensor=True)
+                TransformerEncoder(encoder_layers, 1, enable_nested_tensor=False)
             )
         for _ in range(self.num_layers):
             self.lst_gnn.append(

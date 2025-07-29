@@ -13,11 +13,11 @@ import random
 
 
 import numpy as np
-import job_creation
-import agent_machine
-import agent_workcenter
-import sequencing
-import routing
+import util.job_creation as job_creation
+import util.agent_machine as agent_machine
+import util.agent_workcenter as agent_workcenter
+import util.sequencing as sequencing
+import util.routing as routing
 
 
 class shopfloor:
@@ -337,15 +337,17 @@ wc_no = 3
 ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
-def main(dataset_name, seed):
+def main(config, *args):
     # if __name__ == "__main__":
     #     dataset_name = str(sys.argv[1])
     #     seed = int(sys.argv[2])
-    random.seed(int(seed))
-    np.random.seed(int(seed))
+    seed = config.exp.seeds
+    dataset_name = config.exp.scenarios
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(dataset_name, seed)
+    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(
+        dataset_name, seed
+    )
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_json_format(

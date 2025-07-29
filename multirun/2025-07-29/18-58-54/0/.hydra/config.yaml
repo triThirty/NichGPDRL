@@ -1,7 +1,0 @@
-exp:
-  scenarios: HL
-  seeds: 0
-  device: cpu
-  num_pre_selection: 3
-  score_based_algo: true
-  model_type: test

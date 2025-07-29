@@ -6,17 +6,17 @@ import torch
 from copy import deepcopy
 
 
-import saveFile
-from model.surrogate import (
-    surrogate_train,
+import TransformerMTGP.saveFile as saveFile
+from TransformerMTGP.model.surrogate import (
+    # surrogate_train,
     surrogate_evaluate,
     new_surrogate_train,
 )
 from model.model import MyNN, SharedEmbeddings
 
-from NichGPDRL.MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
 
-from util.functions import (
+from TransformerMTGP.util.functions import (
     remove_duplicates,
     phyno_remove_duplicates,
 )
@@ -115,7 +115,7 @@ def eaSimple(
     shared_emb = SharedEmbeddings()
     transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
     optimizer = torch.optim.Adam(
-        params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
+        params=list(transformer_model.parameters()),
         lr=1e-3,
     )
 
@@ -208,7 +208,7 @@ def eaSimple(
 
         transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
         optimizer = torch.optim.Adam(
-            params=list(transformer_model.parameters()) + list(shared_emb.parameters()),
+            params=list(transformer_model.parameters()),
             lr=1e-3,
         )
         new_surrogate_train(

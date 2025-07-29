@@ -1,4 +1,5 @@
 defaults:
   - /defaults/base@_here_
 
-model_type: "Transformer"
+algo: Transformer
+score_based_algo: False

@@ -5,8 +5,8 @@ import random
 import numpy as np
 import torch
 from tabulate import tabulate
-import NichGPDRL.util.routing
-import NichGPDRL.NichingMTGP.niching.RoutingDecisionSituation as RoutingDecisionSituation
+import util.routing as routing
+# import NichingMTGP.niching.RoutingDecisionSituation as RoutingDecisionSituation
 
 '''
 this is the simulation model of the workcenter, each workcenter consists of several machines

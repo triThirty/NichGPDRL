@@ -9,3 +9,4 @@ hydra:
     params:
       exp.scenarios: ${exp.scenarios}
       exp.seeds: ${exp.seeds}
+  verbose: Flase

@@ -1,7 +1,0 @@
-exp:
-  defaults:
-    scenarios: LH
-    seeds: 794609
-    device: cuda
-    num_pre_selection: 3
-  model_type: Transformer

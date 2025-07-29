@@ -1,9 +1,0 @@
-exp:
-  defaults:
-    scenarios: HH
-    seeds: 0
-    device: cuda
-    num_pre_selection: 3
-  model_type: test
-exp.defaults.scenarios: HL
-exp.defaults.seeds: 0

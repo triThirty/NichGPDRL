@@ -460,7 +460,7 @@ max_record = []
 rate_record = []
 iteration = 100  # original 1
 # dont mess with above one-
-export_result = 1
+export_result = 0
 
 
 def main(dataset_name, seedOfRun, input_algo):

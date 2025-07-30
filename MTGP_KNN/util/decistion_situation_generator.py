@@ -2,8 +2,8 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 
 # from MTGP_KNN.GPFC import evaluate, shopfloor
-from NichGPDRL.util.sequencing import GP_evolve_S
-from NichGPDRL.util.routing import GP_evolve_R
+from util.sequencing import GP_evolve_S
+from util.routing import GP_evolve_R
 
 
 def compute_phenotype(pop, decision_situations):
@@ -18,8 +18,6 @@ def compute_phenotype(pop, decision_situations):
 
 
 def KNN_train(X, y):
-    # y = np.array(y, dtype="str")
-    # y = [",".join(item) for item in y.astype(str)]
     KNN_model = KNeighborsClassifier(n_neighbors=3, p=2)
     KNN_model.fit(X, y)
     return KNN_model
@@ -29,3 +27,30 @@ def predict(model, pop):
     for ind in pop:
         predicted_fitness = model.predict([ind.decision_vector])
         ind.fitness.values = (predicted_fitness[0],)
+
+
+def hash_individual(ind):
+    return hash(str(ind.decision_vector))
+
+
+def remove_duplicates(population):
+    unique_pop = []
+    seen = set()
+
+    for ind in population:
+        h = hash_individual(ind)
+        if h not in seen:
+            seen.add(h)
+            unique_pop.append(ind)
+
+    return unique_pop
+
+
+def generate_next_generation(pop_intermediate, population, elitism, toolbox, knn_model):
+    predict(knn_model, pop_intermediate)
+    score_elite = []
+    while len(score_elite) < len(population) - elitism:
+        score_elite.extend(toolbox.select(pop_intermediate, len(population) - elitism))
+
+        score_elite[:] = remove_duplicates(score_elite)
+    return score_elite

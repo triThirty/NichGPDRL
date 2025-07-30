@@ -342,7 +342,7 @@ def connectedness(cluster):
 
 
 def init_toolbox(toolbox, pset, config):
-    REP.init_toolbox(toolbox, pset, config.exp.score_based_algo)
+    REP.init_toolbox(toolbox, pset, config.score_based_algo)
     toolbox.register(
         "select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM
     )
@@ -562,10 +562,10 @@ def main(config, *args):
     #     seed = int(sys.argv[2])
     # random.seed(int(seed))
     # np.random.seed(int(seed))
-    seed = config.exp.seeds
-    dataset_name = config.exp.scenarios
-    num_pre_selection = config.exp.num_pre_selection
-    device = config.exp.device
+    seed = config.seeds
+    dataset_name = config.scenarios
+    num_pre_selection = config.num_pre_selection
+    device = config.device
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
     start = time.time()
     (

@@ -3,15 +3,13 @@ import MTGP.GPFC as MTGPmain
 import MTGP_KNN.GPFC as KNNmain
 import torch
 import random
-import hydra
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 import numpy as np
 
 
-@hydra.main(version_base=None, config_path="conf", config_name="config")
 def my_app(cfg: DictConfig) -> None:
-    seed = cfg.exp.seeds
-    device = cfg.exp.device
+    seed = cfg.seeds
+    device = cfg.device
     torch.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
@@ -21,15 +19,23 @@ def my_app(cfg: DictConfig) -> None:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    if cfg.exp.algo == "Transformer":
+    if cfg.algo == "Transformer":
         TransformerGPmain.main(cfg)
-    elif cfg.exp.algo == "Transformer_SSGP":
+    elif cfg.algo == "Transformer_SSGP":
         TransformerGPmain.main(cfg)
-    elif cfg.exp.algo == "KNN":
+    elif cfg.algo == "KNN":
         KNNmain.main(cfg)
-    elif cfg.exp.algo == "MTGP":
+    elif cfg.algo == "MTGP":
         MTGPmain.main(cfg)
 
 
+def merge_conf(algo: str) -> DictConfig:
+    base_conf = OmegaConf.load("conf/defaults/base.yaml")
+    algo_conf = OmegaConf.load(f"conf/exp/{algo}.yaml")
+    conf = OmegaConf.merge(base_conf, algo_conf)
+    return conf
+
+
 if __name__ == "__main__":
-    my_app()
+    cfg = merge_conf("KNN")
+    my_app(cfg)

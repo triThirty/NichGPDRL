@@ -1,0 +1,8 @@
+# defaults:
+#   - /defaults/base@_here_
+
+device: "cpu"
+algo: KNN 
+
+scenarios: HH
+seeds: 0

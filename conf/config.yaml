@@ -1,7 +1,7 @@
 defaults:
-  - exp/test
-  # - exp/Transformer
-  # - override hydra/launcher: joblib
+  # - exp/MTGP
+  - exp/Transformer
+  - override hydra/launcher: joblib
   - _self_
 
 hydra:
@@ -10,3 +10,5 @@ hydra:
       exp.scenarios: ${exp.scenarios}
       exp.seeds: ${exp.seeds}
   verbose: Flase
+
+

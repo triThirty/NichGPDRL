@@ -511,8 +511,8 @@ def main(config, *args):
     # if __name__ == "__main__":
     #     dataset_name = str(sys.argv[1])
     #     seed = int(sys.argv[2])
-    seed = config.exp.seeds
-    dataset_name = config.exp.scenarios
+    seed = config.seeds
+    dataset_name = config.scenarios
     random.seed(int(seed))
     np.random.seed(int(seed))
     saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)

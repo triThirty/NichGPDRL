@@ -1,5 +1,6 @@
-defaults:
-  - /defaults/base@_here_
+# defaults:
+#   - /defaults/base@_here_
 
 algo: "Transformer_SSGP"
-enable_ssgp: True
+score_based_algo: True
+device: cuda

@@ -7,7 +7,8 @@ from MTGP_KNN.selection import selElitistAndTournament
 from MTGP_KNN.util.decistion_situation_generator import (
     compute_phenotype,
     KNN_train,
-    predict,
+    generate_next_generation,
+    remove_duplicates,
 )
 
 
@@ -59,23 +60,6 @@ def sortPopulation(toolbox, population):
     #            populationCopy]
     # print(pop_fit)
     return populationCopy
-
-
-def hash_individual(ind):
-    return hash(str(ind.decision_vector))
-
-
-def remove_duplicates(population):
-    unique_pop = []
-    seen = set()
-
-    for ind in population:
-        h = hash_individual(ind)
-        if h not in seen:
-            seen.add(h)
-            unique_pop.append(ind)
-
-    return unique_pop
 
 
 def eaSimple(
@@ -173,28 +157,18 @@ def eaSimple(
             ]
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
-        # for ind in pop_intermediate:
-        # compute_phenotype(pop_intermediate, rd["decision_situations"])
-
-        predict(knn_model, pop_intermediate)
-
-        score_elite = []
-        while len(score_elite) < len(population) - elitism:
-            score_elite.extend(
-                toolbox.select(pop_intermediate, len(population) - elitism)
-            )
-
-            score_elite[:] = remove_duplicates(score_elite)
+        score_elite = generate_next_generation(
+            pop_intermediate, population, elitism, toolbox, knn_model
+        )
         population = sorted_elite + score_elite[: len(population) - elitism]
 
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
-        
+
         decision_matrix = [ind.decision_vector for ind in population]
         fitness_matrix = [ind.fitness.values[0] for ind in population]
         knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
-
 
         # modified by mengxu
         if halloffame is not None:

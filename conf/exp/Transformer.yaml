@@ -1,5 +1,3 @@
-defaults:
-  - /defaults/base@_here_
-
 algo: Transformer
 score_based_algo: False
+device: cuda 

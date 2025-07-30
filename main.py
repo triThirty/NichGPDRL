@@ -29,14 +29,14 @@ def my_app(cfg: DictConfig) -> None:
         MTGPmain.main(cfg)
 
 
-def merge_conf(algo: str) -> DictConfig:
-    cli_conf = OmegaConf.from_cli()
+def merge_conf(cli_conf: DictConfig) -> DictConfig:
     base_conf = OmegaConf.load("conf/defaults/base.yaml")
-    algo_conf = OmegaConf.load(f"conf/exp/{algo}.yaml")
+    algo_conf = OmegaConf.load(f"conf/exp/{cli_conf.algo}.yaml")
     conf = OmegaConf.merge(base_conf, algo_conf, cli_conf)
     return conf
 
 
 if __name__ == "__main__":
-    cfg = merge_conf("KNN")
+    cli_conf = OmegaConf.from_cli()  # Default to KNN if not specified
+    cfg = merge_conf(cli_conf)
     my_app(cfg)

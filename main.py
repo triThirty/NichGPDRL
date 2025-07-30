@@ -30,9 +30,10 @@ def my_app(cfg: DictConfig) -> None:
 
 
 def merge_conf(algo: str) -> DictConfig:
+    cli_conf = OmegaConf.from_cli()
     base_conf = OmegaConf.load("conf/defaults/base.yaml")
     algo_conf = OmegaConf.load(f"conf/exp/{algo}.yaml")
-    conf = OmegaConf.merge(base_conf, algo_conf)
+    conf = OmegaConf.merge(base_conf, algo_conf, cli_conf)
     return conf
 
 

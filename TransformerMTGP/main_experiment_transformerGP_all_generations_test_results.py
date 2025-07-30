@@ -10,20 +10,19 @@ import numpy as np
 from tabulate import tabulate
 import pandas as pd
 from pandas import DataFrame
-
 # import NichingMTGP.LoadIndividual as mtload
-import MTGP_KNN.LoadIndividual as mtload
-import agent_machine
-import agent_workcenter
-import sequencing
-import routing
-import job_creation
-from MTGP_KNN import saveFile
+import TransformerMTGP.LoadIndividual as mtload
+import util.agent_machine as agent_machine
+import util.agent_workcenter as agent_workcenter
+import util.sequencing as sequencing
+import util.routing as routing
+import util.job_creation as job_creation
+from TransformerMTGP import saveFile
 
 # import breakdown_creation
 # import heterogeneity_creation
-import validation_S
-import validation_R
+# import validation_S
+# import validation_R
 
 """
 experiment of independent routing agents
@@ -366,7 +365,7 @@ def best_MTGP_rule_after_validation(dataSetName, seedOfRun):
     # I think this is wrong, actually I should use totally same randomseed for test of all the runs 2022.10.27
     np.random.seed(int(validationSeeds))
     # np.random.seed(int(randomSeeds))
-    print("******************* Validation Knn_MTGP *******************")
+    print("******************* Validation MTGP *******************")
     sum_record_validation = []
     iteration_validation = 50
     MTGP_validation = []
@@ -482,13 +481,15 @@ def main(dataset_name, seedOfRun, input_algo):
         dict_best_MTGP_individuals_dict = mtload.load_individual_from_gen_json_format(
             seedOfRun, dataSetName
         )
-    elif input_algo == "Knn_GP_all_gen_test":
-        dict_best_MTGP_individuals = mtload.load_individual_from_gen(
-            seedOfRun, dataSetName
+    elif input_algo == "GP_all_individuals_test":
+        dict_best_MTGP_individuals_dict = (
+            mtload.load_all_individuals_from_gen_json_format(seedOfRun, dataSetName)
         )
-        dict_best_MTGP_individuals_dict = mtload.load_individual_from_gen_json_format(
-            seedOfRun, dataSetName
-        )
+        dict_best_MTGP_individuals = []
+        for ind in dict_best_MTGP_individuals_dict:
+            t0 = re.findall(r"[a-zA-Z_]+", ind["T0"])
+            t1 = re.findall(r"[a-zA-Z_]+", ind["T1"])
+            dict_best_MTGP_individuals.append([t0, t1])
 
     # # Do validation and obtain the best evolved rule
     # best_GPLS_rule_index = 51
@@ -684,9 +685,14 @@ def main(dataset_name, seedOfRun, input_algo):
     # for _, ind in dict_best_MTGP_individuals_dict.items():
     for ind in dict_best_MTGP_individuals_dict:
         ind["fitness"] = ind["fitness"] / iteration
-    saveFile.save_each_gen_best_individual_on_test_dataset(
-        seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
-    )
+    if input_algo == "transformerGP_all_gen_test":
+        saveFile.save_each_gen_best_individual_on_test_dataset(
+            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
+        )
+    elif input_algo == "GP_all_individuals_test":
+        saveFile.save_all_individuals(
+            seedOfRun, dataSetName, dict_best_MTGP_individuals_dict, with_fitness=True
+        )
     # title = benchmark + MTGP + ['Integrated_DRL']
     title = benchmark + MTGP
 
@@ -739,7 +745,7 @@ def main(dataset_name, seedOfRun, input_algo):
             sys.path[0]
             + "/experiment_result/scenario_"
             + dataSetName
-            + "/Knn_MTGP_all_gen_test_"
+            + "/transformerGP_all_gen_test_"
             + dataSetName
             + "_run_"
             + str(seedOfRun)

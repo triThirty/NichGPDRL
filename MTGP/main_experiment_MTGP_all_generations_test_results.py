@@ -10,19 +10,20 @@ import numpy as np
 from tabulate import tabulate
 import pandas as pd
 from pandas import DataFrame
+
 # import NichingMTGP.LoadIndividual as mtload
 import MTGP.LoadIndividual as mtload
-import agent_machine
-import agent_workcenter
-import sequencing
-import routing
-import job_creation
+import util.agent_machine as agent_machine
+import util.agent_workcenter as agent_workcenter
+import util.sequencing as sequencing
+import util.routing as routing
+import util.job_creation as job_creation
 from MTGP import saveFile
 
 # import breakdown_creation
 # import heterogeneity_creation
-import validation_S
-import validation_R
+# import validation_S
+# import validation_R
 
 """
 experiment of independent routing agents

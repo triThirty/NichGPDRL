@@ -8,7 +8,7 @@ import sys
 def load_individual_from_gen_json_format(randomSeeds, dataSetName):
     with open(
         sys.path[0]
-        + "/MTGP_KNN/train/scenario_"
+        + "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -26,7 +26,7 @@ def load_individual_from_gen_json_format(randomSeeds, dataSetName):
 def load_individual_from_gen(randomSeeds, dataSetName):
     with open(
         sys.path[0]
-        + "/MTGP_KNN/train/scenario_"
+        + "./MTGP_KNN/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)

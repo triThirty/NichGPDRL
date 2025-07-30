@@ -61,7 +61,7 @@ def load_individual_from_gen(
 
 def load_training_time(randomSeeds, dataSetName):  # save individual as txt by mengxu
     folder = (
-        "./MTGP/train/scenario_"
+        "/MTGP/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -76,7 +76,7 @@ def load_training_time(randomSeeds, dataSetName):  # save individual as txt by m
 
 def load_min_fitness(randomSeeds, dataSetName):  # save individual as txt by mengxu
     folder = (
-        "./MTGP/train/scenario_"
+        "/MTGP/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)

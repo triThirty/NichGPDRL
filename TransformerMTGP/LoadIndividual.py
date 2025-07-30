@@ -112,7 +112,7 @@ def load_top_inds_from_final_gen(
 
 def load_training_time(randomSeeds, dataSetName):  # save individual as txt by mengxu
     folder = (
-        "./TransformerMTGP/train/scenario_"
+        "/TransformerMTGP/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)
@@ -127,7 +127,7 @@ def load_training_time(randomSeeds, dataSetName):  # save individual as txt by m
 
 def load_min_fitness(randomSeeds, dataSetName):  # save individual as txt by mengxu
     folder = (
-        "./TransformerMTGP/train/scenario_"
+        "/TransformerMTGP/train/scenario_"
         + str(dataSetName)
         + "/"
         + str(randomSeeds)

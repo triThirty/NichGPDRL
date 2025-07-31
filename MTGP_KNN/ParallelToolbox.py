@@ -3,10 +3,9 @@ import pickle
 # import json
 
 from deap import base
-from multiprocessing import cpu_count, Pool
+from multiprocessing import Pool
 
 from functools import partial
-from memory_profiler import profile
 
 
 ##thanks TPOT
@@ -23,7 +22,6 @@ class ParallelToolbox(base.Toolbox):
         self.__dict__.update(state)
 
     # created by mengxu 2022.11.28 for multiple processing
-    @profile
     def multiProcess(self, evaluate, invalid_ind, rd):
         pickle.dumps(invalid_ind)
         pickle.dumps(evaluate)

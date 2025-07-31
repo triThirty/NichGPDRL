@@ -64,7 +64,6 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
-@profile
 def eaSimple(
     population,
     toolbox,

@@ -106,9 +106,11 @@ def eaSimple(
     decision_matrix = [ind.decision_vector for ind in population]
     fitness_matrix = [ind.fitness.values[0] for ind in population]
     knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
+    del decision_matrix
+    del fitness_matrix
 
     # all_individuals.append(invalid_ind)
-    all_individuals = [item for item in invalid_ind]
+    all_individuals = []
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -151,6 +153,7 @@ def eaSimple(
         offspring = toolbox.select(population, len(population) - elitism)
 
         pop_intermediate = []
+        print("-------No OOM-----")
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
@@ -158,11 +161,14 @@ def eaSimple(
             pop_intermediate = remove_duplicates(sorted_elite + pop_intermediate)[
                 elitism:
             ]
+            del offspring_intermediate
+        print("*******No OOM*******")
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         score_elite = generate_next_generation(
             pop_intermediate, population, elitism, toolbox, knn_model
         )
+        del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
@@ -187,7 +193,8 @@ def eaSimple(
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}
-        logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        # logbook.record(gen=gen, nevals=len(invalid_ind), **record)
+        logbook.record(gen=gen, nevals=len(population), **record)
         if verbose:
             print(logbook.stream)
 

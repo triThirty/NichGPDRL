@@ -11,6 +11,8 @@ from MTGP_KNN.util.decistion_situation_generator import (
     remove_duplicates,
 )
 
+from memory_profiler import profile
+
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
     offspring = [toolbox.clone(ind) for ind in population]
@@ -62,6 +64,7 @@ def sortPopulation(toolbox, population):
     return populationCopy
 
 
+@profile
 def eaSimple(
     population,
     toolbox,

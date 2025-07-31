@@ -152,7 +152,6 @@ def eaSimple(
         offspring = toolbox.select(population, len(population) - elitism)
 
         pop_intermediate = []
-        print("-------No OOM-----")
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
             compute_phenotype(offspring_intermediate, rd["decision_situations"])

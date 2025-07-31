@@ -8,7 +8,6 @@ from copy import deepcopy
 
 import TransformerMTGP.saveFile as saveFile
 from TransformerMTGP.model.surrogate import (
-    # surrogate_train,
     surrogate_evaluate,
     new_surrogate_train,
 )
@@ -178,6 +177,7 @@ def eaSimple(
             )
 
             score_elite[:] = remove_duplicates(score_elite)
+        del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 
         rd["seed"] = randomSeed_ngen[gen]
@@ -185,26 +185,6 @@ def eaSimple(
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
-
-        # fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
-        # for ind, fit in zip(pop_intermediate, fitnesses):
-        #     ind.fitness.values = fit
-
-        # saveFile.save_all_intermedia_individuals(
-        #     seed, dataset_name, pop_intermediate, gen
-        # )
-
-        # sorted_intermediate = sorted(
-        #     pop_intermediate, key=lambda x: x.fitness.values[0]
-        # )[: len(population) - elitism]
-
-        # print("Best intermediate individual     ", "Best surrogate individual")
-        # for k, ind in enumerate(sorted_intermediate):
-        #     print(
-        #         ind.fitness.values[0],
-        #         " --- ",
-        #         population[elitism:][k].fitness.values[0],
-        #     )
 
         transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
         optimizer = torch.optim.Adam(
@@ -238,25 +218,7 @@ def eaSimple(
         if verbose:
             print(logbook.stream)
 
-        pop_fit = [
-            ind.fitness.values[0] for ind in population
-        ]  ######selection from author
+        pop_fit = [ind.fitness.values[0] for ind in population]
         min_fitness.append(min(pop_fit))
 
-        if gen == ngen:
-            # output top 5 individuals by niching GP 2023.10.19
-            sorted_elite = sortPopulation(toolbox, population)
-            top_inds_final_gen = []
-            top_inds_fitness_final_gen = []
-            for i in range(10):
-                top_inds_final_gen.append(sorted_elite[i])
-                top_inds_fitness_final_gen.append(sorted_elite[i].fitness.values[0])
-
-    return (
-        population,
-        logbook,
-        min_fitness,
-        best_ind_all_gen,
-        top_inds_fitness_final_gen,
-        top_inds_final_gen,
-    )
+    return population, logbook, min_fitness, best_ind_all_gen, [], []

@@ -557,11 +557,6 @@ ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 # def main(dataset_name, seed, num_pre_selection, device, *args):
 def main(config, *args):
-    # if __name__ == "__main__":
-    #     dataset_name = str(sys.argv[1])
-    #     seed = int(sys.argv[2])
-    # random.seed(int(seed))
-    # np.random.seed(int(seed))
     seed = config.seeds
     dataset_name = config.scenarios
     num_pre_selection = config.num_pre_selection

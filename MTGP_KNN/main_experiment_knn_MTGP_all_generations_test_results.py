@@ -3,9 +3,6 @@ import sys
 import re
 
 sys.path
-# import matplotlib.pyplot as plt
-# import matplotlib.animation as animation
-# import torch
 import numpy as np
 from tabulate import tabulate
 import pandas as pd
@@ -20,10 +17,6 @@ import util.routing as routing
 import util.job_creation as job_creation
 from MTGP_KNN import saveFile
 
-# import breakdown_creation
-# import heterogeneity_creation
-# import validation_S
-# import validation_R
 
 """
 experiment of independent routing agents
@@ -358,83 +351,6 @@ class shopfloorMTGP:
         self.env.run()
 
 
-# def normalisation()
-
-
-def best_MTGP_rule_after_validation(dataSetName, seedOfRun):
-    validationSeeds = 34225
-    # I think this is wrong, actually I should use totally same randomseed for test of all the runs 2022.10.27
-    np.random.seed(int(validationSeeds))
-    # np.random.seed(int(randomSeeds))
-    print("******************* Validation Knn_MTGP *******************")
-    sum_record_validation = []
-    iteration_validation = 50
-    MTGP_validation = []
-    best_individual_after_validation = []
-
-    dict_best_MTGP_individuals = mtload.load_individual_from_gen(seedOfRun, dataSetName)
-    training_time = mtload.load_training_time(seedOfRun, dataSetName)
-    min_fitness = mtload.load_min_fitness(seedOfRun, dataSetName)
-    print("\nTraining time: ")
-    print(training_time)
-    print("Training min_fitness: ")
-    print(min_fitness)
-    print("\n")
-
-    for run in range(iteration_validation):
-        seed = np.random.randint(2000000000)
-        print(seed)
-        sum_record_validation.append([])
-        print("******************* ITERATION-{} *******************".format(run))
-        for gen in range(len(dict_best_MTGP_individuals)):
-            if run == 0:
-                MTGP_validation.append(gen)
-            individual = dict_best_MTGP_individuals.get(gen)
-            sequencing_rule_tree = individual[0]
-            routing_rule_tree = individual[1]
-            # print('\nsequencing_rule: ')
-            # print(sequencing_rule_tree)
-            # print('routing_rule: ')
-            # print(routing_rule_tree)
-            # create the environment instance for simulation
-            env = simpy.Environment()
-            spf = shopfloorMTGP(
-                env,
-                span,
-                m_no,
-                wc_no,
-                sequencing_rule_tree,
-                routing_rule_tree,
-                routing_rule="GP_pair_R_test",
-                sequencing_rule="GP_pair_S_test",
-                seed=seed,
-                ifPrint=False,
-                dataset_name=dataSetName,
-            )
-
-            # spf = shopfloor(env, span, m_no, wc_no, routing_rule = rule, seed = seed)
-            spf.simulation()
-            output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
-                spf.job_creator.tardiness_output()
-            )
-            # add by mengxu to test
-            # spf.job_creator.output()
-            # spf.job_creator.final_output()
-            # # add by mengxu to test
-            sum_record_validation[run].append(cumulative_tard[-1])
-            # max_record[run].append(tard_max)
-            # rate_record[run].append(tard_rate)
-
-    # get the overall performance
-    avg = np.mean(sum_record_validation, axis=0)
-
-    best_MTGP_index = avg.argmin(
-        axis=0
-    )  # this return the gen of getting the best result
-    print("Best MTGP rule index: " + str(best_MTGP_index))
-    return best_MTGP_index, avg
-
-
 # dictionary to store shopfloors and production record
 spf_dict = {}
 production_record = {}
@@ -490,43 +406,6 @@ def main(dataset_name, seedOfRun, input_algo):
             seedOfRun, dataSetName
         )
 
-    # # Do validation and obtain the best evolved rule
-    # best_GPLS_rule_index = 51
-    # # MTGP rule test, test the best rule obtained from all the generations
-    # dict_best_GPLS_individuals = gplsload.load_individual_from_gen(seedOfRun, dataSetName)
-    # ===================================The following is about not using validation===================================
-
-    # ===================================The following is about using validation===================================
-    # # Do validation and obtain the best evolved rule
-    # best_MTGP_rule_index,avg_all_gen_MTGP = best_MTGP_rule_after_validation(dataSetName, seedOfRun)
-    # MTGP rule test, test the best rule obtained from all the generations
-    # dict_best_MTGP_individuals = mtload.load_individual_from_gen(seedOfRun, dataSetName)
-
-    # # Do validation and obtain the best evolved rule
-    # best_GPLS_rule_index,avg_all_gen_GPLS = best_GPLS_rule_after_validation(dataSetName, seedOfRun)
-    # # MTGP rule test, test the best rule obtained from all the generations
-    # dict_best_GPLS_individuals = gplsload.load_individual_from_gen(seedOfRun, dataSetName)
-
-    # sum_dict = {'MTGP': avg_all_gen_MTGP, 'GSGP': avg_all_gen_GPLS}
-    # data = pd.DataFrame.from_dict(sum_dict)
-    # # print(data)
-    # addressFinal = sys.path[
-    #                    0] + '/experiment_result/scenario_' + dataset_name + '/all_gen_validation_results_MTGP_vs_GPLS_' + dataset_name + '_run_' + str(seedOfRun) + '.xlsx'
-    # data.to_excel(addressFinal, index=False)
-
-    # # Do validation and obtain the best evolved rule
-    # best_GPLS_rule_index,avg_all_gen_GPLS = best_GPLS_rule_after_validation(dataSetName, seedOfRun)
-    # # MTGP rule test, test the best rule obtained from all the generations
-    # dict_best_GPLS_individuals = gplsload.load_individual_from_gen(seedOfRun, dataSetName)
-
-    # sum_dict = {'MTGP': avg_all_gen_MTGP, 'GPLS': avg_all_gen_GPLS}
-    # data = pd.DataFrame.from_dict(sum_dict)
-    # # print(data)
-    # addressFinal = sys.path[
-    #                    0] + '/experiment_result/scenario_' + dataset_name + '/all_gen_validation_results_MTGP_vs_GPLS_' + dataset_name + '_run_' + str(seedOfRun) + '.xlsx'
-    # data.to_excel(addressFinal, index=False)
-    # ===================================The following is about using validation===================================
-
     testSeeds = 123453
     # I think this is wrong, actually I should use totally same randomseed for test of all the runs 2022.10.27
     np.random.seed(int(testSeeds))
@@ -538,46 +417,6 @@ def main(dataset_name, seedOfRun, input_algo):
         max_record.append([])
         rate_record.append([])
         seed = np.random.randint(2000000000)
-
-        # run simulation with different rules
-        for idx, rule in enumerate(benchmark):
-            # create the environment instance for simulation
-            # np.random.seed(int(seed))  # add by mengxu 2022.10.31
-            env = simpy.Environment()
-            if rule == "GP_pair_R":
-                spf = shopfloor(
-                    env,
-                    span,
-                    m_no,
-                    wc_no,
-                    routing_rule=rule,
-                    sequencing_rule="GP_pair_S",
-                    seed=seed,
-                    dataset_name=dataSetName,
-                )
-            else:
-                spf = shopfloor(
-                    env,
-                    span,
-                    m_no,
-                    wc_no,
-                    routing_rule=rule,
-                    seed=seed,
-                    dataset_name=dataSetName,
-                )
-            # spf = shopfloor(env, span, m_no, wc_no, routing_rule = rule, seed = seed)
-            spf.simulation()
-            output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
-                spf.job_creator.tardiness_output()
-            )
-            # add by mengxu to test
-            # spf.job_creator.output()
-            # spf.job_creator.final_output()
-            # # add by mengxu to test
-            sum_record[run].append(cumulative_tard[-1])
-            benchmark_record[run].append(cumulative_tard[-1])
-            max_record[run].append(tard_max)
-            rate_record[run].append(tard_rate)
 
         # for idx in range(len(dict_best_MTGP_individuals)):
         for idx, individual in enumerate(dict_best_MTGP_individuals):
@@ -608,154 +447,10 @@ def main(dataset_name, seedOfRun, input_algo):
             output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
                 spf.job_creator.tardiness_output()
             )
-            sum_record[run].append(cumulative_tard[-1])
             ind_dict["fitness"] += cumulative_tard[-1]
-            benchmark_record[run].append(cumulative_tard[-1])
-            max_record[run].append(tard_max)
-            rate_record[run].append(tard_rate)
 
-        # algo = 'gen_best_MTGP_test'
-        # if run == 0:
-        #     MTGP.append(algo)
-        # individual = dict_best_MTGP_individuals.get(best_MTGP_rule_index)
-        # sequencing_rule_tree = individual[0]
-        # routing_rule_tree = individual[1]
-        # # np.random.seed(int(seed))  # add by mengxu 2022.10.31
-        # env = simpy.Environment()
-        # spf = shopfloorMTGP(env, span, m_no, wc_no, sequencing_rule_tree, routing_rule_tree,
-        #                     routing_rule='GP_pair_R_test', sequencing_rule='GP_pair_S_test', seed=seed, ifPrint=False,
-        #                     dataset_name=dataSetName)
-        #
-        # spf.simulation()
-        # output_time, cumulative_tard, tard_mean, tard_max, tard_rate = spf.job_creator.tardiness_output()
-        # sum_record[run].append(cumulative_tard[-1])
-        # benchmark_record[run].append(cumulative_tard[-1])
-        # max_record[run].append(tard_max)
-        # rate_record[run].append(tard_rate)
-
-        # algo = 'gen_best_GPLS_test'
-        # if run == 0:
-        #     MTGP.append(algo)
-        # individual = dict_best_GPLS_individuals.get(best_GPLS_rule_index)
-        # sequencing_rule_tree = individual[0]
-        # routing_rule_tree = individual[1]
-        # # np.random.seed(int(seed))  # add by mengxu 2022.10.31
-        # env = simpy.Environment()
-        # spf = shopfloorMTGP(env, span, m_no, wc_no, sequencing_rule_tree, routing_rule_tree,
-        #                     routing_rule='GP_pair_R_test', sequencing_rule='GP_pair_S_test', seed=seed, ifPrint=False,
-        #                     dataset_name=dataSetName)
-        #
-        # spf.simulation()
-        # output_time, cumulative_tard, tard_mean, tard_max, tard_rate = spf.job_creator.tardiness_output()
-        # sum_record[run].append(cumulative_tard[-1])
-        # benchmark_record[run].append(cumulative_tard[-1])
-        # max_record[run].append(tard_max)
-        # rate_record[run].append(tard_rate)
-
-        # RL test
-        for idx, x in enumerate(DRLs):
-            env = simpy.Environment()
-            # spf = shopfloor(env, span, m_no, wc_no, DRL_R=True, DRL_S=True, seed=seed, dataset_name=dataSetName)# which one should I use
-            spf = shopfloor(
-                env,
-                span,
-                m_no,
-                wc_no,
-                arch=x,
-                global_reward=reward_mechanism[idx],
-                DRL_S=True,
-                seed=seed,
-                dataset_name=dataSetName,
-                seedOfRun=seedOfRun,
-            )
-            # spf = shopfloor(env, span, m_no, wc_no, arch = x, global_reward = reward_mechanism[idx], seed = seed)
-            spf.simulation()
-            output_time, cumulative_tard, tard_mean, tard_max, tard_rate = (
-                spf.job_creator.tardiness_output()
-            )
-            # add by mengxu to test
-            # spf.job_creator.output()
-            # spf.job_creator.final_output()
-            # # add by mengxu to test
-            sum_record[run].append(cumulative_tard[-1])
-            max_record[run].append(tard_max)
-            rate_record[run].append(tard_rate)
-
-    # for _, ind in dict_best_MTGP_individuals_dict.items():
     for ind in dict_best_MTGP_individuals_dict:
         ind["fitness"] = ind["fitness"] / iteration
     saveFile.save_each_gen_best_individual_on_test_dataset(
         seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
     )
-    # title = benchmark + MTGP + ['Integrated_DRL']
-    title = benchmark + MTGP
-
-    print("-------------- Complete Record --------------")
-    print(tabulate(sum_record, headers=title))
-    print("-------------- Average Performance --------------")
-
-    # get the performnce without DRL
-    avg_b = np.mean(benchmark_record, axis=0)
-    ratio_b = np.around(avg_b / avg_b.max() * 100, 2)
-    winning_rate_b = np.zeros(len(title))
-    for idx in np.argmin(benchmark_record, axis=1):
-        winning_rate_b[idx] += 1
-    winning_rate_b = np.around(winning_rate_b / iteration * 100, 2)
-
-    # get the overall performance (include DRL)
-    avg = np.mean(sum_record, axis=0)
-    max = np.mean(max_record, axis=0)
-    tardy_rate = np.around(np.mean(rate_record, axis=0) * 100, 2)
-    ratio = np.around(avg / avg.min() * 100, 2)
-    rank = np.argsort(ratio)
-    winning_rate = np.zeros(len(title))
-    for idx in np.argmin(sum_record, axis=1):
-        winning_rate[idx] += 1
-    winning_rate = np.around(winning_rate / iteration * 100, 2)
-    for rank, rule in enumerate(rank):
-        print(
-            "{}, avg.: {} | max: {} | %: {}% | tardy %: {}% | winning rate: {}/{}%".format(
-                title[rule],
-                avg[rule],
-                max[rule],
-                ratio[rule],
-                tardy_rate[rule],
-                winning_rate_b[rule],
-                winning_rate[rule],
-            )
-        )
-
-    if export_result:
-        df_win_rate = DataFrame([winning_rate], columns=title)
-        # print(df_win_rate)
-        df_sum = DataFrame(sum_record, columns=title)
-        # print(df_sum)
-        df_tardy_rate = DataFrame(rate_record, columns=title)
-        # print(df_tardy_rate)
-        df_max = DataFrame(max_record, columns=title)
-        # print(df_max)
-        df_before_win_rate = DataFrame([winning_rate_b], columns=title)
-        address = (
-            sys.path[0]
-            + "/experiment_result/scenario_"
-            + dataSetName
-            + "/Knn_MTGP_all_gen_test_"
-            + dataSetName
-            + "_run_"
-            + str(seedOfRun)
-            + "_val.xlsx"
-        )
-        # address = sys.path[0]+'/experiment_result/RAW_RA_val.xlsx'
-        Excelwriter = pd.ExcelWriter(address, engine="xlsxwriter")
-        dflist = [df_win_rate, df_sum, df_tardy_rate, df_max, df_before_win_rate]
-        sheetname = ["win rate", "sum", "tardy rate", "maximum", "before win rate"]
-
-        for i, df in enumerate(dflist):
-            df.to_excel(Excelwriter, sheet_name=sheetname[i], index=False)
-        Excelwriter.close()
-        # Excelwriter.save()
-        print("export to {}".format(address))
-
-    # check the parameter and scenario setting
-    # spf.sequencing_brain.check_parameter()
-    # spf.routing_brain.check_parameter()

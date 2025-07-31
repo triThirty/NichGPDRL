@@ -92,7 +92,8 @@ def eaSimple(
         ind.fitness.values = fit
 
     # all_individuals.append(invalid_ind)
-    all_individuals = [item for item in invalid_ind]
+    # all_individuals = [item for item in invalid_ind]
+    all_individuals = []
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -149,7 +150,7 @@ def eaSimple(
         for ind, fit in zip(invalid_ind, fitnesses):
             ind.fitness.values = fit
 
-        all_individuals.extend(invalid_ind)
+        # all_individuals.extend(invalid_ind)
 
         # Update the hall of fame with the generated individuals
         # if halloffame is not None:
@@ -170,7 +171,6 @@ def eaSimple(
         best_ind_all_gen.append(population[best_index])  # add by mengxu
         p_one = population[best_index]
         saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
-
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}

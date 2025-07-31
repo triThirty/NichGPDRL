@@ -162,22 +162,25 @@ def eaSimple(
                 elitism:
             ]
             del offspring_intermediate
-        print("*******No OOM*******")
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         score_elite = generate_next_generation(
             pop_intermediate, population, elitism, toolbox, knn_model
         )
+        print("*******No OOM*******")
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
+        print("@@@@@@@No OOM@@@@@@@")
 
         decision_matrix = [ind.decision_vector for ind in population]
         fitness_matrix = [ind.fitness.values[0] for ind in population]
         knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
+        del decision_matrix
+        del fitness_matrix
 
         # modified by mengxu
         if halloffame is not None:

@@ -164,62 +164,6 @@ def save_individual_each_gen_to_txt(
     return
 
 
-def clear_individual_each_gen_to_txt(
-    randomSeeds, dataSetName
-):  # save individual as txt by mengxu
-    # file = open(
-    #     "./MTGP_KNN/train/scenario_"
-    #     + str(dataSetName)
-    #     + "/"
-    #     + str(randomSeeds)
-    #     + "_"
-    #     + dataSetName
-    #     + "_each_gen.txt",
-    #     "w",
-    # )  # 'w' represent coverage, 'a' denotes not coverage
-    # file.write("Best individuals from each gen:\n")
-    # file.close()
-    # return
-    if not os.path.exists("./MTGP_KNN/train/scenario_" + str(dataSetName)):
-        os.makedirs("./MTGP_KNN/train/scenario_" + str(dataSetName))
-
-    with open(
-        "./MTGP_KNN/train/scenario_"
-        + str(dataSetName)
-        + "/"
-        + str(randomSeeds)
-        + "_"
-        + dataSetName
-        + "_each_gen.txt",
-        "w",
-    ) as file:
-        file.write("Best individuals from each gen:\n")
-
-
-def save_individual_each_gen_to_txt(
-    randomSeeds, dataSetName, individuals, gen
-):  # save individual as txt by mengxu
-    file = open(
-        "./MTGP_KNN/train/scenario_"
-        + str(dataSetName)
-        + "/"
-        + str(randomSeeds)
-        + "_"
-        + dataSetName
-        + "_each_gen.txt",
-        "a",
-    )  # 'w' represent coverage, 'a' denotes not coverage
-    file.write("\nGen: " + str(gen) + "\n")
-    file.write("Individual:\n")
-    file.write("Tree 0:\n")  # routing rule
-    file.write(str(individuals[0]) + "\n")
-    file.write("Tree 1:\n")  # sequencing rule
-    file.write(str(individuals[1]) + "\n")
-
-    file.close()
-    return
-
-
 def save_archive(randomSeeds, dataSetName, individuals):
     # with open(
     #     "./MTGP_KNN/train/scenario_"

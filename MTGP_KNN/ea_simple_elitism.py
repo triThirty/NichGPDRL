@@ -166,14 +166,12 @@ def eaSimple(
         score_elite = generate_next_generation(
             pop_intermediate, population, elitism, toolbox, knn_model
         )
-        print("*******No OOM*******")
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
-        print("@@@@@@@No OOM@@@@@@@")
 
         decision_matrix = [ind.decision_vector for ind in population]
         fitness_matrix = [ind.fitness.values[0] for ind in population]
@@ -195,13 +193,10 @@ def eaSimple(
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}
-        # logbook.record(gen=gen, nevals=len(invalid_ind), **record)
         logbook.record(gen=gen, nevals=len(population), **record)
         if verbose:
             print(logbook.stream)
 
-        pop_fit = [
-            ind.fitness.values[0] for ind in population
-        ]  ######selection from author
+        pop_fit = [ind.fitness.values[0] for ind in population]
         min_fitness.append(min(pop_fit))
     return population, logbook, min_fitness, best_ind_all_gen, all_individuals

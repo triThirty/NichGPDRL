@@ -25,9 +25,8 @@ class ParallelToolbox(base.Toolbox):
     # created by mengxu 2022.11.28 for multiple processing
     @profile
     def multiProcess(self, evaluate, invalid_ind, rd):
-        cores = cpu_count()
         pickle.dumps(invalid_ind)
         pickle.dumps(evaluate)
         partial_evaluate = partial(evaluate, rd=rd)
-        fitnesses = Pool().map(partial_evaluate, invalid_ind)
+        fitnesses = Pool(processes=2).map(partial_evaluate, invalid_ind)
         return fitnesses

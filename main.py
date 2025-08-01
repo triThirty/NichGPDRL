@@ -33,9 +33,7 @@ def my_app(cfg: DictConfig) -> None:
         )
     elif cfg.algo == "KNN":
         KNNmain.main(cfg)
-        main_experiment_knn_MTGP_all_generations_test_results.main(
-            cfg.scenarios, seed, "Knn_GP_all_gen_test"
-        )
+        main_experiment_knn_MTGP_all_generations_test_results.main(cfg)
     elif cfg.algo == "MTGP":
         MTGPmain.main(cfg)
         main_experiment_MTGP_all_generations_test_results.main(

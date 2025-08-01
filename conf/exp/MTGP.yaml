@@ -1,5 +1,2 @@
-# defaults:
-#   - /defaults/base@_here_
-
 device: "cpu"
 algo: MTGP

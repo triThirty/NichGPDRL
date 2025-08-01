@@ -1,6 +1,4 @@
-# defaults:
-#   - /defaults/base@_here_
-
 algo: "Transformer_SSGP"
 score_based_algo: True
-device: cuda
+device: cpu
+exploration_ratio: 0.1

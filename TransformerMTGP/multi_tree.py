@@ -5,25 +5,7 @@ import numpy as np
 from collections import defaultdict
 from deap import gp, creator
 from deap import tools
-
-# from MTGP.GPFC import N_TREES, MAX_HEIGHT
-
-
-# def process_data(individual, toolbox, data):
-#     no_instances = data.shape[0]
-#     no_trees = len(individual)
-#     feature_major = data.T
-#     # [no_trees x no_instances]
-#     # we do it this way so we can assign rows (constructed features) efficiently.
-#     result = np.zeros(shape=(no_trees, no_instances))
-#     for i, expr in enumerate(individual):
-#         func = toolbox.compile(expr=expr)
-#         vec = func(*feature_major)
-#         if (not isinstance(vec, np.ndarray)) or vec.ndim == 0:
-#             # it decided to just give us a constant back...
-#             vec = np.repeat(vec, no_instances)
-#         result[i] = vec
-#     return result.T
+from functools import partial
 
 
 def init_primitives(pset):
@@ -86,7 +68,7 @@ def lf(x):  # add by mengxu 2022.11.08
     return 1 / (1 + np.exp(-x))
 
 
-def init_toolbox(toolbox, pset, score_based_algo):
+def init_toolbox(toolbox, pset, config):
     creator.create(
         "Individual",
         list,
@@ -104,17 +86,19 @@ def init_toolbox(toolbox, pset, score_based_algo):
     )
     toolbox.register("population", tools.initRepeat, list, toolbox.individual)
     toolbox.register("compile", gp.compile, pset=pset)
-
     toolbox.register("expr_mut", gp.genFull, min_=2, max_=8)
-    # toolbox.register("mate", xmate)
-    # toolbox.register("mutate", xmut, expr=toolbox.expr_mut)
 
-    if score_based_algo:
-        toolbox.register("mate", newlim_xmate)
-        toolbox.register("mutate", newlim_xmut, expr=toolbox.expr_mut)
-    else:
-        toolbox.register("mate", lim_xmate)
-        toolbox.register("mutate", lim_xmut, expr=toolbox.expr_mut)
+    partial_newlim_xmate = partial(
+        newlim_xmate,
+        exploration_ratio=config.get("exploration_ratio", 0),
+        enable_score_based_algo=config.score_based_algo,
+    )
+    partial_newlim_xmut = partial(
+        newlim_xmut, enable_score_based_algo=config.score_based_algo
+    )
+
+    toolbox.register("mate", partial_newlim_xmate)
+    toolbox.register("mutate", partial_newlim_xmut, expr=toolbox.expr_mut)
 
 
 def maxheight(v):
@@ -222,19 +206,12 @@ def newcxOnePoint(ind1, ind2):
     return ind1, ind2
 
 
-def newxmate(ind1, ind2):
+def newxmate(ind1, ind2, exploration_ratio=0.1, enable_score_based_algo=False):
     if len(ind1) == 2:
         randomValue = random.random()
-        if randomValue < 0.9:  # crossover
-            i1 = random.randrange(len(ind1))
-            # i2 = random.randrange(len(ind2))
-            # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
-            ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
-
-            # exchange the other tree
-            i2 = 1 - i1  # only for individual with two tree
-            ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
-        else:
+        if (
+            enable_score_based_algo and randomValue < exploration_ratio
+        ):  # use score-based crossover
             ind1, ind2 = newcxOnePoint(ind1, ind2)
             del ind1.l_min
             del ind1.l_max
@@ -244,6 +221,11 @@ def newxmate(ind1, ind2):
             del ind2.l_max
             del ind2.r_min
             del ind2.r_max
+        else:
+            i1 = random.randrange(len(ind1))
+            ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
+            i2 = 1 - i1
+            ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
     else:
         if len(ind1) == 2:
             ind1[0], ind2[0] = gp.cxOnePoint(ind1[0], ind2[0])
@@ -254,7 +236,6 @@ def newxmate(ind1, ind2):
 def xmate(ind1, ind2):
     if len(ind1) == 2:
         i1 = random.randrange(len(ind1))
-        # i2 = random.randrange(len(ind2))
         # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
         ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
 
@@ -267,39 +248,21 @@ def xmate(ind1, ind2):
     return ind1, ind2
 
 
-# def xmate(ind1, ind2):
-#     i1 = random.randrange(len(ind1))
-#     i2 = random.randrange(len(ind2))
-#     ind1[i1], ind2[i2] = gp.cxOnePoint(ind1[i1], ind2[i2])
-#     return ind1, ind2
-
-
 def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
 
 
-def newlim_xmate(ind1, ind2):
-    return wrap(newxmate, ind1, ind2)
+def newlim_xmate(ind1, ind2, exploration_ratio=0.1, enable_score_based_algo=False):
+    return wrap(
+        newxmate,
+        ind1,
+        ind2,
+        exploration_ratio=exploration_ratio,
+        enable_score_based_algo=enable_score_based_algo,
+    )
 
 
-# def mutUniform(individual, expr, pset, mutate_point):
-#     """Randomly select a point in the tree *individual*, then replace the
-#     subtree at that point as a root by the expression generated using method
-#     :func:`expr`.
-
-#     :param individual: The tree to be mutated.
-#     :param expr: A function object that can generate an expression when
-#                  called.
-#     :returns: A tuple of one tree.
-#     """
-#     # index = random.randrange(len(individual))
-#     index = mutate_point
-#     slice_ = individual.searchSubtree(index)
-#     type_ = individual[index].ret
-#     individual[slice_] = expr(pset=pset, type_=type_)
-#     return (individual,)
-
-
+# score-based mutation
 def mutUniform(individual, expr, pset):
     """Randomly select a point in the tree *individual*, then replace the
     subtree at that point as a root by the expression generated using method
@@ -332,36 +295,31 @@ def mutUniform(individual, expr, pset):
 
 
 def xmut(ind, expr):
-    # ind = mutUniform(ind, expr, pset=ind.pset)
-    # return ind
-
     i1 = random.randrange(len(ind))
     indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
     ind[i1] = indx[0]
     return (ind,)
 
 
-def newxmut(ind, expr):
-    # ind = mutUniform(ind, expr, pset=ind.pset)
-    # return ind
-
-    # i1 = random.randrange(len(ind))
-    ind = mutUniform(ind, expr, pset=ind.pset)
-    # ind[i1] = indx[0]
-    return ind
+def newxmut(ind, expr, enable_score_based_algo=False):
+    if enable_score_based_algo:
+        ind = mutUniform(ind, expr, pset=ind.pset)  # score-based mutation
+    else:
+        i1 = random.randrange(len(ind))
+        indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
+        ind[i1] = indx[0]
+    return (ind,)
 
 
 def lim_xmut(ind, expr):
     # have to put expr=expr otherwise it tries to use it as an individual
     res = wrap(xmut, ind, expr=expr)
-    # print(res)
     return res
 
 
-def newlim_xmut(ind, expr):
+def newlim_xmut(ind, expr, enable_score_based_algo=False):
     # have to put expr=expr otherwise it tries to use it as an individual
-    res = wrap(newxmut, ind, expr=expr)
-    # print(res)
+    res = wrap(newxmut, ind, expr=expr, enable_score_based_algo=enable_score_based_algo)
     return res
 
 

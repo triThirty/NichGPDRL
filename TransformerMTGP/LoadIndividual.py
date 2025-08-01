@@ -41,27 +41,7 @@ def load_all_individuals_from_gen_json_format(randomSeeds, dataSetName):
     return dict
 
 
-def load_individual_from_gen(
-    randomSeeds, dataSetName
-):  # save individual as txt by mengxu
-    # with open('./MTGP/train/scenario_' + str(dataSetName) + '/' + str(
-    #         randomSeeds) + '_meng_individual_' + dataSetName + '.pkl',
-    #           "rb") as fileName_individual:
-    # with open(
-    #     sys.path[0]
-    #     + "/TransformerMTGP/train/scenario_"
-    #     + str(dataSetName)
-    #     + "/"
-    #     + str(randomSeeds)
-    #     + "_meng_individual_"
-    #     + dataSetName
-    #     + ".pkl",
-    #     "rb",
-    # ) as fileName_individual:
-    #     dict = pickle.load(fileName_individual)
-
-    # # print(dict.items())
-    # return dict
+def load_individual_from_gen(randomSeeds, dataSetName):
     with open(
         sys.path[0]
         + "/TransformerMTGP/train/scenario_"

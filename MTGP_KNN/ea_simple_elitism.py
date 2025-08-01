@@ -78,6 +78,7 @@ def eaSimple(
     seed=__debug__,
     dataset_name=__debug__,
     num_pre_selection=3,
+    config=None,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -102,7 +103,9 @@ def eaSimple(
 
     decision_matrix = [ind.decision_vector for ind in population]
     fitness_matrix = [ind.fitness.values[0] for ind in population]
-    knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
+    knn_model = KNN_train(
+        X=decision_matrix, y=fitness_matrix, n_neighbors=config.n_neighbors
+    )
     del decision_matrix
     del fitness_matrix
 
@@ -115,7 +118,7 @@ def eaSimple(
     best_index = np.argmin(pop_fit)
     best_ind_all_gen.append(population[best_index])  # add by mengxu
     p_one = population[best_index]
-    saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, 0)
+    saveFile.save_individual_each_gen_to_txt(config, p_one, 0)
 
     if halloffame is not None:
         halloffame.update(population)
@@ -172,7 +175,9 @@ def eaSimple(
 
         decision_matrix = [ind.decision_vector for ind in population]
         fitness_matrix = [ind.fitness.values[0] for ind in population]
-        knn_model = KNN_train(X=decision_matrix, y=fitness_matrix)
+        knn_model = KNN_train(
+            X=decision_matrix, y=fitness_matrix, n_neighbors=config.n_neighbors
+        )
         del decision_matrix
         del fitness_matrix
 
@@ -186,7 +191,7 @@ def eaSimple(
         best_index = np.argmin(pop_fit)
         best_ind_all_gen.append(population[best_index])  # add by mengxu
         p_one = population[best_index]
-        saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
+        saveFile.save_individual_each_gen_to_txt(config, p_one, gen)
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}

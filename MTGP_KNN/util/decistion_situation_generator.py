@@ -17,8 +17,8 @@ def compute_phenotype(pop, decision_situations):
         ind.decision_vector = decision_vector
 
 
-def KNN_train(X, y):
-    KNN_model = KNeighborsClassifier(n_neighbors=3, p=2)
+def KNN_train(X, y, n_neighbors):
+    KNN_model = KNeighborsRegressor(n_neighbors=n_neighbors, p=2, weights="distance")
     KNN_model.fit(X, y)
     return KNN_model
 

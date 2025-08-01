@@ -421,7 +421,7 @@ def init_data(rundata):
     rd = rundata
 
 
-def GPFC_main(dataset_name, seed):
+def GPFC_main(dataset_name, seed, config):
     rd["seed"] = seed
     rd["dataset_name"] = dataset_name
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
@@ -483,6 +483,7 @@ def GPFC_main(dataset_name, seed):
             verbose=True,
             seed=seed,
             dataset_name=dataset_name,
+            config=config,
         )
     )
     best = hof[0]
@@ -508,27 +509,17 @@ ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
 def main(config, *args):
-    # if __name__ == "__main__":
-    #     dataset_name = str(sys.argv[1])
-    #     seed = int(sys.argv[2])
     seed = config.seeds
     dataset_name = config.scenarios
-    random.seed(int(seed))
-    np.random.seed(int(seed))
-    saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
+    saveFile.clear_individual_each_gen_to_txt(config)
     start = time.time()
     min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(
-        dataset_name, seed
+        dataset_name, seed, config
     )
     end = time.time()
     running_time = end - start
-    saveFile.save_each_gen_best_individual_json_format(
-        seed, dataset_name, best_ind_all_gen
-    )
-    saveFile.saveAllIndividuals(seed, dataset_name, all_individuals)
-    saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)
-    saveFile.saveMinFitness(seed, dataset_name, min_fitness)
-    saveFile.saveRunningTime(seed, dataset_name, running_time)
+    saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)
+    saveFile.save_each_gen_best_individual_meng(config, best_ind_all_gen)
     print(min_fitness)
     print("Training time: " + str(running_time))
     print("Training end!")

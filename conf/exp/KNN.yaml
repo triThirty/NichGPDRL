@@ -1,8 +1,7 @@
-# defaults:
-#   - /defaults/base@_here_
-
 device: "cpu"
-algo: KNN 
+algo: KNN
 
 scenarios: HH
 seeds: 0
+
+n_neighbors: 3

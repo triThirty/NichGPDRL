@@ -342,7 +342,7 @@ def connectedness(cluster):
 
 
 def init_toolbox(toolbox, pset, config):
-    REP.init_toolbox(toolbox, pset, config.score_based_algo)
+    REP.init_toolbox(toolbox, pset, config)
     toolbox.register(
         "select", selElitistAndTournament, tournsize=TOURNAMENT_SIZE, elitism=ELITISM
     )

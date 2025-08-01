@@ -179,22 +179,6 @@ class shopfloorMTGP:
         self.env.run()
 
 
-# dictionary to store shopfloors and production record
-spf_dict = {}
-production_record = {}
-# list of experiments
-benchmark_R = ["EA", "CT", "ET", "TT"]
-benchmark_S = ["FIFO", "EDD", "SPT", "WINQ"]
-
-benchmark = []
-
-MTGP = []
-DRLs = []
-# DRLs = ['validated']
-reward_mechanism = [False]
-
-# title = benchmark + ['Integrated_DRL']
-title = benchmark
 span = 1000
 m_no = 6
 wc_no = 3
@@ -202,20 +186,15 @@ sum_record = []
 benchmark_record = []
 max_record = []
 rate_record = []
-iteration = 100  # original 1
-# dont mess with above one-
-export_result = 0
+iteration = 100
 
 
-def main(dataset_name, seedOfRun, input_algo):
-    dataSetName = dataset_name
-    seedOfRun = int(seedOfRun)
+def main(config):
+    dataSetName = config.scenarios
 
-    # ===================================The following is about not using validation===================================
-    # Do validation and obtain the best evolved rule
-    dict_best_MTGP_individuals = mtload.load_individual_from_gen(seedOfRun, dataSetName)
+    dict_best_MTGP_individuals = mtload.load_individual_from_gen(config)
     dict_best_MTGP_individuals_dict = mtload.load_individual_from_gen_json_format(
-        seedOfRun, dataSetName
+        config
     )
 
     testSeeds = 123453
@@ -230,16 +209,10 @@ def main(dataset_name, seedOfRun, input_algo):
         rate_record.append([])
         seed = np.random.randint(2000000000)
 
-        # for idx in range(len(dict_best_MTGP_individuals)):
         for idx, individual in enumerate(dict_best_MTGP_individuals):
-            algo = "GP_gen_" + str(idx)
-            if run == 0:
-                MTGP.append(algo)
-            # individual = dict_best_MTGP_individuals.get(str(idx))
             ind_dict = dict_best_MTGP_individuals_dict[idx]
             sequencing_rule_tree = individual[0]
             routing_rule_tree = individual[1]
-            # np.random.seed(int(seed))  # add by mengxu 2022.10.31
             env = simpy.Environment()
             spf = shopfloorMTGP(
                 env,
@@ -268,5 +241,5 @@ def main(dataset_name, seedOfRun, input_algo):
     for ind in dict_best_MTGP_individuals_dict:
         ind["fitness"] = ind["fitness"] / iteration
     saveFile.save_each_gen_best_individual_on_test_dataset(
-        seedOfRun, dataSetName, dict_best_MTGP_individuals_dict
+        config, dict_best_MTGP_individuals_dict
     )

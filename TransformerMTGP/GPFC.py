@@ -434,10 +434,10 @@ def init_data(rundata):
     rd = rundata
 
 
-def GPFC_main(dataset_name, seed, num_pre_selection, device, config):
+def GPFC_main(config):
     rd["use_niching"] = use_niching
-    rd["seed"] = seed
-    rd["dataset_name"] = dataset_name
+    rd["seed"] = config.seeds
+    rd["dataset_name"] = config.scenarios
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
     pset = gp.PrimitiveSet("MAIN", num_features, prefix="f")
     pset.context["array"] = np.array
@@ -457,9 +457,6 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device, config):
     seedRotate = True
     rd["decision_situations"] = []
     env = simpy.Environment()
-    dataset_name = rd["dataset_name"]
-    rule_R = "GP_evolve_R"
-    rule_S = "GP_evolve_S"
     spf = knn_shopfloor(
         env,
         span,
@@ -467,11 +464,11 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device, config):
         wc_no,
         pop[0][0],
         pop[0][1],
-        routing_rule=rule_R,
-        sequencing_rule=rule_S,
-        seed=seed,
+        routing_rule="GP_evolve_R",
+        sequencing_rule="GP_evolve_S",
+        seed=rd["seed"],
         ifPrint=False,
-        dataset_name=dataset_name,
+        dataset_name=rd["dataset_name"],
     )
     spf.simulation()
 
@@ -514,11 +511,12 @@ def GPFC_main(dataset_name, seed, num_pre_selection, device, config):
         stats,
         halloffame=hof,
         verbose=True,
-        seed=seed,
-        dataset_name=dataset_name,
+        seed=rd["seed"],
+        dataset_name=rd["dataset_name"],
         start_gen=times,
-        num_pre_selection=num_pre_selection,
-        device=device,
+        num_pre_selection=config.num_pre_selection,
+        device=config.device,
+        config=config,
     )
     best = hof[0]
 
@@ -556,12 +554,8 @@ ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
 # def main(dataset_name, seed, num_pre_selection, device, *args):
-def main(config, *args):
-    seed = config.seeds
-    dataset_name = config.scenarios
-    num_pre_selection = config.num_pre_selection
-    device = config.device
-    saveFile.clear_individual_each_gen_to_txt(seed, dataset_name)
+def main(config):
+    saveFile.clear_individual_each_gen_to_txt(config)
     start = time.time()
     (
         min_fitness,
@@ -569,22 +563,11 @@ def main(config, *args):
         best_ind_all_gen,
         top_inds_fitness_final_gen,
         top_inds_final_gen,
-    ) = GPFC_main(dataset_name, seed, num_pre_selection, device, config)
+    ) = GPFC_main(config)
     end = time.time()
     running_time = end - start
-    saveFile.save_each_gen_best_individual_meng(seed, dataset_name, best_ind_all_gen)
-    saveFile.save_each_gen_best_individual_json_format(
-        seed, dataset_name, best_ind_all_gen
-    )
-    saveFile.saveMinFitness(seed, dataset_name, min_fitness)
-    saveFile.saveRunningTime(seed, dataset_name, running_time)
-    saveFile.save_top_inds_final_gen_meng(seed, dataset_name, top_inds_final_gen)
-    saveFile.save_top_inds_fitness_final_gen(
-        seed, dataset_name, top_inds_fitness_final_gen
-    )
-    saveFile.save_top_inds_with_fitness_final_gen_to_txt(
-        seed, dataset_name, top_inds_final_gen, top_inds_fitness_final_gen
-    )
+    saveFile.save_each_gen_best_individual_meng(config, best_ind_all_gen)
+    saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)
     print(min_fitness)
     print("Training time: " + str(running_time))
     print("Training end!")

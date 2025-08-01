@@ -21,16 +21,9 @@ def my_app(cfg: DictConfig) -> None:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    if cfg.algo == "Transformer":
+    if cfg.algo == "Transformer_SSGP":
         TransformerGPmain.main(cfg)
-        main_experiment_transformerGP_all_generations_test_results.main(
-            cfg.scenarios, seed, "transformerGP_all_gen_test"
-        )
-    elif cfg.algo == "Transformer_SSGP":
-        TransformerGPmain.main(cfg)
-        main_experiment_transformerGP_all_generations_test_results.main(
-            cfg.scenarios, seed, "transformerGP_all_gen_test"
-        )
+        main_experiment_transformerGP_all_generations_test_results.main(cfg)
     elif cfg.algo == "KNN":
         KNNmain.main(cfg)
         main_experiment_knn_MTGP_all_generations_test_results.main(cfg)

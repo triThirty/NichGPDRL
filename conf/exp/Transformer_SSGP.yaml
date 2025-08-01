@@ -1,4 +1,3 @@
 algo: "Transformer_SSGP"
-score_based_algo: True
 device: cpu
 exploration_ratio: 0.1

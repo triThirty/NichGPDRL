@@ -1,4 +1,3 @@
-# import pickle5 as pickle
 import json
 from MTGP_KNN.saveFile import formula_base_dir, base_dir
 

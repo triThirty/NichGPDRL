@@ -90,11 +90,10 @@ def init_toolbox(toolbox, pset, config):
 
     partial_newlim_xmate = partial(
         newlim_xmate,
-        exploration_ratio=config.get("exploration_ratio", 0),
-        enable_score_based_algo=config.score_based_algo,
+        exploration_ratio=config.exploration_ratio,
     )
     partial_newlim_xmut = partial(
-        newlim_xmut, enable_score_based_algo=config.score_based_algo
+        newlim_xmut, exploration_ratio=config.exploration_ratio
     )
 
     toolbox.register("mate", partial_newlim_xmate)
@@ -206,12 +205,10 @@ def newcxOnePoint(ind1, ind2):
     return ind1, ind2
 
 
-def newxmate(ind1, ind2, exploration_ratio=0.1, enable_score_based_algo=False):
+def newxmate(ind1, ind2, exploration_ratio=0.1):
     if len(ind1) == 2:
         randomValue = random.random()
-        if (
-            enable_score_based_algo and randomValue < exploration_ratio
-        ):  # use score-based crossover
+        if randomValue < exploration_ratio:  # use score-based crossover
             ind1, ind2 = newcxOnePoint(ind1, ind2)
             del ind1.l_min
             del ind1.l_max
@@ -252,13 +249,12 @@ def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
 
 
-def newlim_xmate(ind1, ind2, exploration_ratio=0.1, enable_score_based_algo=False):
+def newlim_xmate(ind1, ind2, exploration_ratio=0.1):
     return wrap(
         newxmate,
         ind1,
         ind2,
         exploration_ratio=exploration_ratio,
-        enable_score_based_algo=enable_score_based_algo,
     )
 
 
@@ -301,8 +297,8 @@ def xmut(ind, expr):
     return (ind,)
 
 
-def newxmut(ind, expr, enable_score_based_algo=False):
-    if enable_score_based_algo:
+def newxmut(ind, expr, exploration_ratio=0):
+    if exploration_ratio:
         ind = mutUniform(ind, expr, pset=ind.pset)  # score-based mutation
     else:
         i1 = random.randrange(len(ind))
@@ -317,9 +313,9 @@ def lim_xmut(ind, expr):
     return res
 
 
-def newlim_xmut(ind, expr, enable_score_based_algo=False):
+def newlim_xmut(ind, expr, exploration_ratio=0):
     # have to put expr=expr otherwise it tries to use it as an individual
-    res = wrap(newxmut, ind, expr=expr, enable_score_based_algo=enable_score_based_algo)
+    res = wrap(newxmut, ind, expr=expr, exploration_ratio=exploration_ratio)
     return res
 
 

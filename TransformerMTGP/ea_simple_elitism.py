@@ -68,10 +68,6 @@ def sortPopulation(toolbox, population):
         if not sign:
             break
 
-    # FOR CHECK
-    # pop_fit = [np.sum(ind.fitness.values) for ind in
-    #            populationCopy]
-    # print(pop_fit)
     return populationCopy
 
 
@@ -93,6 +89,7 @@ def eaSimple(
     start_gen=1,
     num_pre_selection=0,
     device="cuda",
+    config=None,
 ):
     # initialise the random seed of each generation
     randomSeed_ngen = []
@@ -126,7 +123,6 @@ def eaSimple(
         device=device,
     )
     surrogate_evaluate(population, transformer_model, device)
-    saveFile.save_all_individuals(seed, dataset_name, population, 0)
 
     pop_fit = [ind.fitness.values[0] for ind in population]
     min_fitness.append(min(pop_fit))
@@ -134,7 +130,7 @@ def eaSimple(
     best_index = np.argmin(pop_fit)
     best_ind_all_gen.append(population[best_index])  # add by mengxu
     p_one = population[best_index]
-    saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, 0)
+    saveFile.save_individual_each_gen_to_txt(config, p_one, 0)
 
     if halloffame is not None:
         halloffame.update(population)
@@ -198,7 +194,6 @@ def eaSimple(
             device=device,
         )
         surrogate_evaluate(population, transformer_model, device)
-        saveFile.save_all_individuals(seed, dataset_name, population, gen)
 
         # modified by mengxu
         if halloffame is not None:
@@ -210,7 +205,7 @@ def eaSimple(
         best_index = np.argmin(pop_fit)
         best_ind_all_gen.append(population[best_index])  # add by mengxu
         p_one = population[best_index]
-        saveFile.save_individual_each_gen_to_txt(seed, dataset_name, p_one, gen)
+        saveFile.save_individual_each_gen_to_txt(config, p_one, gen)
 
         # Append the current generation statistics to the logbook
         record = stats.compile(population) if stats else {}

@@ -421,9 +421,9 @@ def init_data(rundata):
     rd = rundata
 
 
-def GPFC_main(dataset_name, seed, config):
-    rd["seed"] = seed
-    rd["dataset_name"] = dataset_name
+def GPFC_main(config):
+    rd["seed"] = config.seeds
+    rd["dataset_name"] = config.scenarios
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
     pset = gp.PrimitiveSet("MAIN", num_features, prefix="f")
     pset.context["array"] = np.array
@@ -442,7 +442,6 @@ def GPFC_main(dataset_name, seed, config):
     seedRotate = True
     rd["decision_situations"] = []
     env = simpy.Environment()
-    dataset_name = rd["dataset_name"]
     rule_R = "GP_evolve_R"
     rule_S = "GP_evolve_S"
     spf = knn_shopfloor(
@@ -454,9 +453,9 @@ def GPFC_main(dataset_name, seed, config):
         pop[0][1],
         routing_rule=rule_R,
         sequencing_rule=rule_S,
-        seed=seed,
+        seed=rd["seed"],
         ifPrint=False,
-        dataset_name=dataset_name,
+        dataset_name=rd["dataset_name"],
     )
     spf.simulation()
 
@@ -481,8 +480,8 @@ def GPFC_main(dataset_name, seed, config):
             stats,
             halloffame=hof,
             verbose=True,
-            seed=seed,
-            dataset_name=dataset_name,
+            seed=rd["seed"],
+            dataset_name=rd["dataset_name"],
             config=config,
         )
     )
@@ -508,14 +507,10 @@ wc_no = 3
 ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
-def main(config, *args):
-    seed = config.seeds
-    dataset_name = config.scenarios
+def main(config):
     saveFile.clear_individual_each_gen_to_txt(config)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(
-        dataset_name, seed, config
-    )
+    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(config)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)

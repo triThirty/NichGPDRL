@@ -1,4 +1,0 @@
-algo: Transformer
-score_based_algo: False
-device: cpu
-exploration_ratio: 0.0

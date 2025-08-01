@@ -287,7 +287,7 @@ def mutUniform(individual, expr, pset):
     del individual.l_max
     del individual.r_min
     del individual.r_max
-    return (individual,)
+    return individual
 
 
 def xmut(ind, expr):

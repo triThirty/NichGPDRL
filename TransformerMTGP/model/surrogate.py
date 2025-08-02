@@ -98,11 +98,6 @@ def new_surrogate_train(
         ).to(device)
         indices = torch.nonzero(combined_x[:, 1:] == 1, as_tuple=True)[1] + 1
 
-        # x_embedding = embedding_layer(indices)
-        # position_embedding = positional_encoding(combined_x.shape[0], 64, device)
-
-        # x_pos_embedding = (x_embedding + position_embedding).clone().detach()
-
         combined_edge_index = torch.cat(
             [graph1.edge_index, graph2.edge_index + graph1.x.size(0)], dim=1
         )
@@ -125,9 +120,6 @@ def new_surrogate_train(
 
 
 def surrogate_evaluate(population, model, device):
-    embedding_layer = torch.nn.Embedding(53, 64, padding_idx=0).to(device)
-    embedding_layer.load_state_dict(torch.load("./TransformerMTGP/model/embedding.pth"))
-
     model.to(device)
     model.eval()
     for ind in population:
@@ -150,11 +142,8 @@ def surrogate_evaluate(population, model, device):
             y=graph1.y,
             segement_ids=segement_ids,
         )
-        # output, minimal_score_node_index, max_score_node_index = model(ind_data, is_batch=False)
         output, score_vector = model(ind_data, is_batch=False)
         ind.score = output.clone().detach().item()
-        # ind.minimal_score_node_index = minimal_score_node_index.clone().detach().item()
-        # ind.max_score_node_index = max_score_node_index.clone().detach().item()
         ind.score_vector = score_vector.clone().detach().cpu().numpy()
 
         mask1 = ind_data.segement_ids == 1

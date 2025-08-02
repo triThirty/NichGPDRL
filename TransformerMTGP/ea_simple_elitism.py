@@ -1,4 +1,5 @@
 import random
+import time
 
 import numpy as np
 from deap import tools
@@ -143,6 +144,8 @@ def eaSimple(
     # Begin the generational process
     for gen in range(start_gen, ngen + 1):
 
+        print("Starting time: 0")
+        start_time = time.time()
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
@@ -151,6 +154,8 @@ def eaSimple(
         offspring = toolbox.select(population, len(population) - elitism)
 
         pop_intermediate = []
+        end_time = time.time()
+        print("slow point 1, time cost: ", end_time - start_time)
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(
                 offspring, toolbox, cxpb, mutpb, reppb, transformer_model, device
@@ -165,6 +170,8 @@ def eaSimple(
             )[elitism:]
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
+        end_time = time.time()
+        print("slow point 2, time cost: ", end_time - start_time)
         surrogate_evaluate(pop_intermediate, transformer_model, device)
         score_elite = []
         while len(score_elite) < len(population) - elitism:
@@ -177,6 +184,8 @@ def eaSimple(
         population = sorted_elite + score_elite[: len(population) - elitism]
 
         rd["seed"] = randomSeed_ngen[gen]
+        end_time = time.time()
+        print("slow point 3, time cost: ", end_time - start_time)
         surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
@@ -193,6 +202,8 @@ def eaSimple(
             optimizer,
             device=device,
         )
+        end_time = time.time()
+        print("slow point 4, time cost: ", end_time - start_time)
         surrogate_evaluate(population, transformer_model, device)
 
         # modified by mengxu

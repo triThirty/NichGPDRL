@@ -30,8 +30,10 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
             del offspring[i - 1].fitness.values, offspring[i].fitness.values
             i = i + 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
-            (offspring[i],) = toolbox.mutate(offspring[i])
-            del offspring[i].fitness.values
+            (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
+            del offspring[i - 1].fitness.values
+            i = i + 1
+        else:
             i = i + 1
     return offspring
 

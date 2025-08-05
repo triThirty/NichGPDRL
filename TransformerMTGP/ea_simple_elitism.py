@@ -33,20 +33,25 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb, transformer_model, device):
             if offspring[i - 1] == offspring[i]:
                 (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
                 (offspring[i],) = toolbox.mutate(offspring[i])
+                print(f"mutate {i-1}")
+                print(f"mutate {i}")
             else:
                 offspring[i - 1], offspring[i] = toolbox.mate(
                     offspring[i - 1], offspring[i]
                 )
+                print(f"mate {i-1}")
+                print(f"mate {i}")
             del offspring[i - 1].fitness.values, offspring[i].fitness.values
-            offspring[i - 1].num_calculation = 0
-            offspring[i].num_calculation = 0
             i = i + 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
-            (offspring[i],) = toolbox.mutate(offspring[i])
-            del offspring[i].fitness.values
-            offspring[i].num_calculation = 0
-            surrogate_evaluate([offspring[i]], transformer_model, device)
+            (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
+            print(f"mutate {i-1}")
+            del offspring[i - 1].fitness.values
+            surrogate_evaluate([offspring[i - 1]], transformer_model, device)
             i = i + 1
+        else:
+            print(f"No operation on {i-1}")
+            i += 1
     return offspring
 
 

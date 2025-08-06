@@ -24,8 +24,10 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
             del offspring[i - 1].fitness.values, offspring[i].fitness.values
             i = i + 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
-            (offspring[i],) = toolbox.mutate(offspring[i])
-            del offspring[i].fitness.values
+            (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
+            del offspring[i - 1].fitness.values
+            i = i + 1
+        else:
             i = i + 1
     return offspring
 
@@ -87,12 +89,10 @@ def eaSimple(
 
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-    # fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
     # all_individuals.append(invalid_ind)
-    # all_individuals = [item for item in invalid_ind]
     all_individuals = []
 
     pop_fit = [ind.fitness.values[0] for ind in population]
@@ -178,8 +178,6 @@ def eaSimple(
         if verbose:
             print(logbook.stream)
 
-        pop_fit = [
-            ind.fitness.values[0] for ind in population
-        ]  ######selection from author
+        pop_fit = [ind.fitness.values[0] for ind in population]
         min_fitness.append(min(pop_fit))
     return population, logbook, min_fitness, best_ind_all_gen, all_individuals

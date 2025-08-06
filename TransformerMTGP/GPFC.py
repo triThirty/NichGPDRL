@@ -568,7 +568,7 @@ def main(config):
     saveFile.save_each_gen_best_individual_meng(config, best_ind_all_gen)
     saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)
     print("The accuracy trend is: ")
-    print(accuracy_trend)
+    saveFile.save_surrogate_accuracy_trend(config, accuracy_trend)
     print(min_fitness)
     print("Training time: " + str(running_time))
     print("Training end!")

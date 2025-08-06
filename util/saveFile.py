@@ -11,6 +11,19 @@ formula_base_dir = Template(
 base_dir = Template(f"{root_dir}/${{seeds}}_meng_individual_${{scenarios}}.json")
 txt_base_dir = Template(f"{root_dir}/${{seeds}}_${{scenarios}}_each_gen.txt")
 
+surrogate_accuracy_dir = Template(f"{root_dir}/${{seeds}}_accuracy_trend.json")
+
+
+@ensure_directory_exists(surrogate_accuracy_dir)
+def save_surrogate_accuracy_trend(config, accuracy_trend):
+    path = surrogate_accuracy_dir.substitute(**config)
+    with open(
+        path,
+        "w",
+    ) as fileName_individual:
+        json.dump(accuracy_trend, fileName_individual)
+    return
+
 
 @ensure_directory_exists(formula_base_dir)
 def save_each_gen_best_individual_json_format(config, best_ind_all_gen):

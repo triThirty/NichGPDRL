@@ -119,3 +119,14 @@ def calculate_score_based_ind_proportion(
             concordant_pairs += 1
 
     return concordant_pairs / total_individuals
+
+
+def get_index_of_selected_inds_in_intermediate(
+    sorted_pop_intermediate_by_fitness: list, selected_inds
+):
+    indices = []
+    for ind in selected_inds:
+        if ind in sorted_pop_intermediate_by_fitness:
+            index = sorted_pop_intermediate_by_fitness.index(ind)
+            indices.append(index)
+    return indices

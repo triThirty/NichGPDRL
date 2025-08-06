@@ -13,6 +13,7 @@ txt_base_dir = Template(f"{root_dir}/${{seeds}}_${{scenarios}}_each_gen.txt")
 
 surrogate_accuracy_dir = Template(f"{root_dir}/${{seeds}}_accuracy_trend.json")
 surrogate_proportion_dir = Template(f"{root_dir}/${{seeds}}_proportion_trend.json")
+surrogate_proportion_index_dir = Template(f"{root_dir}/${{seeds}}_proportion_index.txt")
 
 
 @ensure_directory_exists(surrogate_proportion_dir)
@@ -131,4 +132,26 @@ def save_individual_each_gen_to_txt(config, individuals, gen):
         file.write(str(individuals[0]) + "\n")
         file.write("Tree 1:\n")  # sequencing rule
         file.write(str(individuals[1]) + "\n")
+    return
+
+
+@ensure_directory_exists(surrogate_proportion_index_dir)
+def clear_index_of_selected_inds_in_intermediate(config):
+    path = surrogate_proportion_index_dir.substitute(**config)
+    with open(
+        path,
+        "w",
+    ) as file:
+        file.write("")
+    return
+
+
+@ensure_directory_exists(surrogate_proportion_index_dir)
+def save_index_of_selected_inds_in_intermediate(config, index):
+    path = surrogate_proportion_index_dir.substitute(**config)
+    with open(
+        path,
+        "a",
+    ) as file:
+        file.write(str(index) + "\n")
     return

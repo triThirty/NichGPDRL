@@ -554,6 +554,7 @@ ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 # def main(dataset_name, seed, num_pre_selection, device, *args):
 def main(config):
+    saveFile.clear_index_of_selected_inds_in_intermediate(config)
     saveFile.clear_individual_each_gen_to_txt(config)
     start = time.time()
     (

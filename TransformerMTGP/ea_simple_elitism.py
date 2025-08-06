@@ -21,6 +21,7 @@ from TransformerMTGP.util.functions import (
     phyno_remove_duplicates,
     calculate_ranking_accuracy,
     calculate_score_based_ind_proportion,
+    get_index_of_selected_inds_in_intermediate,
 )
 
 
@@ -185,11 +186,7 @@ def eaSimple(
 
         sorted_pop_intermediate_by_fitness = sorted(
             pop_intermediate, key=lambda x: x.fitness.values[0], reverse=True
-        )[: len(population) - elitism]
-
-        # sorted_pop_intermediate_by_score = sorted(
-        #     pop_intermediate, key=lambda x: x.score
-        # )[: len(population) - elitism]
+        )
 
         accuracy = calculate_ranking_accuracy(pop_intermediate)
         print(f"Ranking accuracy: {accuracy:.4f}")
@@ -204,8 +201,13 @@ def eaSimple(
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 
+        indices = get_index_of_selected_inds_in_intermediate(
+            sorted_pop_intermediate_by_fitness, score_elite[: len(population) - elitism]
+        )
+        saveFile.save_index_of_selected_inds_in_intermediate(config, indices)
+
         score_based_ind_proportion = calculate_score_based_ind_proportion(
-            sorted_pop_intermediate_by_fitness,
+            sorted_pop_intermediate_by_fitness[: len(population) - elitism],
             score_elite[: len(population) - elitism],
         )
         proportion_trend.append(score_based_ind_proportion)

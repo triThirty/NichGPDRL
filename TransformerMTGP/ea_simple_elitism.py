@@ -178,6 +178,7 @@ def eaSimple(
         surrogate_evaluate(pop_intermediate, transformer_model, device)
         score_elite = []
 
+        # Some statistics from here
         fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
         for ind, fit in zip(pop_intermediate, fitnesses):
             ind.fitness.values = fit
@@ -186,16 +187,10 @@ def eaSimple(
             pop_intermediate, key=lambda x: x.fitness.values[0], reverse=True
         )[: len(population) - elitism]
 
-        sorted_pop_intermediate_by_score = sorted(
-            pop_intermediate, key=lambda x: x.score
-        )[: len(population) - elitism]
+        # sorted_pop_intermediate_by_score = sorted(
+        #     pop_intermediate, key=lambda x: x.score
+        # )[: len(population) - elitism]
 
-        score_based_ind_proportion = calculate_score_based_ind_proportion(
-            sorted_pop_intermediate_by_fitness,
-            sorted_pop_intermediate_by_score,
-        )
-        proportion_trend.append(score_based_ind_proportion)
-        print(f"Score-based individual proportion: {score_based_ind_proportion:.4f}")
         accuracy = calculate_ranking_accuracy(pop_intermediate)
         print(f"Ranking accuracy: {accuracy:.4f}")
         accuracy_trend.append(accuracy)
@@ -208,6 +203,14 @@ def eaSimple(
             score_elite[:] = remove_duplicates(score_elite)
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
+
+        score_based_ind_proportion = calculate_score_based_ind_proportion(
+            sorted_pop_intermediate_by_fitness,
+            score_elite[: len(population) - elitism],
+        )
+        proportion_trend.append(score_based_ind_proportion)
+        print(f"Score-based individual proportion: {score_based_ind_proportion:.4f}")
+        # End of statistics
 
         rd["seed"] = randomSeed_ngen[gen]
         end_time = time.time()
@@ -253,4 +256,11 @@ def eaSimple(
         pop_fit = [ind.fitness.values[0] for ind in population]
         min_fitness.append(min(pop_fit))
 
-    return population, logbook, min_fitness, best_ind_all_gen, accuracy_trend, proportion_trend
+    return (
+        population,
+        logbook,
+        min_fitness,
+        best_ind_all_gen,
+        accuracy_trend,
+        proportion_trend,
+    )

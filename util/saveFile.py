@@ -3,7 +3,7 @@ from string import Template
 from util.decorator import ensure_directory_exists
 
 
-root_dir = r"./data/${algo}_${exploration_ratio}/scenario_${scenarios}"
+root_dir = r"./data/${algo}_${path_surfix}/scenario_${scenarios}"
 
 formula_base_dir = Template(
     f"{root_dir}/${{seeds}}_meng_individual_${{scenarios}}_formula_format.json"

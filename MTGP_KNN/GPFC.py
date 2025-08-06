@@ -458,8 +458,8 @@ def GPFC_main(config):
     spf.simulation()
 
     for routing_data, sequencing_data in zip(
-        spf.decision_situations["routing"][200:220],
-        spf.decision_situations["sequencing"][200:220],
+        spf.decision_situations["routing"][-20:],
+        spf.decision_situations["sequencing"][-20:],
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)

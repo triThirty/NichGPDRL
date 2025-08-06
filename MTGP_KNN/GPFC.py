@@ -17,6 +17,12 @@ from util.selection import (
     selElitistAndTournament,
 )
 
+from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+from TransformerMTGP.util.functions import (
+    remove_duplicates,
+    phyno_remove_duplicates,
+)
+
 
 class shopfloor:
     def __init__(self, env, span, m_no, wc_no, sequencing_tree, routing_tree, **kwargs):
@@ -463,6 +469,16 @@ def GPFC_main(config):
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)
+
+    compute_phenotype(pop, rd["decision_situations"])
+    pop = remove_duplicates(pop)
+    pop = phyno_remove_duplicates(pop)
+    while len(pop) < POP_SIZE:
+        new_ind = toolbox.individual()
+        compute_phenotype([new_ind], rd["decision_situations"])
+        pop.append(new_ind)
+        pop = remove_duplicates(pop)
+        pop = phyno_remove_duplicates(pop)
 
     pop, logbook, min_fitness, best_ind_all_gen, all_individuals = (
         ea_simple_elitism.eaSimple(

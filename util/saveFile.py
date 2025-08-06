@@ -12,6 +12,18 @@ base_dir = Template(f"{root_dir}/${{seeds}}_meng_individual_${{scenarios}}.json"
 txt_base_dir = Template(f"{root_dir}/${{seeds}}_${{scenarios}}_each_gen.txt")
 
 surrogate_accuracy_dir = Template(f"{root_dir}/${{seeds}}_accuracy_trend.json")
+surrogate_proportion_dir = Template(f"{root_dir}/${{seeds}}_proportion_trend.json")
+
+
+@ensure_directory_exists(surrogate_proportion_dir)
+def save_surrogate_proportion_trend(config, proportion_trend):
+    path = surrogate_proportion_dir.substitute(**config)
+    with open(
+        path,
+        "w",
+    ) as fileName_individual:
+        json.dump(proportion_trend, fileName_individual)
+    return
 
 
 @ensure_directory_exists(surrogate_accuracy_dir)

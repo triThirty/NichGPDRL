@@ -127,7 +127,6 @@ class MyNN(nn.Module):
             return x, score_vector
 
     def src_mask(self, x):
-        # padding_mask = torch.all(x == 0, dim=-1)
         padding_mask = x == 0
         return padding_mask
 

@@ -496,7 +496,7 @@ def GPFC_main(config):
         min_fitness,
         best_ind_all_gen,
         accuracy_trend,
-        top_inds_final_gen,
+        proportion_trend,
     ) = ea_simple_elitism.eaSimple(
         pop,
         toolbox,
@@ -524,7 +524,7 @@ def GPFC_main(config):
         best,
         best_ind_all_gen,
         accuracy_trend,
-        top_inds_final_gen,
+        proportion_trend,
     )
 
 
@@ -561,14 +561,14 @@ def main(config):
         p_one,
         best_ind_all_gen,
         accuracy_trend,
-        top_inds_final_gen,
+        proportion_trend,
     ) = GPFC_main(config)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_meng(config, best_ind_all_gen)
     saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)
-    print("The accuracy trend is: ")
     saveFile.save_surrogate_accuracy_trend(config, accuracy_trend)
+    saveFile.save_surrogate_proportion_trend(config, proportion_trend)
     print(min_fitness)
     print("Training time: " + str(running_time))
     print("Training end!")

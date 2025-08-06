@@ -40,7 +40,7 @@ def list_net_loss(scores, labels, margin=0.0, lambda_var=0.1):
         for j in range(i + 1, n):
             if labels[i] == labels[j]:
                 # 相同标签：强制分数接近
-                loss += (scores[i] - scores[j])
+                loss += scores[i] - scores[j]
             else:
                 # 不同标签：使用Margin Ranking Loss
                 sign = 1.0 if labels[i] > labels[j] else -1.0
@@ -106,3 +106,16 @@ def calculate_ranking_accuracy(data):
                 discordant_pairs += 1
     accuracy = concordant_pairs / (concordant_pairs + discordant_pairs)
     return accuracy
+
+
+def calculate_score_based_ind_proportion(
+    sorted_pop_intermediate_by_fitness, sorted_pop_intermediate_by_score
+):
+    total_individuals = len(sorted_pop_intermediate_by_fitness)
+    concordant_pairs = 0
+
+    for ind in sorted_pop_intermediate_by_score:
+        if ind in sorted_pop_intermediate_by_fitness:
+            concordant_pairs += 1
+
+    return concordant_pairs / total_individuals

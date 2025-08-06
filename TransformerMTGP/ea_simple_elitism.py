@@ -20,6 +20,7 @@ from TransformerMTGP.util.functions import (
     remove_duplicates,
     phyno_remove_duplicates,
     calculate_ranking_accuracy,
+    calculate_score_based_ind_proportion,
 )
 
 
@@ -102,6 +103,7 @@ def eaSimple(
     min_fitness = []
     best_ind_all_gen = []  # add by mengxu
     accuracy_trend = []
+    proportion_trend = []
 
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
@@ -180,9 +182,22 @@ def eaSimple(
         for ind, fit in zip(pop_intermediate, fitnesses):
             ind.fitness.values = fit
 
+        sorted_pop_intermediate_by_fitness = sorted(
+            pop_intermediate, key=lambda x: x.fitness.values[0], reverse=True
+        )[: len(population) - elitism]
+
+        sorted_pop_intermediate_by_score = sorted(
+            pop_intermediate, key=lambda x: x.score
+        )[: len(population) - elitism]
+
+        score_based_ind_proportion = calculate_score_based_ind_proportion(
+            sorted_pop_intermediate_by_fitness,
+            sorted_pop_intermediate_by_score,
+        )
+        proportion_trend.append(score_based_ind_proportion)
+        print(f"Score-based individual proportion: {score_based_ind_proportion:.4f}")
         accuracy = calculate_ranking_accuracy(pop_intermediate)
         print(f"Ranking accuracy: {accuracy:.4f}")
-
         accuracy_trend.append(accuracy)
 
         while len(score_elite) < len(population) - elitism:
@@ -238,4 +253,4 @@ def eaSimple(
         pop_fit = [ind.fitness.values[0] for ind in population]
         min_fitness.append(min(pop_fit))
 
-    return population, logbook, min_fitness, best_ind_all_gen, accuracy_trend, []
+    return population, logbook, min_fitness, best_ind_all_gen, accuracy_trend, proportion_trend

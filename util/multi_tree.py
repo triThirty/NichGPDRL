@@ -16,15 +16,6 @@ def init_primitives(pset):
     pset.addPrimitive(protected_div, 2)
     pset.addPrimitive(np.maximum, 2)
     pset.addPrimitive(np.minimum, 2)
-    # pset.addPrimitive(lf, 1)  # add by mengxu 2022.11.08 for GSGP
-    # pset.addPrimitive(add_abs, 2)
-    # pset.addPrimitive(sub_abs, 2)
-    # pset.addPrimitive(mt_if, 3)
-    # pset.addEphemeralConstant("rand", ephemeral=lambda: random.uniform(-1, 1))
-    # add terminal
-    # pset.addTerminal(1)  # add by mengxu //todo: the terminals seems not right, it already has three terminals in the set before I add my terminals in, need to modify
-    # pset.addTerminal(2)  # add by mengxu
-    # pset.addTerminal(3)  # add by mengxu
 
     # terminals for sequencing and routing in my paper
     pset.addTerminal(str("NIQ"))  # add by mengxu
@@ -35,37 +26,8 @@ def init_primitives(pset):
     pset.addTerminal(str("OWT"))  # add by mengxu
     pset.addTerminal(str("WKR"))  # add by mengxu
     pset.addTerminal(str("NOR"))  # add by mengxu
-    # pset.addTerminal('W')  # add by mengxu
     pset.addTerminal(str("TIS"))  # add by mengxu
-    # pset.addTerminal('TRANT')  # add by mengxu
-
-    # adviced terminal by Yi 2022.10.31
     pset.addTerminal(str("SLACK"))  # add by mengxu
-
-    # pset.addTerminal('NIQ')  # add by mengxu
-    # pset.addTerminal('WIQ')  # add by mengxu
-    # pset.addTerminal('MWT')  # add by mengxu
-    # pset.addTerminal('PT')  # add by mengxu
-    # pset.addTerminal('NPT')  # add by mengxu
-    # pset.addTerminal('OWT')  # add by mengxu
-    # pset.addTerminal('WKR')  # add by mengxu
-    # pset.addTerminal('NOR')  # add by mengxu
-    # # pset.addTerminal('W')  # add by mengxu
-    # pset.addTerminal('TIS')  # add by mengxu
-    # # pset.addTerminal('TRANT')  # add by mengxu
-
-    # # terminals for sequencing
-    # pset.addTerminal('current_pt') #add by mengxu //todo: the terminals seems not right, it already has three terminals in the set before I add my terminals in, need to modify
-    # pset.addTerminal('slack') #add by mengxu
-    # pset.addTerminal('queue') #add by mengxu
-    #
-    # # terminals for routing
-    # pset.addTerminal('time_in_system')  # add by mengxu
-    # pset.addTerminal('que_size')  # add by mengxu
-
-
-def lf(x):  # add by mengxu 2022.11.08
-    return 1 / (1 + np.exp(-x))
 
 
 def init_toolbox(toolbox, pset, config):
@@ -116,46 +78,6 @@ def wrap(func, *args, **kwargs):
 
 
 __type__ = object
-
-
-def cxOnePoint(ind1, ind2):
-    """Randomly select crossover point in each individual and exchange each
-    subtree with the point as root between each individual.
-
-    :param ind1: First tree participating in the crossover.
-    :param ind2: Second tree participating in the crossover.
-    :returns: A tuple of two trees.
-    """
-    if len(ind1) < 2 or len(ind2) < 2:
-        # No crossover on single node tree
-        return ind1, ind2
-
-    # List all available primitive types in each individual
-    types1 = defaultdict(list)
-    types2 = defaultdict(list)
-    if ind1.root.ret == __type__:
-        # Not STGP optimization
-        types1[__type__] = list(range(1, len(ind1)))
-        types2[__type__] = list(range(1, len(ind2)))
-        common_types = [__type__]
-    else:
-        for idx, node in enumerate(ind1[1:], 1):
-            types1[node.ret].append(idx)
-        for idx, node in enumerate(ind2[1:], 1):
-            types2[node.ret].append(idx)
-        common_types = set(types1.keys()).intersection(set(types2.keys()))
-
-    if len(common_types) > 0:
-        type_ = random.choice(list(common_types))
-
-        index1 = random.choice(types1[type_])
-        index2 = random.choice(types2[type_])
-
-        slice1 = ind1.searchSubtree(index1)
-        slice2 = ind2.searchSubtree(index2)
-        ind1[slice1], ind2[slice2] = ind2[slice2], ind1[slice1]
-
-    return ind1, ind2
 
 
 def newcxOnePoint(ind1, ind2):
@@ -220,7 +142,7 @@ def newxmate(ind1, ind2, exploration_ratio=0.1):
             del ind2.r_max
         else:
             i1 = random.randrange(len(ind1))
-            ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
+            ind1[i1], ind2[i1] = gp.cxOnePoint(ind1[i1], ind2[i1])
             i2 = 1 - i1
             ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
     else:
@@ -234,7 +156,7 @@ def xmate(ind1, ind2):
     if len(ind1) == 2:
         i1 = random.randrange(len(ind1))
         # todo: I think this is not same with my MTGP, as only the same type of tree can be used to do crossover
-        ind1[i1], ind2[i1] = cxOnePoint(ind1[i1], ind2[i1])
+        ind1[i1], ind2[i1] = gp.cxOnePoint(ind1[i1], ind2[i1])
 
         # exchange the other tree
         i2 = 1 - i1  # only for individual with two tree
@@ -317,18 +239,6 @@ def newlim_xmut(ind, expr, exploration_ratio=0):
     # have to put expr=expr otherwise it tries to use it as an individual
     res = wrap(newxmut, ind, expr=expr, exploration_ratio=exploration_ratio)
     return res
-
-
-def add_abs(a, b):
-    return np.abs(np.add(a, b))
-
-
-def sub_abs(a, b):
-    return np.abs(np.subtract(a, b))
-
-
-def mt_if(a, b, c):
-    return np.where(a < 0, b, c)
 
 
 def protected_div(left, right):

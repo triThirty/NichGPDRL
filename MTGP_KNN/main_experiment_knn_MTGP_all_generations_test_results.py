@@ -3,13 +3,13 @@ import simpy
 # import sys
 # sys.path
 import numpy as np
-import MTGP_KNN.LoadIndividual as mtload
+import util.LoadIndividual as mtload
 import util.agent_machine as agent_machine
 import util.agent_workcenter as agent_workcenter
 import util.sequencing as sequencing
 import util.routing as routing
 import util.job_creation as job_creation
-from MTGP_KNN import saveFile
+import util.saveFile as saveFile
 
 
 """

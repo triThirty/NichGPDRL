@@ -2,14 +2,11 @@ import simpy
 from deap import base
 from deap import creator
 from deap import gp
-import TransformerMTGP.multi_tree as mt
+import util.multi_tree as mt
 import TransformerMTGP.ea_simple_elitism as ea_simple_elitism
-from ParallelToolbox import ParallelToolbox
-from selection import *
-import saveFile
+from util.ParallelToolbox import ParallelToolbox
+import util.saveFile as saveFile
 import time
-
-# import torch
 
 import numpy as np
 import util.job_creation as job_creation
@@ -17,6 +14,8 @@ import util.agent_machine as agent_machine
 import util.agent_workcenter as agent_workcenter
 import util.sequencing as sequencing
 import util.routing as routing
+from util.selection import selElitistAndTournament, ScoreBasedselElitistAndTournament
+from deap import tools
 
 from TransformerMTGP.util.functions import (
     remove_duplicates,
@@ -496,7 +495,7 @@ def GPFC_main(config):
         logbook,
         min_fitness,
         best_ind_all_gen,
-        top_inds_fitness_final_gen,
+        accuracy_trend,
         top_inds_final_gen,
     ) = ea_simple_elitism.eaSimple(
         pop,
@@ -524,7 +523,7 @@ def GPFC_main(config):
         min_fitness,
         best,
         best_ind_all_gen,
-        top_inds_fitness_final_gen,
+        accuracy_trend,
         top_inds_final_gen,
     )
 
@@ -561,13 +560,15 @@ def main(config):
         min_fitness,
         p_one,
         best_ind_all_gen,
-        top_inds_fitness_final_gen,
+        accuracy_trend,
         top_inds_final_gen,
     ) = GPFC_main(config)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_meng(config, best_ind_all_gen)
     saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)
+    print("The accuracy trend is: ")
+    print(accuracy_trend)
     print(min_fitness)
     print("Training time: " + str(running_time))
     print("Training end!")

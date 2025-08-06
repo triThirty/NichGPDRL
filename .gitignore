@@ -9,6 +9,7 @@ experiment_result/
 .vscode/
 multirun/
 outputs/
+data/
 
 .DS_Store
 

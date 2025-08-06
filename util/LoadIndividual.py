@@ -1,5 +1,5 @@
 import json
-from TransformerMTGP.saveFile import formula_base_dir, base_dir
+from util.saveFile import formula_base_dir, base_dir
 
 
 def load_individual_from_gen_json_format(config):

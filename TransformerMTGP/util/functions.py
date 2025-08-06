@@ -40,46 +40,14 @@ def list_net_loss(scores, labels, margin=0.0, lambda_var=0.1):
         for j in range(i + 1, n):
             if labels[i] == labels[j]:
                 # 相同标签：强制分数接近
-                loss += (scores[i] - scores[j]) ** 2
+                loss += (scores[i] - scores[j])
             else:
                 # 不同标签：使用Margin Ranking Loss
                 sign = 1.0 if labels[i] > labels[j] else -1.0
                 diff = (scores[i] - scores[j]) * sign
-                loss += torch.relu(margin - diff)
+                loss += torch.relu(diff)
 
     return loss / (n * (n - 1) / 2) + var_loss
-
-
-# 保存的 checkpoint
-def save_checkpoint(model, optimizer, epoch, loss, filename="checkpoint.pth"):
-    checkpoint = {
-        "epoch": epoch,
-        "model_state_dict": model.state_dict(),
-        "optimizer_state_dict": optimizer.state_dict(),
-        "loss": loss,
-    }
-    torch.save(checkpoint, filename)
-    print(f"Checkpoint saved at epoch {epoch}")
-
-
-def load_checkpoint(model, optimizer, filename="checkpoint.pth"):
-    checkpoint = torch.load(filename)
-    model.load_state_dict(checkpoint["model_state_dict"])
-    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-    epoch = checkpoint["epoch"]
-    loss = checkpoint["loss"]
-    print(f"Checkpoint loaded: Resuming from epoch {epoch} with loss {loss}")
-    return epoch, loss
-
-
-def lr_lambda(epoch):
-    if epoch < warmup_epochs:
-        return epoch / warmup_epochs
-    else:
-        return 0.5 * (
-            1
-            + math.cos((epoch - warmup_epochs) / (num_epochs - warmup_epochs) * math.pi)
-        )
 
 
 def phyno_hash_individual(ind):
@@ -114,3 +82,27 @@ def remove_duplicates(population):
             unique_pop.append(ind)
 
     return unique_pop
+
+
+def calculate_ranking_accuracy(data):
+    concordant_pairs = 0
+    discordant_pairs = 0
+
+    n = len(data)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            item_i = data[i]
+            item_j = data[j]
+
+            fitness_diff = item_i.fitness.values[0] - item_j.fitness.values[0]
+            score_diff = item_i.score - item_j.score
+
+            if fitness_diff != 0 and fitness_diff * score_diff < 0:
+                concordant_pairs += 1
+            elif fitness_diff == 0 and score_diff == 0:
+                concordant_pairs += 1
+            else:
+                discordant_pairs += 1
+    accuracy = concordant_pairs / (concordant_pairs + discordant_pairs)
+    return accuracy

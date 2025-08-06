@@ -1,16 +1,10 @@
 import simpy
-from deap import base
-from deap import creator
-from deap import gp
-import MTGP_KNN.multi_tree as mt
+from deap import base, creator, gp, tools
+import MTGP_KNN.multi_tree as REP
 from MTGP_KNN import ea_simple_elitism
-from MTGP_KNN.ParallelToolbox import ParallelToolbox
-from MTGP_KNN.selection import *
-import sys
-from MTGP_KNN import saveFile
+from util.ParallelToolbox import ParallelToolbox
+import util.saveFile as saveFile
 import time
-import random
-
 
 import numpy as np
 import util.job_creation as job_creation
@@ -18,6 +12,10 @@ import util.agent_machine as agent_machine
 import util.agent_workcenter as agent_workcenter
 import util.sequencing as sequencing
 import util.routing as routing
+import util.multi_tree as mt
+from util.selection import (
+    selElitistAndTournament,
+)
 
 
 class shopfloor:
@@ -427,7 +425,7 @@ def GPFC_main(config):
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
     pset = gp.PrimitiveSet("MAIN", num_features, prefix="f")
     pset.context["array"] = np.array
-    REP.init_primitives(pset)
+    mt.init_primitives(pset)
     weights = (-1.0,)
     creator.create("FitnessMin", base.Fitness, weights=weights)
     # set up toolbox
@@ -496,7 +494,6 @@ MUTPB = 0.15
 REPPB = 0.05
 ELITISM = 10
 MAX_HEIGHT = 8
-REP = mt  # individual representation {mt (multi-tree) or vt (vector-tree)}
 N_TREES = 2
 rd = {}
 

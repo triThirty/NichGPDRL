@@ -5,16 +5,14 @@ import re
 sys.path
 import numpy as np
 from tabulate import tabulate
-import pandas as pd
-from pandas import DataFrame
 
-import TransformerMTGP.LoadIndividual as mtload
+import util.LoadIndividual as mtload
 import util.agent_machine as agent_machine
 import util.agent_workcenter as agent_workcenter
 import util.sequencing as sequencing
 import util.routing as routing
 import util.job_creation as job_creation
-from TransformerMTGP import saveFile
+from util import saveFile
 
 
 class shopfloorMTGP:

@@ -1,9 +1,8 @@
-from operator import attrgetter
 import random
 from deap import tools
 import numpy as np
-from MTGP_KNN import saveFile
-from MTGP_KNN.selection import selElitistAndTournament
+import util.saveFile as saveFile
+from util.selection import selElitistAndTournament
 from MTGP_KNN.util.decistion_situation_generator import (
     compute_phenotype,
     KNN_train,

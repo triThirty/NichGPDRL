@@ -7,7 +7,7 @@ import torch
 from copy import deepcopy
 
 
-import TransformerMTGP.saveFile as saveFile
+import util.saveFile as saveFile
 from TransformerMTGP.model.surrogate import (
     surrogate_evaluate,
     new_surrogate_train,
@@ -19,6 +19,7 @@ from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
 from TransformerMTGP.util.functions import (
     remove_duplicates,
     phyno_remove_duplicates,
+    calculate_ranking_accuracy,
 )
 
 
@@ -100,6 +101,7 @@ def eaSimple(
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
     min_fitness = []
     best_ind_all_gen = []  # add by mengxu
+    accuracy_trend = []
 
     rd["seed"] = randomSeed_ngen[0]
     fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
@@ -173,6 +175,16 @@ def eaSimple(
         print("slow point 2, time cost: ", end_time - start_time)
         surrogate_evaluate(pop_intermediate, transformer_model, device)
         score_elite = []
+
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
+        for ind, fit in zip(pop_intermediate, fitnesses):
+            ind.fitness.values = fit
+
+        accuracy = calculate_ranking_accuracy(pop_intermediate)
+        print(f"Ranking accuracy: {accuracy:.4f}")
+
+        accuracy_trend.append(accuracy)
+
         while len(score_elite) < len(population) - elitism:
             score_elite.extend(
                 toolbox.score_base_select(pop_intermediate, len(population) - elitism)
@@ -226,4 +238,4 @@ def eaSimple(
         pop_fit = [ind.fitness.values[0] for ind in population]
         min_fitness.append(min(pop_fit))
 
-    return population, logbook, min_fitness, best_ind_all_gen, [], []
+    return population, logbook, min_fitness, best_ind_all_gen, accuracy_trend, []

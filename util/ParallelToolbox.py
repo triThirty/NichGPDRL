@@ -1,7 +1,7 @@
 import pickle
 
 from deap import base
-from multiprocessing import cpu_count, Pool
+from multiprocessing import Pool
 from functools import partial
 
 

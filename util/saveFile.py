@@ -3,7 +3,7 @@ from string import Template
 from util.decorator import ensure_directory_exists
 
 
-root_dir = r"./TransformerMTGP/train/Transformer_SSGP__${exploration_ratio}/scenario_${scenarios}"
+root_dir = r"./data/${algo}_${exploration_ratio}/scenario_${scenarios}"
 
 formula_base_dir = Template(
     f"{root_dir}/${{seeds}}_meng_individual_${{scenarios}}_formula_format.json"
@@ -72,7 +72,6 @@ def save_each_gen_best_individual_meng(config, best_ind_all_gen):
         if len(best_ind) == 2:
             individual.append(routing_list)
 
-        # individual_dict.__setitem__(gen, individual)
         individual_dict.append(individual)
 
     path = base_dir.substitute(**config)
@@ -84,7 +83,7 @@ def save_each_gen_best_individual_meng(config, best_ind_all_gen):
 
 
 @ensure_directory_exists(txt_base_dir)
-def clear_individual_each_gen_to_txt(config):  # save individual as txt by mengxu
+def clear_individual_each_gen_to_txt(config):
     path = txt_base_dir.substitute(**config)
     with open(
         path,

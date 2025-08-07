@@ -459,7 +459,7 @@ def GPFC_main(config):
     spf = knn_shopfloor(
         env,
         span,
-        m_no,
+        12,
         wc_no,
         pop[0][0],
         pop[0][1],
@@ -467,13 +467,13 @@ def GPFC_main(config):
         sequencing_rule="GP_evolve_S",
         seed=rd["seed"],
         ifPrint=False,
-        dataset_name=rd["dataset_name"],
+        dataset_name="LH",
     )
     spf.simulation()
 
     for routing_data, sequencing_data in zip(
-        spf.decision_situations["routing"][:100],
-        spf.decision_situations["sequencing"][:100],
+        spf.decision_situations["routing"][-20:],
+        spf.decision_situations["sequencing"][-20:],
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)
@@ -529,7 +529,7 @@ def GPFC_main(config):
 
 
 POP_SIZE = 50
-NGEN = 50
+NGEN = 100
 CXPB = 0.8
 MUTPB = 0.15
 REPPB = 0.05

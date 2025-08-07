@@ -450,7 +450,7 @@ def GPFC_main(config):
     rule_S = "GP_evolve_S"
     spf = knn_shopfloor(
         env,
-        span,
+        2000,
         12,
         wc_no,
         pop[0][0],
@@ -459,7 +459,7 @@ def GPFC_main(config):
         sequencing_rule=rule_S,
         seed=rd["seed"],
         ifPrint=False,
-        dataset_name="LH",
+        dataset_name=rd["dataset_name"],
     )
     spf.simulation()
 

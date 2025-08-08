@@ -14,14 +14,13 @@ from TransformerMTGP.model.surrogate import (
 )
 from model.model import MyNN, SharedEmbeddings
 
-from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
-
-from TransformerMTGP.util.functions import (
+from util.deplicate_removal import (
     remove_duplicates,
     phyno_remove_duplicates,
     calculate_ranking_accuracy,
     calculate_score_based_ind_proportion,
     get_index_of_selected_inds_in_intermediate,
+    compute_phenotype,
 )
 
 
@@ -185,7 +184,7 @@ def eaSimple(
             ind.fitness.values = fit
 
         sorted_pop_intermediate_by_fitness = sorted(
-            pop_intermediate, key=lambda x: x.fitness.values[0], reverse=True
+            pop_intermediate, key=lambda x: x.fitness.values[0]
         )
 
         accuracy = calculate_ranking_accuracy(pop_intermediate)

@@ -17,11 +17,17 @@ import util.routing as routing
 from util.selection import selElitistAndTournament, ScoreBasedselElitistAndTournament
 from deap import tools
 
-from TransformerMTGP.util.functions import (
+# from TransformerMTGP.util.functions import (
+#     remove_duplicates,
+#     phyno_remove_duplicates,
+# )
+# from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+
+from util.deplicate_removal import (
     remove_duplicates,
     phyno_remove_duplicates,
+    compute_phenotype,
 )
-from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
 
 
 class shopfloor:

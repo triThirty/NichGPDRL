@@ -17,10 +17,16 @@ from util.selection import (
     selElitistAndTournament,
 )
 
-from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
-from TransformerMTGP.util.functions import (
-    remove_duplicates,
+# from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
+# from TransformerMTGP.util.functions import (
+#     remove_duplicates,
+#     phyno_remove_duplicates,
+# )
+
+from util.deplicate_removal import (
+    compute_phenotype,
     phyno_remove_duplicates,
+    remove_duplicates,
 )
 
 

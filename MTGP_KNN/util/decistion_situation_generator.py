@@ -1,20 +1,5 @@
-import numpy as np
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
-
-# from MTGP_KNN.GPFC import evaluate, shopfloor
-from util.sequencing import GP_evolve_S
-from util.routing import GP_evolve_R
-
-
-def compute_phenotype(pop, decision_situations):
-    for ind in pop:
-        decision_vector = []
-        for situation in decision_situations:
-            selected_machine_index = GP_evolve_R(ind[0], *situation[0])
-            decision_vector.append(selected_machine_index)
-            job_position = GP_evolve_S(situation[1], ind[1])
-            decision_vector.append(job_position)
-        ind.decision_vector = decision_vector
+from util.deplicate_removal import phyno_remove_duplicates
 
 
 def KNN_train(X, y, n_neighbors):
@@ -29,28 +14,11 @@ def predict(model, pop):
         ind.fitness.values = (predicted_fitness[0],)
 
 
-def hash_individual(ind):
-    return hash(str(ind.decision_vector))
-
-
-def remove_duplicates(population):
-    unique_pop = []
-    seen = set()
-
-    for ind in population:
-        h = hash_individual(ind)
-        if h not in seen:
-            seen.add(h)
-            unique_pop.append(ind)
-
-    return unique_pop
-
-
 def generate_next_generation(pop_intermediate, population, elitism, toolbox, knn_model):
     predict(knn_model, pop_intermediate)
     score_elite = []
     while len(score_elite) < len(population) - elitism:
         score_elite.extend(toolbox.select(pop_intermediate, len(population) - elitism))
 
-        score_elite[:] = remove_duplicates(score_elite)
+        score_elite[:] = phyno_remove_duplicates(score_elite)
     return score_elite

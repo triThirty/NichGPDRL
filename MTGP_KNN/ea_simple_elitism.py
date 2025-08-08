@@ -4,10 +4,14 @@ import numpy as np
 import util.saveFile as saveFile
 from util.selection import selElitistAndTournament
 from MTGP_KNN.util.decistion_situation_generator import (
-    compute_phenotype,
     KNN_train,
     generate_next_generation,
-    remove_duplicates,
+)
+
+from util.deplicate_removal import (
+    compute_phenotype,
+    phyno_remove_duplicates,
+    get_index_of_selected_inds_in_intermediate,
 )
 
 
@@ -84,7 +88,6 @@ def eaSimple(
     # initialise the random seed of each generation
     randomSeed_ngen = []
     for i in range((ngen + 1)):
-        # for i in range((ngen+1)*ins_each_gen): # the *ins_each_gen is added by mengxu followed the advice of Meng 2022.11.01
         randomSeed_ngen.append(np.random.randint(2000000000))
 
     logbook = tools.Logbook()
@@ -99,7 +102,6 @@ def eaSimple(
     for ind, fit in zip(invalid_ind, fitnesses):
         ind.fitness.values = fit
 
-    # for ind in population:
     compute_phenotype(population, rd["decision_situations"])
 
     decision_matrix = [ind.decision_vector for ind in population]
@@ -110,7 +112,6 @@ def eaSimple(
     del decision_matrix
     del fitness_matrix
 
-    # all_individuals.append(invalid_ind)
     all_individuals = []
 
     pop_fit = [ind.fitness.values[0] for ind in population]
@@ -129,21 +130,15 @@ def eaSimple(
     if verbose:
         print(logbook.stream)
 
-    # population = sorted(population, key=lambda x: x.fitness.values[0])[
-    #     : int(len(population) / 4)
-    # ]
     # Begin the generational process
     for gen in range(1, ngen + 1):
 
         # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-            # rd['seed'] = np.random.randint(2000000000)
-        # Select the next generation individuals
         sorted_elite = sortPopulation(toolbox, population)[
             :elitism
         ]  # modified by mengxu 2022.10.29
-        # sorted_elite = sorted(population, key=attrgetter("fitness"), reverse=True)[:elitism]
 
         if gen == 1:
             ELITISM = 10
@@ -158,17 +153,30 @@ def eaSimple(
             offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
-            pop_intermediate = remove_duplicates(sorted_elite + pop_intermediate)[
+            pop_intermediate = phyno_remove_duplicates(sorted_elite + pop_intermediate)[
                 elitism:
             ]
             del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
+
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
+        for ind, fit in zip(pop_intermediate, fitnesses):
+            ind.fitness.values = fit
+
+        sorted_pop_intermediate_by_fitness = sorted(
+            pop_intermediate, key=lambda x: x.fitness.values[0]
+        )
 
         score_elite = generate_next_generation(
             pop_intermediate, population, elitism, toolbox, knn_model
         )
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
+
+        indices = get_index_of_selected_inds_in_intermediate(
+            sorted_pop_intermediate_by_fitness, score_elite[: len(population) - elitism]
+        )
+        saveFile.save_index_of_selected_inds_in_intermediate(config, indices)
 
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):

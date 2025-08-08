@@ -458,7 +458,7 @@ def GPFC_main(config):
     env = simpy.Environment()
     spf = knn_shopfloor(
         env,
-        span,
+        2000,
         12,
         wc_no,
         pop[0][0],
@@ -467,7 +467,7 @@ def GPFC_main(config):
         sequencing_rule="GP_evolve_S",
         seed=rd["seed"],
         ifPrint=False,
-        dataset_name="LH",
+        dataset_name=rd["dataset_name"],
     )
     spf.simulation()
 

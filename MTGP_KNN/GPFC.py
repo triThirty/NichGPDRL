@@ -527,6 +527,7 @@ ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
 def main(config):
+    saveFile.clear_index_of_selected_inds_in_intermediate(config)
     saveFile.clear_individual_each_gen_to_txt(config)
     start = time.time()
     min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(config)

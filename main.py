@@ -42,6 +42,7 @@ def merge_conf(cli_conf: DictConfig) -> DictConfig:
 
 
 if __name__ == "__main__":
+    torch.use_deterministic_algorithms(True)
     cli_conf = OmegaConf.from_cli()  # Default to KNN if not specified
     cfg = merge_conf(cli_conf)
     my_app(cfg)

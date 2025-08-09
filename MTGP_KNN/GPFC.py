@@ -465,7 +465,7 @@ def GPFC_main(config):
         sequencing_rule=rule_S,
         seed=rd["seed"],
         ifPrint=False,
-        dataset_name="LH",
+        dataset_name=rd["dataset_name"],
     )
     spf.simulation()
 

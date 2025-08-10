@@ -1,5 +1,4 @@
 import random
-import time
 
 import numpy as np
 from deap import tools
@@ -21,7 +20,7 @@ from util.deplicate_removal import (
     calculate_score_based_ind_proportion,
     get_index_of_selected_inds_in_intermediate,
     compute_phenotype,
-    phenotype_distance,
+    # phenotype_distance,
 )
 
 
@@ -44,29 +43,41 @@ def varAnd(
         randomValue = random.random()
         if randomValue < new_cxpb:  # crossover
             if random.random() < config.exploration_ratio or i == len(offspring) - 1:
-                (offspring[i], _) = toolbox.score_mate(
-                    offspring[i], population[min_indices[i]]
-                )
-                del offspring[i].fitness.values
-                del offspring[i].l_min
-                del offspring[i].l_max
-                del offspring[i].r_min
-                del offspring[i].r_max
-                i += 1
+                if i < len(offspring) - 1 and offspring[i] == offspring[i + 1]:
+                    (offspring[i],) = toolbox.score_mutate(offspring[i])
+                    (offspring[i + 1],) = toolbox.score_mutate(offspring[i + 1])
+                    i += 2
+                else:
+                    (offspring[i], _) = toolbox.score_mate(
+                        # offspring[i], population[min_indices[i]]
+                        offspring[i],
+                        population[(i + 1) % len(offspring)],
+                    )
+                    del offspring[i].fitness.values
+                    del offspring[i].l_min
+                    del offspring[i].l_max
+                    del offspring[i].r_min
+                    del offspring[i].r_max
+                    i += 1
             else:
-                offspring[i], offspring[i + 1] = toolbox.mate(
-                    offspring[i], offspring[i + 1]
-                )
-                del offspring[i].fitness.values
-                del offspring[i].l_min
-                del offspring[i].l_max
-                del offspring[i].r_min
-                del offspring[i].r_max
-                del offspring[i + 1].fitness.values
-                del offspring[i + 1].l_min
-                del offspring[i + 1].l_max
-                del offspring[i + 1].r_min
-                del offspring[i + 1].r_max
+                if offspring[i] == offspring[(i + 1) % 40]:
+                    (offspring[i],) = toolbox.mutate(offspring[i])
+                    (offspring[i + 1],) = toolbox.mutate(offspring[i + 1])
+                else:
+                    offspring[i], offspring[i + 1] = toolbox.mate(
+                        offspring[i], offspring[i + 1]
+                    )
+                    del offspring[i].fitness.values
+                    del offspring[i].l_min
+                    del offspring[i].l_max
+                    del offspring[i].r_min
+                    del offspring[i].r_max
+                    del offspring[i + 1].fitness.values
+                    del offspring[i + 1].l_min
+                    del offspring[i + 1].l_max
+                    del offspring[i + 1].r_min
+                    del offspring[i + 1].r_max
+
                 i += 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
             if random.random() < config.exploration_ratio:
@@ -190,13 +201,13 @@ def eaSimple(
         sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
 
         offspring = toolbox.select(population, len(population) - elitism)
-        offspring = phyno_remove_duplicates(offspring)
-        while len(offspring) < len(population) - elitism:
-            offspring.extend(toolbox.select(population, len(population) - elitism))
-            offspring = phyno_remove_duplicates(offspring)
-        offspring = offspring[: len(population) - elitism]
+        # offspring = phyno_remove_duplicates(offspring)
+        # while len(offspring) < len(population) - elitism:
+        #     offspring.extend(toolbox.select(population, len(population) - elitism))
+        #     offspring = phyno_remove_duplicates(offspring)
+        # offspring = offspring[: len(population) - elitism]
 
-        min_indices = phenotype_distance(offspring)
+        # min_indices = phenotype_distance(offspring)
 
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
@@ -207,7 +218,8 @@ def eaSimple(
                 mutpb,
                 reppb,
                 transformer_model,
-                min_indices,
+                # min_indices,
+                0,
                 config,
                 device,
             )
@@ -243,7 +255,7 @@ def eaSimple(
                 toolbox.score_base_select(pop_intermediate, len(population) - elitism)
             )
 
-            score_elite[:] = remove_duplicates(score_elite)
+            # score_elite[:] = remove_duplicates(score_elite)
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 

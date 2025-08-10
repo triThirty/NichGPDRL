@@ -1,5 +1,7 @@
 from util.sequencing import GP_evolve_S
 from util.routing import GP_evolve_R
+import numpy as np
+from scipy.spatial.distance import pdist, squareform
 
 
 def phyno_hash_individual(ind):
@@ -93,3 +95,15 @@ def compute_phenotype(pop, decision_situations):
             job_position = GP_evolve_S(situation[1], ind[1])
             decision_vector.append(job_position)
         ind.decision_vector = decision_vector
+
+
+def phenotype_distance(offspring):
+    data_matrix = []
+    for ind in offspring:
+        data_matrix.append(ind.decision_vector)
+    data_matrix = np.array(data_matrix)
+    distances_compressed = pdist(data_matrix, metric="euclidean")
+    distance_matrix = squareform(distances_compressed)
+    masked_matrix = distance_matrix + np.diag([np.inf] * distance_matrix.shape[0])
+    min_indices = np.argmin(masked_matrix, axis=1)
+    return min_indices

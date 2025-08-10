@@ -21,32 +21,76 @@ from util.deplicate_removal import (
     calculate_score_based_ind_proportion,
     get_index_of_selected_inds_in_intermediate,
     compute_phenotype,
+    phenotype_distance,
 )
 
 
-def varAnd(population, toolbox, cxpb, mutpb, reppb, transformer_model, device):
+def varAnd(
+    population,
+    toolbox,
+    cxpb,
+    mutpb,
+    reppb,
+    transformer_model,
+    min_indices,
+    config,
+    device,
+):
     offspring = [toolbox.clone(ind) for ind in population]
     new_cxpb = cxpb / (cxpb + mutpb + reppb)
     new_mutpb = mutpb / (cxpb + mutpb + reppb) + new_cxpb
-    i = 1
+    i = 0
     while i < len(offspring):
         randomValue = random.random()
         if randomValue < new_cxpb:  # crossover
-            if offspring[i - 1] == offspring[i]:
-                (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
-                (offspring[i],) = toolbox.mutate(offspring[i])
-            else:
-                offspring[i - 1], offspring[i] = toolbox.mate(
-                    offspring[i - 1], offspring[i]
+            if random.random() < config.exploration_ratio or i == len(offspring) - 1:
+                (offspring[i], _) = toolbox.score_mate(
+                    offspring[i], population[min_indices[i]]
                 )
-            del offspring[i - 1].fitness.values, offspring[i].fitness.values
-            i = i + 2
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+                print(f"{i} - score mate")
+                i += 1
+            else:
+                offspring[i], offspring[i + 1] = toolbox.mate(
+                    offspring[i], offspring[i + 1]
+                )
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+                del offspring[i + 1].fitness.values
+                del offspring[i + 1].l_min
+                del offspring[i + 1].l_max
+                del offspring[i + 1].r_min
+                del offspring[i + 1].r_max
+                print(f"{i} - cross mate")
+                print(f"{i+1} - cross mate")
+                i += 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
-            (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
-            del offspring[i - 1].fitness.values
-            surrogate_evaluate([offspring[i - 1]], transformer_model, device)
+            if random.random() < config.exploration_ratio:
+                (offspring[i],) = toolbox.score_mutate(offspring[i])
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+                print(f"{i} - score mut")
+            else:
+                (offspring[i],) = toolbox.mutate(offspring[i])
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+                print(f"{i} - mut")
             i = i + 1
         else:
+            print(f"{i} - no operation")
             i += 1
     return offspring
 
@@ -147,23 +191,34 @@ def eaSimple(
     # Begin the generational process
     for gen in range(start_gen, ngen + 1):
 
-        print("Starting time: 0")
-        start_time = time.time()
-        # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
         sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
 
         offspring = toolbox.select(population, len(population) - elitism)
+        offspring = phyno_remove_duplicates(offspring)
+        while len(offspring) < len(population) - elitism:
+            offspring.extend(toolbox.select(population, len(population) - elitism))
+            offspring = phyno_remove_duplicates(offspring)
+        offspring = offspring[: len(population) - elitism]
+
+        min_indices = phenotype_distance(offspring)
 
         pop_intermediate = []
-        end_time = time.time()
-        print("slow point 1, time cost: ", end_time - start_time)
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(
-                offspring, toolbox, cxpb, mutpb, reppb, transformer_model, device
+                offspring,
+                toolbox,
+                cxpb,
+                mutpb,
+                reppb,
+                transformer_model,
+                min_indices,
+                config,
+                device,
             )
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
+            # surrogate_evaluate(offspring_intermediate, transformer_model, device)
             pop_intermediate.extend(offspring_intermediate)
             pop_intermediate = remove_duplicates(
                 sorted_elite + deepcopy(pop_intermediate)
@@ -173,8 +228,6 @@ def eaSimple(
             )[elitism:]
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
-        end_time = time.time()
-        print("slow point 2, time cost: ", end_time - start_time)
         surrogate_evaluate(pop_intermediate, transformer_model, device)
         score_elite = []
 
@@ -214,8 +267,6 @@ def eaSimple(
         # End of statistics
 
         rd["seed"] = randomSeed_ngen[gen]
-        end_time = time.time()
-        print("slow point 3, time cost: ", end_time - start_time)
         surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
@@ -232,8 +283,6 @@ def eaSimple(
             optimizer,
             device=device,
         )
-        end_time = time.time()
-        print("slow point 4, time cost: ", end_time - start_time)
         surrogate_evaluate(population, transformer_model, device)
 
         # modified by mengxu

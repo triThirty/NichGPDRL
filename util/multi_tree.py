@@ -50,16 +50,11 @@ def init_toolbox(toolbox, pset, config):
     toolbox.register("compile", gp.compile, pset=pset)
     toolbox.register("expr_mut", gp.genFull, min_=2, max_=8)
 
-    partial_newlim_xmate = partial(
-        newlim_xmate,
-        exploration_ratio=config.exploration_ratio,
-    )
-    partial_newlim_xmut = partial(
-        newlim_xmut, exploration_ratio=config.exploration_ratio
-    )
+    toolbox.register("mate", lim_xmate)
+    toolbox.register("mutate", lim_xmut, expr=toolbox.expr_mut)
 
-    toolbox.register("mate", partial_newlim_xmate)
-    toolbox.register("mutate", partial_newlim_xmut, expr=toolbox.expr_mut)
+    toolbox.register("score_mate", newlim_xmate)
+    toolbox.register("score_mutate", newlim_xmut, expr=toolbox.expr_mut)
 
 
 def maxheight(v):
@@ -122,29 +117,14 @@ def newcxOnePoint(ind1, ind2):
 
             slice1 = tree_1.searchSubtree(index1)
             slice2 = tree_2.searchSubtree(index2)
-            tree_1[slice1], tree_2[slice2] = tree_2[slice2], tree_1[slice1]
+            tree_1[slice1] = tree_2[slice2]
 
     return ind1, ind2
 
 
-def newxmate(ind1, ind2, exploration_ratio=0.1):
+def newxmate(ind1, ind2):
     if len(ind1) == 2:
-        randomValue = random.random()
-        if randomValue < exploration_ratio:  # use score-based crossover
-            ind1, ind2 = newcxOnePoint(ind1, ind2)
-            del ind1.l_min
-            del ind1.l_max
-            del ind1.r_min
-            del ind1.r_max
-            del ind2.l_min
-            del ind2.l_max
-            del ind2.r_min
-            del ind2.r_max
-        else:
-            i1 = random.randrange(len(ind1))
-            ind1[i1], ind2[i1] = gp.cxOnePoint(ind1[i1], ind2[i1])
-            i2 = 1 - i1
-            ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+        ind1, ind2 = newcxOnePoint(ind1, ind2)
     else:
         if len(ind1) == 2:
             ind1[0], ind2[0] = gp.cxOnePoint(ind1[0], ind2[0])
@@ -171,12 +151,11 @@ def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
 
 
-def newlim_xmate(ind1, ind2, exploration_ratio=0.1):
+def newlim_xmate(ind1, ind2):
     return wrap(
         newxmate,
         ind1,
         ind2,
-        exploration_ratio=exploration_ratio,
     )
 
 
@@ -192,23 +171,19 @@ def mutUniform(individual, expr, pset):
     :returns: A tuple of one tree.
     """
     # index = random.randrange(len(individual))
-    ind = individual[0]
+    tree1 = individual[0]
     index = individual.l_min
-    slice_ = ind.searchSubtree(index)
-    type_ = ind[index].ret
-    ind[slice_] = expr(pset=pset, type_=type_)
-    individual[0] = ind
+    slice_ = tree1.searchSubtree(index)
+    type_ = tree1[index].ret
+    tree1[slice_] = expr(pset=pset, type_=type_)
+    individual[0] = tree1
 
-    ind = individual[1]
+    tree2 = individual[1]
     index = individual.r_min
-    slice_ = ind.searchSubtree(index)
-    type_ = ind[index].ret
-    ind[slice_] = expr(pset=pset, type_=type_)
-    individual[1] = ind
-    del individual.l_min
-    del individual.l_max
-    del individual.r_min
-    del individual.r_max
+    slice_ = tree2.searchSubtree(index)
+    type_ = tree2[index].ret
+    tree2[slice_] = expr(pset=pset, type_=type_)
+    individual[1] = tree2
     return individual
 
 
@@ -219,13 +194,8 @@ def xmut(ind, expr):
     return (ind,)
 
 
-def newxmut(ind, expr, exploration_ratio=0):
-    if exploration_ratio:
-        ind = mutUniform(ind, expr, pset=ind.pset)  # score-based mutation
-    else:
-        i1 = random.randrange(len(ind))
-        indx = gp.mutUniform(ind[i1], expr, pset=ind.pset)
-        ind[i1] = indx[0]
+def newxmut(ind, expr):
+    ind = mutUniform(ind, expr, pset=ind.pset)  # score-based mutation
     return (ind,)
 
 
@@ -235,9 +205,9 @@ def lim_xmut(ind, expr):
     return res
 
 
-def newlim_xmut(ind, expr, exploration_ratio=0):
+def newlim_xmut(ind, expr):
     # have to put expr=expr otherwise it tries to use it as an individual
-    res = wrap(newxmut, ind, expr=expr, exploration_ratio=exploration_ratio)
+    res = wrap(newxmut, ind, expr=expr)
     return res
 
 

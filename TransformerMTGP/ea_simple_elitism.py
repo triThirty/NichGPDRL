@@ -52,7 +52,6 @@ def varAnd(
                 del offspring[i].l_max
                 del offspring[i].r_min
                 del offspring[i].r_max
-                print(f"{i} - score mate")
                 i += 1
             else:
                 offspring[i], offspring[i + 1] = toolbox.mate(
@@ -68,8 +67,6 @@ def varAnd(
                 del offspring[i + 1].l_max
                 del offspring[i + 1].r_min
                 del offspring[i + 1].r_max
-                print(f"{i} - cross mate")
-                print(f"{i+1} - cross mate")
                 i += 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
             if random.random() < config.exploration_ratio:
@@ -79,7 +76,6 @@ def varAnd(
                 del offspring[i].l_max
                 del offspring[i].r_min
                 del offspring[i].r_max
-                print(f"{i} - score mut")
             else:
                 (offspring[i],) = toolbox.mutate(offspring[i])
                 del offspring[i].fitness.values
@@ -87,10 +83,8 @@ def varAnd(
                 del offspring[i].l_max
                 del offspring[i].r_min
                 del offspring[i].r_max
-                print(f"{i} - mut")
             i = i + 1
         else:
-            print(f"{i} - no operation")
             i += 1
     return offspring
 

@@ -6,6 +6,7 @@ from util.ParallelToolbox import ParallelToolbox
 import util.saveFile as saveFile
 import time
 
+from functools import partial
 import numpy as np
 import util.job_creation as job_creation
 import util.agent_machine as agent_machine
@@ -17,16 +18,9 @@ from util.selection import (
     selElitistAndTournament,
 )
 
-# from MTGP_KNN.util.decistion_situation_generator import compute_phenotype
-# from TransformerMTGP.util.functions import (
-#     remove_duplicates,
-#     phyno_remove_duplicates,
-# )
-
 from util.deplicate_removal import (
     compute_phenotype,
     phyno_remove_duplicates,
-    remove_duplicates,
 )
 
 
@@ -72,8 +66,6 @@ class shopfloor:
         """STEP 3: initialize the job creator"""
         # env, span, machine_list, workcenter_list, number_of_jobs, pt_range, due_tightness, E_utliz
         if "seed" in kwargs:
-            # self.job_creator = job_creation.creation \
-            #     (self.env, self.span, self.m_list, self.wc_list, [5, 25], 2, 0.9, random_seed=True, ifPrint = self.ifPrint)
             if "dataset_name" in kwargs:
                 if kwargs["dataset_name"] == "HH":
                     self.job_creator = job_creation.creation(
@@ -346,9 +338,14 @@ def connectedness(cluster):
     print(cluster)
 
 
-def init_toolbox(toolbox, pset):
+def init_toolbox(toolbox, pset, config):
     REP.init_toolbox(toolbox, pset)
-    toolbox.register("select", selElitistAndTournament, tournsize=4, elitism=ELITISM)
+    toolbox.register(
+        "select",
+        selElitistAndTournament,
+        tournsize=config.TOURNAMENT_SIZE,
+        elitism=config.ELITISM,
+    )
 
 
 def init_stats():
@@ -361,25 +358,22 @@ def init_stats():
     return stats
 
 
-def evaluate(individual, rd, seed):
-    # add by mengxu 2022.10.13 to add the training instances ===============================================
+def evaluate(individual, **kwargs):
     # create the environment instance for simulation
+    config = kwargs["config"]
     env = simpy.Environment()
-    dataset_name = rd["dataset_name"]
+    dataset_name = config.scenarios
     # create the shop floor instance
-    rule_R = "GP_evolve_R"
-    rule_S = "GP_evolve_S"
-    # np.random.seed(seed)
     spf = shopfloor(
         env,
-        span,
-        m_no,
-        wc_no,
+        config.span,
+        config.m_no,
+        config.wc_no,
         individual[0],
         individual[1],
-        routing_rule=rule_R,
-        sequencing_rule=rule_S,
-        seed=seed,
+        routing_rule="GP_evolve_R",
+        sequencing_rule="GP_evolve_S",
+        seed=config.seeds,
         ifPrint=False,
         dataset_name=dataset_name,
     )
@@ -389,14 +383,14 @@ def evaluate(individual, rd, seed):
     )
     fitness = cumulative_tard[-1]
 
-    for i in range(ins_each_gen - 1):
-        seed = seed + 1000
+    for i in range(config.ins_each_gen - 1):
+        seed = config.seeds + 1000
         env = simpy.Environment()
         spf = shopfloor(
             env,
-            span,
-            m_no,
-            wc_no,
+            config.span,
+            config.m_no,
+            config.wc_no,
             individual[0],
             individual[1],
             routing_rule=rule_R,
@@ -411,18 +405,9 @@ def evaluate(individual, rd, seed):
         )
         fitness = fitness + cumulative_tard[-1]
 
-    # spf.job_creator.final_output() #for check
-    fitness = fitness / ins_each_gen
+    fitness = fitness / config.ins_each_gen
     scores = [fitness]
-    # scores = [cumulative_tard[-1]]
     return scores
-
-
-def eval_wrapper(*args, **kwargs):
-    rd = kwargs["rd"]
-    return evaluate(*args, **kwargs, seed=rd["seed"])
-    # return evaluate(*args, **kwargs, toolbox=rd["toolbox"], seed=rd["seed"])
-    # return evaluate(*args, **kwargs, toolbox=rd['toolbox'], data=rd['data'], labels=rd['labels'])
 
 
 # copies data over from parent process
@@ -432,6 +417,7 @@ def init_data(rundata):
 
 
 def GPFC_main(config):
+    rd = {}
     rd["seed"] = config.seeds
     rd["dataset_name"] = config.scenarios
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
@@ -442,27 +428,27 @@ def GPFC_main(config):
     creator.create("FitnessMin", base.Fitness, weights=weights)
     # set up toolbox
     toolbox = ParallelToolbox()  # base.Toolbox()
-    init_toolbox(toolbox, pset)
-    toolbox.register("evaluate", eval_wrapper)
+    init_toolbox(toolbox, pset, config)
+
+    partial_evaluate = partial(evaluate, config=config)
+    toolbox.register("evaluate", partial_evaluate)
 
     rd["toolbox"] = toolbox
-    pop = toolbox.population(n=POP_SIZE)
+    pop = toolbox.population(n=config.POP_SIZE)
     stats = init_stats()
     hof = tools.HallOfFame(1)
     seedRotate = True
     rd["decision_situations"] = []
     env = simpy.Environment()
-    rule_R = "GP_evolve_R"
-    rule_S = "GP_evolve_S"
     spf = knn_shopfloor(
         env,
         2000,
         12,
-        wc_no,
+        config.wc_no,
         pop[0][0],
         pop[0][1],
-        routing_rule=rule_R,
-        sequencing_rule=rule_S,
+        routing_rule="GP_evolve_R",
+        sequencing_rule="GP_evolve_S",
         seed=rd["seed"],
         ifPrint=False,
         dataset_name=rd["dataset_name"],
@@ -477,53 +463,34 @@ def GPFC_main(config):
         rd["decision_situations"].append(decision_situation)
 
     compute_phenotype(pop, rd["decision_situations"])
-    # pop = remove_duplicates(pop)
     pop = phyno_remove_duplicates(pop)
-    while len(pop) < POP_SIZE:
+    while len(pop) < config.POP_SIZE:
         new_ind = toolbox.individual()
         compute_phenotype([new_ind], rd["decision_situations"])
         pop.append(new_ind)
-        # pop = remove_duplicates(pop)
         pop = phyno_remove_duplicates(pop)
 
     pop, logbook, min_fitness, best_ind_all_gen, proportion_trend = (
         ea_simple_elitism.eaSimple(
             pop,
             toolbox,
-            CXPB,
-            MUTPB,
-            REPPB,
-            ELITISM,
-            NGEN,
+            config.CXPB,
+            config.MUTPB,
+            config.REPPB,
+            config.ELITISM,
+            config.NGEN,
             seedRotate,
             rd,
             stats,
             halloffame=hof,
             verbose=True,
-            seed=rd["seed"],
-            dataset_name=rd["dataset_name"],
+            seed=config.seeds,
+            dataset_name=config.scenarios,
             config=config,
         )
     )
     best = hof[0]
     return min_fitness, best, best_ind_all_gen, proportion_trend
-
-
-POP_SIZE = 50
-NGEN = 100
-CXPB = 0.8
-MUTPB = 0.15
-REPPB = 0.05
-ELITISM = 10
-MAX_HEIGHT = 8
-N_TREES = 2
-rd = {}
-
-# create the shop floor instance
-span = 1000
-m_no = 6
-wc_no = 3
-ins_each_gen = 1  # added by mengxu followed the advice of Meng 2022.11.01
 
 
 def main(config):

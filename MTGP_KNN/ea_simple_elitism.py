@@ -41,28 +41,6 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
     return offspring
 
 
-# todo: need to check if this is right
-def sortPopulation(toolbox, population):
-    populationCopy = [toolbox.clone(ind) for ind in population]
-    popsize = len(population)
-
-    for j in range(popsize):
-        sign = False
-        for i in range(popsize - 1 - j):
-            sum_fit_i = np.sum(populationCopy[i].fitness.values)
-            sum_fit_i_1 = np.sum(populationCopy[i + 1].fitness.values)
-            if sum_fit_i > sum_fit_i_1:
-                populationCopy[i], populationCopy[i + 1] = (
-                    populationCopy[i + 1],
-                    populationCopy[i],
-                )
-                sign = True
-        if not sign:
-            break
-
-    return populationCopy
-
-
 def eaSimple(
     population,
     toolbox,
@@ -99,7 +77,7 @@ def eaSimple(
             rd["seed"] = randomSeed_ngen[gen]
 
         # Step 3: Full Fitness Evaluation
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, config)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
         # Step 3: Full Fitness Evaluation
@@ -126,20 +104,14 @@ def eaSimple(
         del fitness_matrix
         # Step 4: Update Surrogate Model
 
-        # sorted_elite = sortPopulation(toolbox, population)[:elitism]
-        sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
-
         # Step 5-7: Produce Offspring from population in intermediate population
-        offspring = toolbox.select(population, len(population) - elitism)
-
+        parents = toolbox.select(population, len(population))
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
-            offspring_intermediate = varAnd(offspring, toolbox, cxpb, mutpb, reppb)
+            offspring_intermediate = varAnd(parents, toolbox, cxpb, mutpb, reppb)
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
-            pop_intermediate = phyno_remove_duplicates(sorted_elite + pop_intermediate)[
-                elitism:
-            ]
+            pop_intermediate = phyno_remove_duplicates(pop_intermediate)
             del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
         # Step 5-7: Produce Offspring from population in intermediate population

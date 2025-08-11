@@ -1,7 +1,5 @@
 import simpy
 
-# import sys
-# sys.path
 import numpy as np
 import util.LoadIndividual as mtload
 import util.agent_machine as agent_machine
@@ -10,11 +8,6 @@ import util.sequencing as sequencing
 import util.routing as routing
 import util.job_creation as job_creation
 import util.saveFile as saveFile
-
-
-"""
-experiment of independent routing agents
-"""
 
 
 class shopfloorMTGP:
@@ -182,7 +175,7 @@ rate_record = []
 iteration = 100
 
 
-def main(config):
+def run(config):
     dataSetName = config.scenarios
 
     dict_best_MTGP_individuals = mtload.load_individual_from_gen(config)
@@ -191,7 +184,6 @@ def main(config):
     )
 
     testSeeds = 123453
-    # I think this is wrong, actually I should use totally same randomseed for test of all the runs 2022.10.27
     np.random.seed(int(testSeeds))
 
     for run in range(iteration):

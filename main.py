@@ -1,12 +1,12 @@
-import TransformerMTGP.GPFC as TransformerGPmain
-from TransformerMTGP import main_experiment_transformerGP_all_generations_test_results
-from MTGP import GPFC as MTGPmain, main_experiment_MTGP_all_generations_test_results
-import MTGP_KNN.GPFC as KNNmain
-from MTGP_KNN import main_experiment_knn_MTGP_all_generations_test_results
 import torch
 import random
 from omegaconf import DictConfig, OmegaConf
 import numpy as np
+
+import TransformerMTGP.GPFC as TransformerGPmain
+from MTGP import GPFC as MTGPmain
+import MTGP_KNN.GPFC as KNNmain
+from util.experiment import run as experiment_run
 
 
 def my_app(cfg: DictConfig) -> None:
@@ -23,15 +23,13 @@ def my_app(cfg: DictConfig) -> None:
 
     if cfg.algo == "Transformer_SSGP":
         TransformerGPmain.main(cfg)
-        main_experiment_transformerGP_all_generations_test_results.main(cfg)
+        experiment_run(cfg)
     elif cfg.algo == "KNN":
         KNNmain.main(cfg)
-        main_experiment_knn_MTGP_all_generations_test_results.main(cfg)
+        experiment_run(cfg)
     elif cfg.algo == "MTGP":
         MTGPmain.main(cfg)
-        main_experiment_MTGP_all_generations_test_results.main(
-            cfg.scenarios, seed, "GP_all_gen_test"
-        )
+        experiment_run(cfg)
 
 
 def merge_conf(cli_conf: DictConfig) -> DictConfig:

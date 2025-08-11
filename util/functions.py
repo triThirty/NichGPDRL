@@ -28,5 +28,4 @@ def record(
     if verbose:
         print(logbook.stream)
 
-    pop_fit = [ind.fitness.values[0] for ind in population]
-    min_fitness.append(min(pop_fit))
+    min_fitness.append(p_one.fitness.values[0])

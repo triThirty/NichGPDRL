@@ -5,21 +5,10 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 from torch_geometric.utils import to_networkx
-
-# from sklearn.model_selection import train_test_split
 from torch_geometric.loader import DataLoader
-from torch.optim import Adam
-
-# import sys
-# from pathlib import Path
-
-# sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
 from TransformerMTGP.src.classes.individual import Individual
 from TransformerMTGP.util.functions import positional_encoding, list_net_loss
-
-
-# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 lr_deduction = 0.9
 epoch = 100

@@ -1,1 +1,17 @@
 num_pre_selection: 3
+
+POP_SIZE: 50
+NGEN: 10
+CXPB: 0.8
+MUTPB: 0.15
+REPPB: 0.05
+ELITISM: 10
+MAX_HEIGHT: 8
+N_TREES: 2
+TOURNAMENT_SIZE: 4
+
+# create the shop floor instance
+span: 1000
+m_no: 6
+wc_no: 3
+ins_each_gen: 1

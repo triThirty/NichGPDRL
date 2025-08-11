@@ -89,20 +89,16 @@ def eaSimple(
         surrogate_evaluate(population, transformer_model, device)
         # Step 4: Update Surrogate Model
 
-        sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
-
         # Step 5-7: Produce Offspring from population in intermediate population
-        offspring = toolbox.select(population, len(population) - elitism)
+        parents = toolbox.select(population, len(population))
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(
-                offspring, toolbox, cxpb, mutpb, reppb, config
+                parents, toolbox, cxpb, mutpb, reppb, config
             )
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
             pop_intermediate.extend(offspring_intermediate)
-            pop_intermediate = phyno_remove_duplicates(sorted_elite + pop_intermediate)[
-                elitism:
-            ]
+            pop_intermediate = phyno_remove_duplicates(pop_intermediate)
             del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
         # Step 5-7: Produce Offspring from population in intermediate population

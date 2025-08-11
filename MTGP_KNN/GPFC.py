@@ -477,16 +477,16 @@ def GPFC_main(config):
         rd["decision_situations"].append(decision_situation)
 
     compute_phenotype(pop, rd["decision_situations"])
-    pop = remove_duplicates(pop)
+    # pop = remove_duplicates(pop)
     pop = phyno_remove_duplicates(pop)
     while len(pop) < POP_SIZE:
         new_ind = toolbox.individual()
         compute_phenotype([new_ind], rd["decision_situations"])
         pop.append(new_ind)
-        pop = remove_duplicates(pop)
+        # pop = remove_duplicates(pop)
         pop = phyno_remove_duplicates(pop)
 
-    pop, logbook, min_fitness, best_ind_all_gen, all_individuals = (
+    pop, logbook, min_fitness, best_ind_all_gen, proportion_trend = (
         ea_simple_elitism.eaSimple(
             pop,
             toolbox,
@@ -506,11 +506,11 @@ def GPFC_main(config):
         )
     )
     best = hof[0]
-    return min_fitness, best, best_ind_all_gen, all_individuals
+    return min_fitness, best, best_ind_all_gen, proportion_trend
 
 
 POP_SIZE = 50
-NGEN = 100
+NGEN = 10
 CXPB = 0.8
 MUTPB = 0.15
 REPPB = 0.05
@@ -530,11 +530,12 @@ def main(config):
     saveFile.clear_index_of_selected_inds_in_intermediate(config)
     saveFile.clear_individual_each_gen_to_txt(config)
     start = time.time()
-    min_fitness, p_one, best_ind_all_gen, all_individuals = GPFC_main(config)
+    min_fitness, p_one, best_ind_all_gen, proportion_trend = GPFC_main(config)
     end = time.time()
     running_time = end - start
     saveFile.save_each_gen_best_individual_json_format(config, best_ind_all_gen)
     saveFile.save_each_gen_best_individual_meng(config, best_ind_all_gen)
+    saveFile.save_surrogate_proportion_trend(config, proportion_trend)
     print(min_fitness)
     print("Training time: " + str(running_time))
     print("Training end!")

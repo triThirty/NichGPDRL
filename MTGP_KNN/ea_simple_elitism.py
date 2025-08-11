@@ -1,18 +1,18 @@
 import random
+
 from deap import tools
 import numpy as np
-import util.saveFile as saveFile
-from util.selection import selElitistAndTournament
+
 from MTGP_KNN.util.decistion_situation_generator import (
     KNN_train,
-    generate_next_generation,
+    predict,
 )
-
 from util.deplicate_removal import (
     compute_phenotype,
     phyno_remove_duplicates,
-    get_index_of_selected_inds_in_intermediate,
 )
+from util.functions import record
+from util.statistics import statistics
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -89,59 +89,47 @@ def eaSimple(
     logbook = tools.Logbook()
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
     min_fitness = []
-    best_ind_all_gen = []  # add by mengxu
-    # Evaluate the individuals with an invalid fitness
-    invalid_ind = [ind for ind in population if not ind.fitness.valid]
-
-    rd["seed"] = randomSeed_ngen[0]
-    fitnesses = toolbox.multiProcess(toolbox.evaluate, invalid_ind, rd)
-    for ind, fit in zip(invalid_ind, fitnesses):
-        ind.fitness.values = fit
-
-    compute_phenotype(population, rd["decision_situations"])
-
-    decision_matrix = [ind.decision_vector for ind in population]
-    fitness_matrix = [ind.fitness.values[0] for ind in population]
-    knn_model = KNN_train(
-        X=decision_matrix, y=fitness_matrix, n_neighbors=config.n_neighbors
-    )
-    del decision_matrix
-    del fitness_matrix
-
+    best_ind_all_gen = []
     all_individuals = []
-
-    pop_fit = [ind.fitness.values[0] for ind in population]
-    min_fitness.append(min(pop_fit))
-    # add by mengxu 2022.10.26
-    best_index = np.argmin(pop_fit)
-    best_ind_all_gen.append(population[best_index])  # add by mengxu
-    p_one = population[best_index]
-    saveFile.save_individual_each_gen_to_txt(config, p_one, 0)
-
-    if halloffame is not None:
-        halloffame.update(population)
-
-    record = stats.compile(population) if stats else {}
-    logbook.record(gen=0, nevals=len(invalid_ind), **record)
-    if verbose:
-        print(logbook.stream)
+    proportion_trend = []
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
-
-        # Added by mengxu to do seed rotation
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
-        sorted_elite = sortPopulation(toolbox, population)[
-            :elitism
-        ]  # modified by mengxu 2022.10.29
 
-        if gen == 1:
-            ELITISM = 10
-            toolbox.register(
-                "select", selElitistAndTournament, tournsize=7, elitism=ELITISM
-            )
+        # Step 3: Full Fitness Evaluation
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+        for ind, fit in zip(population, fitnesses):
+            ind.fitness.values = fit
+        # Step 3: Full Fitness Evaluation
 
+        record(
+            halloffame,
+            population,
+            gen,
+            stats,
+            logbook,
+            verbose,
+            config,
+            min_fitness,
+            best_ind_all_gen,
+        )
+
+        # Step 4: Update Surrogate Model
+        decision_matrix = [ind.decision_vector for ind in population]
+        fitness_matrix = [ind.fitness.values[0] for ind in population]
+        knn_model = KNN_train(
+            X=decision_matrix, y=fitness_matrix, n_neighbors=config.n_neighbors
+        )
+        del decision_matrix
+        del fitness_matrix
+        # Step 4: Update Surrogate Model
+
+        # sorted_elite = sortPopulation(toolbox, population)[:elitism]
+        sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
+
+        # Step 5-7: Produce Offspring from population in intermediate population
         offspring = toolbox.select(population, len(population) - elitism)
 
         pop_intermediate = []
@@ -154,56 +142,21 @@ def eaSimple(
             ]
             del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
+        # Step 5-7: Produce Offspring from population in intermediate population
 
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
-        for ind, fit in zip(pop_intermediate, fitnesses):
-            ind.fitness.values = fit
+        # Step 8: Estimate Fitness using Surrogate
+        predict(knn_model, pop_intermediate)
+        # Step 8: Estimate Fitness using Surrogate
 
-        sorted_pop_intermediate_by_fitness = sorted(
-            pop_intermediate, key=lambda x: x.fitness.values[0]
-        )
+        # Step 9: Fill P with Best Rules from intermediate population
+        population = sorted(pop_intermediate, key=lambda x: x.fitness.values[0])[
+            : len(population)
+        ]
+        # Step 9: Fill P with Best Rules from intermediate population
 
-        score_elite = generate_next_generation(
-            pop_intermediate, population, elitism, toolbox, knn_model
-        )
+        # Statistics
+        statistics(toolbox, pop_intermediate, rd, config, population, proportion_trend)
+        # Statistics
         del pop_intermediate
-        population = sorted_elite + score_elite[: len(population) - elitism]
 
-        indices = get_index_of_selected_inds_in_intermediate(
-            sorted_pop_intermediate_by_fitness, score_elite[: len(population) - elitism]
-        )
-        saveFile.save_index_of_selected_inds_in_intermediate(config, indices)
-
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
-        for ind, fit in zip(population, fitnesses):
-            ind.fitness.values = fit
-
-        decision_matrix = [ind.decision_vector for ind in population]
-        fitness_matrix = [ind.fitness.values[0] for ind in population]
-        knn_model = KNN_train(
-            X=decision_matrix, y=fitness_matrix, n_neighbors=config.n_neighbors
-        )
-        del decision_matrix
-        del fitness_matrix
-
-        # modified by mengxu
-        if halloffame is not None:
-            halloffame.clear()  # add by mengxu
-            halloffame.update(population)
-
-        # add by mengxu 2022.10.26
-        pop_fit = [ind.fitness.values[0] for ind in population]
-        best_index = np.argmin(pop_fit)
-        best_ind_all_gen.append(population[best_index])  # add by mengxu
-        p_one = population[best_index]
-        saveFile.save_individual_each_gen_to_txt(config, p_one, gen)
-
-        # Append the current generation statistics to the logbook
-        record = stats.compile(population) if stats else {}
-        logbook.record(gen=gen, nevals=len(population), **record)
-        if verbose:
-            print(logbook.stream)
-
-        pop_fit = [ind.fitness.values[0] for ind in population]
-        min_fitness.append(min(pop_fit))
-    return population, logbook, min_fitness, best_ind_all_gen, all_individuals
+    return population, logbook, min_fitness, best_ind_all_gen, proportion_trend

@@ -1,4 +1,5 @@
 import math
+import random
 
 import torch
 
@@ -50,3 +51,74 @@ def list_net_loss(scores, labels, margin=0.0, lambda_var=0.1):
     return loss / (n * (n - 1) / 2) + var_loss
 
 
+def varAnd(
+    population,
+    toolbox,
+    cxpb,
+    mutpb,
+    reppb,
+    config,
+):
+    offspring = [toolbox.clone(ind) for ind in population]
+    new_cxpb = cxpb / (cxpb + mutpb + reppb)
+    new_mutpb = mutpb / (cxpb + mutpb + reppb) + new_cxpb
+    i = 0
+    while i < len(offspring):
+        randomValue = random.random()
+        if randomValue < new_cxpb:  # crossover
+            if random.random() < config.exploration_ratio or i == len(offspring) - 1:
+                if i < len(offspring) - 1 and offspring[i] == offspring[i + 1]:
+                    (offspring[i],) = toolbox.score_mutate(offspring[i])
+                    (offspring[i + 1],) = toolbox.score_mutate(offspring[i + 1])
+                    i += 2
+                else:
+                    (offspring[i], _) = toolbox.score_mate(
+                        # offspring[i], population[min_indices[i]]
+                        offspring[i],
+                        population[(i + 1) % len(offspring)],
+                    )
+                    del offspring[i].fitness.values
+                    del offspring[i].l_min
+                    del offspring[i].l_max
+                    del offspring[i].r_min
+                    del offspring[i].r_max
+                    i += 1
+            else:
+                if offspring[i] == offspring[(i + 1) % 40]:
+                    (offspring[i],) = toolbox.mutate(offspring[i])
+                    (offspring[i + 1],) = toolbox.mutate(offspring[i + 1])
+                else:
+                    offspring[i], offspring[i + 1] = toolbox.mate(
+                        offspring[i], offspring[i + 1]
+                    )
+                    del offspring[i].fitness.values
+                    del offspring[i].l_min
+                    del offspring[i].l_max
+                    del offspring[i].r_min
+                    del offspring[i].r_max
+                    del offspring[i + 1].fitness.values
+                    del offspring[i + 1].l_min
+                    del offspring[i + 1].l_max
+                    del offspring[i + 1].r_min
+                    del offspring[i + 1].r_max
+
+                i += 2
+        elif new_cxpb <= randomValue < new_mutpb:  # mutation
+            if random.random() < config.exploration_ratio:
+                (offspring[i],) = toolbox.score_mutate(offspring[i])
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+            else:
+                (offspring[i],) = toolbox.mutate(offspring[i])
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+            i = i + 1
+        else:
+            i += 1
+    return offspring

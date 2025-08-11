@@ -510,7 +510,7 @@ def GPFC_main(config):
 
 
 POP_SIZE = 50
-NGEN = 10
+NGEN = 100
 CXPB = 0.8
 MUTPB = 0.15
 REPPB = 0.05

@@ -70,6 +70,16 @@ def varAnd(
                 if i < len(offspring) - 1 and offspring[i] == offspring[i + 1]:
                     (offspring[i],) = toolbox.score_mutate(offspring[i])
                     (offspring[i + 1],) = toolbox.score_mutate(offspring[i + 1])
+                    del offspring[i].fitness.values
+                    del offspring[i].l_min
+                    del offspring[i].l_max
+                    del offspring[i].r_min
+                    del offspring[i].r_max
+                    del offspring[i + 1].fitness.values
+                    del offspring[i + 1].l_min
+                    del offspring[i + 1].l_max
+                    del offspring[i + 1].r_min
+                    del offspring[i + 1].r_max
                     i += 2
                 else:
                     (offspring[i], _) = toolbox.score_mate(

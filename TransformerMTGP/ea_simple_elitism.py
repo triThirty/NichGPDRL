@@ -1,4 +1,5 @@
 import random
+import time
 
 import numpy as np
 from deap import tools
@@ -16,7 +17,7 @@ from model.model import MyNN, SharedEmbeddings
 from util.deplicate_removal import (
     remove_duplicates,
     phyno_remove_duplicates,
-    calculate_ranking_accuracy,
+    # calculate_ranking_accuracy,
     calculate_score_based_ind_proportion,
     get_index_of_selected_inds_in_intermediate,
     compute_phenotype,
@@ -196,6 +197,9 @@ def eaSimple(
     # Begin the generational process
     for gen in range(start_gen, ngen + 1):
 
+        print("Starting time: 0")
+        start_time = time.time()
+
         if seedRotate:
             rd["seed"] = randomSeed_ngen[gen]
         sorted_elite = sorted(population, key=lambda x: x.fitness.values[0])[:elitism]
@@ -203,6 +207,8 @@ def eaSimple(
         offspring = toolbox.select(population, len(population) - elitism)
 
         pop_intermediate = []
+        end_time = time.time()
+        print("slow point 1, time cost: ", end_time - start_time)
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(
                 offspring,
@@ -227,6 +233,9 @@ def eaSimple(
             )[elitism:]
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
+        end_time = time.time()
+        print("slow point 2, time cost: ", end_time - start_time)
+
         surrogate_evaluate(pop_intermediate, transformer_model, device)
         score_elite = []
 
@@ -235,13 +244,13 @@ def eaSimple(
         for ind, fit in zip(pop_intermediate, fitnesses):
             ind.fitness.values = fit
 
-        sorted_pop_intermediate_by_fitness = sorted(
-            pop_intermediate, key=lambda x: x.fitness.values[0]
-        )
+        # sorted_pop_intermediate_by_fitness = sorted(
+        #     pop_intermediate, key=lambda x: x.fitness.values[0]
+        # )
 
-        accuracy = calculate_ranking_accuracy(pop_intermediate)
-        print(f"Ranking accuracy: {accuracy:.4f}")
-        accuracy_trend.append(accuracy)
+        # accuracy = calculate_ranking_accuracy(pop_intermediate)
+        # print(f"Ranking accuracy: {accuracy:.4f}")
+        # accuracy_trend.append(accuracy)
 
         while len(score_elite) < len(population) - elitism:
             score_elite.extend(
@@ -266,6 +275,10 @@ def eaSimple(
         # End of statistics
 
         rd["seed"] = randomSeed_ngen[gen]
+
+        end_time = time.time()
+        print("slow point 3, time cost: ", end_time - start_time)
+
         surrogate_evaluate(population, transformer_model, device)
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
         for ind, fit in zip(population, fitnesses):
@@ -282,6 +295,10 @@ def eaSimple(
             optimizer,
             device=device,
         )
+
+        end_time = time.time()
+        print("slow point 4, time cost: ", end_time - start_time)
+
         surrogate_evaluate(population, transformer_model, device)
 
         # modified by mengxu

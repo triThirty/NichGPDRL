@@ -4,7 +4,6 @@ import time
 import numpy as np
 from deap import tools
 import torch
-from copy import deepcopy
 
 
 import util.saveFile as saveFile
@@ -15,13 +14,10 @@ from TransformerMTGP.model.surrogate import (
 from model.model import MyNN, SharedEmbeddings
 
 from util.deplicate_removal import (
-    remove_duplicates,
     phyno_remove_duplicates,
-    # calculate_ranking_accuracy,
     calculate_score_based_ind_proportion,
     get_index_of_selected_inds_in_intermediate,
     compute_phenotype,
-    # phenotype_distance,
 )
 
 
@@ -31,10 +27,7 @@ def varAnd(
     cxpb,
     mutpb,
     reppb,
-    transformer_model,
-    min_indices,
     config,
-    device,
 ):
     offspring = [toolbox.clone(ind) for ind in population]
     new_cxpb = cxpb / (cxpb + mutpb + reppb)
@@ -211,26 +204,14 @@ def eaSimple(
         print("slow point 1, time cost: ", end_time - start_time)
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(
-                offspring,
-                toolbox,
-                cxpb,
-                mutpb,
-                reppb,
-                transformer_model,
-                # min_indices,
-                0,
-                config,
-                device,
+                offspring, toolbox, cxpb, mutpb, reppb, config
             )
             compute_phenotype(offspring_intermediate, rd["decision_situations"])
-            # surrogate_evaluate(offspring_intermediate, transformer_model, device)
             pop_intermediate.extend(offspring_intermediate)
-            pop_intermediate = remove_duplicates(
-                sorted_elite + deepcopy(pop_intermediate)
-            )[elitism:]
-            pop_intermediate = phyno_remove_duplicates(
-                sorted_elite + deepcopy(pop_intermediate)
-            )[elitism:]
+            pop_intermediate = phyno_remove_duplicates(sorted_elite + pop_intermediate)[
+                elitism:
+            ]
+            del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) * num_pre_selection]
 
         end_time = time.time()
@@ -248,16 +229,11 @@ def eaSimple(
             pop_intermediate, key=lambda x: x.fitness.values[0]
         )
 
-        # accuracy = calculate_ranking_accuracy(pop_intermediate)
-        # print(f"Ranking accuracy: {accuracy:.4f}")
-        # accuracy_trend.append(accuracy)
-
         while len(score_elite) < len(population) - elitism:
             score_elite.extend(
                 toolbox.score_base_select(pop_intermediate, len(population) - elitism)
             )
 
-            # score_elite[:] = remove_duplicates(score_elite)
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 

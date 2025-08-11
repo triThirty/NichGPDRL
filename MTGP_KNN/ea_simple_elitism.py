@@ -60,10 +60,6 @@ def sortPopulation(toolbox, population):
         if not sign:
             break
 
-    # FOR CHECK
-    # pop_fit = [np.sum(ind.fitness.values) for ind in
-    #            populationCopy]
-    # print(pop_fit)
     return populationCopy
 
 

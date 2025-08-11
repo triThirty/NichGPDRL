@@ -244,9 +244,9 @@ def eaSimple(
         for ind, fit in zip(pop_intermediate, fitnesses):
             ind.fitness.values = fit
 
-        # sorted_pop_intermediate_by_fitness = sorted(
-        #     pop_intermediate, key=lambda x: x.fitness.values[0]
-        # )
+        sorted_pop_intermediate_by_fitness = sorted(
+            pop_intermediate, key=lambda x: x.fitness.values[0]
+        )
 
         # accuracy = calculate_ranking_accuracy(pop_intermediate)
         # print(f"Ranking accuracy: {accuracy:.4f}")
@@ -261,17 +261,17 @@ def eaSimple(
         del pop_intermediate
         population = sorted_elite + score_elite[: len(population) - elitism]
 
-        # indices = get_index_of_selected_inds_in_intermediate(
-        #     sorted_pop_intermediate_by_fitness, score_elite[: len(population) - elitism]
-        # )
-        # saveFile.save_index_of_selected_inds_in_intermediate(config, indices)
+        indices = get_index_of_selected_inds_in_intermediate(
+            sorted_pop_intermediate_by_fitness, score_elite[: len(population) - elitism]
+        )
+        saveFile.save_index_of_selected_inds_in_intermediate(config, indices)
 
-        # score_based_ind_proportion = calculate_score_based_ind_proportion(
-        #     sorted_pop_intermediate_by_fitness[: len(population) - elitism],
-        #     score_elite[: len(population) - elitism],
-        # )
-        # proportion_trend.append(score_based_ind_proportion)
-        # print(f"Score-based individual proportion: {score_based_ind_proportion:.4f}")
+        score_based_ind_proportion = calculate_score_based_ind_proportion(
+            sorted_pop_intermediate_by_fitness[: len(population) - elitism],
+            score_elite[: len(population) - elitism],
+        )
+        proportion_trend.append(score_based_ind_proportion)
+        print(f"Score-based individual proportion: {score_based_ind_proportion:.4f}")
         # End of statistics
 
         rd["seed"] = randomSeed_ngen[gen]

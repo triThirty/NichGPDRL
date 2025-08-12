@@ -6,7 +6,9 @@ from util import saveFile
 
 
 def statistics(toolbox, pop_intermediate, rd, config, population, proportion_trend):
-    fitnesses = toolbox.multiProcess(toolbox.evaluate, pop_intermediate, rd)
+    fitnesses = toolbox.multiProcess(
+        toolbox.evaluate, pop_intermediate, config, rd["seed"]
+    )
     for ind, fit in zip(pop_intermediate, fitnesses):
         ind.fitness.values = fit
 

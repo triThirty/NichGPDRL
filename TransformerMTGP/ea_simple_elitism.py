@@ -57,7 +57,9 @@ def eaSimple(
             rd["seed"] = randomSeed_ngen[gen]
 
         # Step 3: Full Fitness Evaluation
-        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, rd)
+        fitnesses = toolbox.multiProcess(
+            toolbox.evaluate, population, config, rd["seed"]
+        )
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
         # Step 3: Full Fitness Evaluation

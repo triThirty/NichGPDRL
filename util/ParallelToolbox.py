@@ -19,8 +19,9 @@ class ParallelToolbox(base.Toolbox):
         self.__dict__.update(state)
 
     # created by mengxu 2022.11.28 for multiple processing
-    def multiProcess(self, evaluate, invalid_ind, config):
+    def multiProcess(self, evaluate, invalid_ind, config, seed):
         pickle.dumps(invalid_ind)
         pickle.dumps(evaluate)
-        fitnesses = Pool(processes=2).map(evaluate, invalid_ind)
+        partial_evaluate = partial(evaluate, config=config, seed=seed)
+        fitnesses = Pool(processes=2).map(partial_evaluate, invalid_ind)
         return fitnesses

@@ -14,9 +14,7 @@ import util.agent_workcenter as agent_workcenter
 import util.sequencing as sequencing
 import util.routing as routing
 import util.multi_tree as mt
-from util.selection import (
-    selElitistAndTournament,
-)
+from util.selection import selElitistAndTournament
 from util.shopfloor import knn_shopfloor, evaluate
 
 
@@ -48,8 +46,6 @@ def init_stats():
 
 def GPFC_main(config):
     rd = {}
-    rd["seed"] = config.seeds
-    rd["dataset_name"] = config.scenarios
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
     pset = gp.PrimitiveSet("MAIN", num_features, prefix="f")
     pset.context["array"] = np.array
@@ -59,14 +55,11 @@ def GPFC_main(config):
     # set up toolbox
     toolbox = ParallelToolbox()  # base.Toolbox()
     init_toolbox(toolbox, pset, config)
-
     toolbox.register("evaluate", evaluate)
 
-    rd["toolbox"] = toolbox
-    pop = toolbox.population(n=config.POP_SIZE)
+    reference_rule = reference_candidates[index]
     stats = init_stats()
     hof = tools.HallOfFame(1)
-    seedRotate = True
     rd["decision_situations"] = []
     env = simpy.Environment()
     spf = knn_shopfloor(
@@ -74,23 +67,24 @@ def GPFC_main(config):
         2000,
         12,
         config.wc_no,
-        pop[0][0],
-        pop[0][1],
+        reference_rule[0],
+        reference_rule[1],
         routing_rule="GP_evolve_R",
         sequencing_rule="GP_evolve_S",
-        seed=rd["seed"],
+        seed=np.random.randint(0, 1000000),
         ifPrint=False,
-        dataset_name=rd["dataset_name"],
+        dataset_name=config.scenarios,
     )
     spf.simulation()
 
     for routing_data, sequencing_data in zip(
-        spf.decision_situations["routing"][-20:],
-        spf.decision_situations["sequencing"][-20:],
+        spf.decision_situations["routing"][-45::3],
+        spf.decision_situations["sequencing"][-45::3],
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)
 
+    pop = toolbox.population(n=config.POP_SIZE)
     compute_phenotype(pop, rd["decision_situations"])
     pop = phyno_remove_duplicates(pop)
     while len(pop) < config.POP_SIZE:
@@ -108,7 +102,6 @@ def GPFC_main(config):
             config.REPPB,
             config.ELITISM,
             config.NGEN,
-            seedRotate,
             rd,
             stats,
             halloffame=hof,

@@ -41,9 +41,6 @@ def init_stats():
 
 
 def GPFC_main(config):
-    rd = {}
-    rd["seed"] = config.seeds
-    rd["dataset_name"] = config.scenarios
     num_features = 0  # the initial number of terminals is 0, then I will add more terminals into the pset
     pset = gp.PrimitiveSet("MAIN", num_features, prefix="f")
     pset.context["array"] = np.array
@@ -56,11 +53,9 @@ def GPFC_main(config):
 
     toolbox.register("evaluate", evaluate)
 
-    rd["toolbox"] = toolbox
     pop = toolbox.population(n=config.POP_SIZE)
     stats = init_stats()
     hof = tools.HallOfFame(1)
-    seedRotate = True
     pop, logbook, min_fitness, best_ind_all_gen, all_individuals = (
         ea_simple_elitism.eaSimple(
             pop,
@@ -70,8 +65,6 @@ def GPFC_main(config):
             config.REPPB,
             config.ELITISM,
             config.NGEN,
-            seedRotate,
-            rd,
             stats,
             halloffame=hof,
             verbose=True,

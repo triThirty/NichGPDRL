@@ -30,7 +30,7 @@ def init_primitives(pset):
     pset.addTerminal(str("SLACK"))  # add by mengxu
 
 
-def init_toolbox(toolbox, pset, config):
+def init_toolbox(toolbox, pset):
     creator.create(
         "Individual",
         list,

@@ -14,4 +14,7 @@ TOURNAMENT_SIZE: 4
 span: 1000
 m_no: 6
 wc_no: 3
-ins_each_gen: 1
+ins_each_gen: 10
+
+evaluation_iterations: 100
+# fitness_evaluation_iterations: 10

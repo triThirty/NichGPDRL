@@ -39,8 +39,6 @@ def eaSimple(
     reppb,
     elitism,
     ngen,
-    seedRotate,
-    rd,
     stats=None,
     halloffame=None,
     verbose=__debug__,
@@ -48,11 +46,6 @@ def eaSimple(
     dataset_name=__debug__,
     config=None,
 ):
-    # initialise the random seed of each generation
-    randomSeed_ngen = []
-    for i in range((ngen + 1)):
-        randomSeed_ngen.append(np.random.randint(2000000000))
-
     logbook = tools.Logbook()
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
     min_fitness = []
@@ -61,13 +54,8 @@ def eaSimple(
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
-        if seedRotate:
-            rd["seed"] = randomSeed_ngen[gen]
-
         # Step 3: Full Fitness Evaluation
-        fitnesses = toolbox.multiProcess(
-            toolbox.evaluate, population, config, rd["seed"]
-        )
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, config)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
         # Step 3: Full Fitness Evaluation
@@ -85,16 +73,17 @@ def eaSimple(
         )
 
         # Step 5-7: Produce Offspring from population in intermediate population
-        parents = toolbox.select(population, len(population))
+        parents = toolbox.select(population, len(population))  # Select parents
+        elitism_pop = tools.selBest(population, elitism)  # Select elitism
         pop_intermediate = []
         while len(pop_intermediate) < len(population):
             offspring_intermediate = varAnd(parents, toolbox, cxpb, mutpb, reppb)
             pop_intermediate.extend(offspring_intermediate)
             del offspring_intermediate
-        pop_intermediate[:] = pop_intermediate[: len(population)]
+        pop_intermediate[:] = pop_intermediate[: len(population) - elitism]
         # Step 5-7: Produce Offspring from population in intermediate population
 
         # Replace the current population by the offspring
-        population[:] = pop_intermediate
+        population[:] = elitism_pop + pop_intermediate
 
     return population, logbook, min_fitness, best_ind_all_gen, all_individuals

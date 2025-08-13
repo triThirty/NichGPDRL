@@ -1,4 +1,5 @@
 import random
+from sklearn.neighbors import KNeighborsRegressor
 
 from deap import tools
 import numpy as np
@@ -49,7 +50,6 @@ def eaSimple(
     reppb,
     elitism,
     ngen,
-    seedRotate,
     rd,
     stats=None,
     halloffame=None,
@@ -59,27 +59,23 @@ def eaSimple(
     num_pre_selection=3,
     config=None,
 ):
-    # initialise the random seed of each generation
-    randomSeed_ngen = []
-    for i in range((ngen + 1)):
-        randomSeed_ngen.append(np.random.randint(2000000000))
 
     logbook = tools.Logbook()
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
+    KNN_model = KNeighborsRegressor(
+        n_neighbors=config.n_neighbors, p=2, weights="distance"
+    )
     min_fitness = []
     best_ind_all_gen = []
-    all_individuals = []
     proportion_trend = []
+    decision_matrix = []
+    fitness_matrix = []
 
     # Begin the generational process
     for gen in range(1, ngen + 1):
-        if seedRotate:
-            rd["seed"] = randomSeed_ngen[gen]
 
         # Step 3: Full Fitness Evaluation
-        fitnesses = toolbox.multiProcess(
-            toolbox.evaluate, population, config, rd["seed"]
-        )
+        fitnesses = toolbox.multiProcess(toolbox.evaluate, population, config)
         for ind, fit in zip(population, fitnesses):
             ind.fitness.values = fit
         # Step 3: Full Fitness Evaluation
@@ -97,17 +93,14 @@ def eaSimple(
         )
 
         # Step 4: Update Surrogate Model
-        decision_matrix = [ind.decision_vector for ind in population]
-        fitness_matrix = [ind.fitness.values[0] for ind in population]
-        knn_model = KNN_train(
-            X=decision_matrix, y=fitness_matrix, n_neighbors=config.n_neighbors
-        )
-        del decision_matrix
-        del fitness_matrix
+        decision_matrix.extend([ind.decision_vector for ind in population])
+        fitness_matrix.extend([ind.fitness.values[0] for ind in population])
+        knn_model = KNN_train(X=decision_matrix, y=fitness_matrix, KNN_model=KNN_model)
         # Step 4: Update Surrogate Model
 
         # Step 5-7: Produce Offspring from population in intermediate population
-        parents = toolbox.select(population, len(population))
+        parents = toolbox.select(population, len(population))  # Select parents
+        elitism_pop = tools.selBest(population, elitism)  # Select elitism
         pop_intermediate = []
         while len(pop_intermediate) < len(population) * num_pre_selection:
             offspring_intermediate = varAnd(parents, toolbox, cxpb, mutpb, reppb)
@@ -123,13 +116,16 @@ def eaSimple(
         # Step 8: Estimate Fitness using Surrogate
 
         # Step 9: Fill P with Best Rules from intermediate population
-        population = sorted(pop_intermediate, key=lambda x: x.fitness.values[0])[
-            : len(population)
-        ]
+        population = (
+            elitism_pop
+            + sorted(pop_intermediate, key=lambda x: x.fitness.values[0])[
+                : len(population) - elitism
+            ]
+        )
         # Step 9: Fill P with Best Rules from intermediate population
 
         # Statistics
-        statistics(toolbox, pop_intermediate, rd, config, population, proportion_trend)
+        # statistics(toolbox, pop_intermediate, rd, config, population, proportion_trend)
         # Statistics
         del pop_intermediate
 

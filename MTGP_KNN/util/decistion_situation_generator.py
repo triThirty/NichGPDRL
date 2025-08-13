@@ -2,8 +2,8 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from util.deplicate_removal import phyno_remove_duplicates
 
 
-def KNN_train(X, y, n_neighbors):
-    KNN_model = KNeighborsRegressor(n_neighbors=n_neighbors, p=2, weights="distance")
+def KNN_train(X, y, KNN_model):
+    # KNN_model = KNeighborsRegressor(n_neighbors=n_neighbors, p=2, weights="distance")
     KNN_model.fit(X, y)
     return KNN_model
 

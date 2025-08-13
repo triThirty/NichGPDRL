@@ -312,7 +312,8 @@ class knn_shopfloor:
 def evaluate(individual, **kwargs):
     # create the environment instance for simulation
     config = kwargs["config"]
-    seed = kwargs["seed"]
+    # seed = kwargs["seed"]
+    seed = config.seeds
     env = simpy.Environment()
     dataset_name = config.scenarios
     # create the shop floor instance

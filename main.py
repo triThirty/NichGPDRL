@@ -23,13 +23,13 @@ def my_app(cfg: DictConfig) -> None:
 
     if cfg.algo == "Transformer_SSGP":
         TransformerGPmain.main(cfg)
-        experiment_run(cfg)
+        experiment_run(cfg, cfg.evaluation_iterations)
     elif cfg.algo == "KNN":
         KNNmain.main(cfg)
-        experiment_run(cfg)
+        experiment_run(cfg, cfg.evaluation_iterations)
     elif cfg.algo == "MTGP":
         MTGPmain.main(cfg)
-        experiment_run(cfg)
+        experiment_run(cfg, cfg.evaluation_iterations)
 
 
 def merge_conf(cli_conf: DictConfig) -> DictConfig:

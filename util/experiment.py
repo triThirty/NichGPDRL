@@ -165,17 +165,7 @@ class shopfloorMTGP:
         self.env.run()
 
 
-span = 1000
-m_no = 6
-wc_no = 3
-sum_record = []
-benchmark_record = []
-max_record = []
-rate_record = []
-iteration = 100
-
-
-def run(config):
+def run(config, iteration):
     dataSetName = config.scenarios
 
     dict_best_MTGP_individuals = mtload.load_individual_from_gen(config)
@@ -188,10 +178,6 @@ def run(config):
 
     for run in range(iteration):
         print("******************* ITERATION-{} *******************".format(run))
-        sum_record.append([])
-        benchmark_record.append([])
-        max_record.append([])
-        rate_record.append([])
         seed = np.random.randint(2000000000)
 
         for idx, individual in enumerate(dict_best_MTGP_individuals):
@@ -201,9 +187,9 @@ def run(config):
             env = simpy.Environment()
             spf = shopfloorMTGP(
                 env,
-                span,
-                m_no,
-                wc_no,
+                config.span,
+                config.m_no,
+                config.wc_no,
                 sequencing_rule_tree,
                 routing_rule_tree,
                 routing_rule="GP_pair_R_test",

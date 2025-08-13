@@ -57,7 +57,12 @@ def GPFC_main(config):
     init_toolbox(toolbox, pset, config)
     toolbox.register("evaluate", evaluate)
 
-    reference_rule = reference_candidates[index]
+    reference_sequencing_rule = gp.PrimitiveTree.from_string(
+        config[config.scenarios].reference_sequencing_rule, pset=pset
+    )
+    reference_routing_rule = gp.PrimitiveTree.from_string(
+        config[config.scenarios].reference_routing_rule, pset=pset
+    )
     stats = init_stats()
     hof = tools.HallOfFame(1)
     rd["decision_situations"] = []
@@ -67,8 +72,8 @@ def GPFC_main(config):
         2000,
         12,
         config.wc_no,
-        reference_rule[0],
-        reference_rule[1],
+        reference_sequencing_rule,
+        reference_routing_rule,
         routing_rule="GP_evolve_R",
         sequencing_rule="GP_evolve_S",
         seed=np.random.randint(0, 1000000),

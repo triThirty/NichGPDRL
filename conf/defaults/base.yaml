@@ -18,3 +18,19 @@ ins_each_gen: 10
 
 evaluation_iterations: 100
 # fitness_evaluation_iterations: 10
+
+HH:
+  reference_sequencing_rule: "maximum('SLACK', 'PT')"
+  reference_routing_rule: "multiply(multiply('PT', minimum(add(add(add(add('MWT', 'PT'), 'OWT'), 'OWT'), 'OWT'), minimum('WIQ', 'WIQ'))), 'SLACK')"
+
+HL:
+  reference_sequencing_rule: "maximum('NPT', multiply(maximum(maximum('PT', maximum(maximum(maximum(multiply('SLACK', 'PT'), maximum('MWT', 'NOR')), 'OWT'), minimum('MWT', 'WIQ'))), minimum('MWT', 'WIQ')), 'PT'))"
+  reference_routing_rule: "multiply(add('PT', maximum(minimum('MWT', 'NPT'), 'MWT')), 'PT')"
+
+LH:
+  reference_sequencing_rule: "maximum('SLACK', 'PT')"
+  reference_routing_rule: "minimum(subtract(multiply(multiply('PT', subtract(multiply(multiply('PT', 'MWT'), protected_div('MWT', 'MWT')), 'MWT')), protected_div('MWT', 'MWT')), multiply(maximum('TIS', 'NIQ'), 'MWT')), 'PT')"
+
+LL:
+  reference_sequencing_rule: "multiply(subtract(add('TIS', maximum('NOR', 'SLACK')), add('TIS', subtract(protected_div('NPT', 'PT'), maximum('WIQ', 'TIS')))), subtract('WIQ', 'MWT'))"
+  reference_routing_rule: "maximum(multiply('PT', multiply(multiply('PT', multiply(multiply('PT', multiply(multiply('PT', 'MWT'), 'NIQ')), 'NIQ')), 'NIQ')), protected_div('PT', protected_div(maximum('NPT', 'TIS'), protected_div('WKR', 'WIQ'))))"

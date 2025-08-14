@@ -112,7 +112,7 @@ def eaSimple(
         # Step 9: Fill P with Best Rules from intermediate population
 
         # Statistics
-        # statistics(toolbox, pop_intermediate, rd, config, population, proportion_trend)
+        statistics(toolbox, pop_intermediate, config, population, proportion_trend)
         # Statistics
         del pop_intermediate
 

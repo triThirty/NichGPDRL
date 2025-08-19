@@ -1,5 +1,6 @@
 import math
 import random
+import numpy as np
 
 import torch
 
@@ -83,7 +84,6 @@ def varAnd(
                     i += 2
                 else:
                     (offspring[i], _) = toolbox.score_mate(
-                        # offspring[i], population[min_indices[i]]
                         offspring[i],
                         population[(i + 1) % len(offspring)],
                     )
@@ -101,33 +101,27 @@ def varAnd(
                     offspring[i], offspring[i + 1] = toolbox.mate(
                         offspring[i], offspring[i + 1]
                     )
-                    del offspring[i].fitness.values
-                    del offspring[i].l_min
-                    del offspring[i].l_max
-                    del offspring[i].r_min
-                    del offspring[i].r_max
-                    del offspring[i + 1].fitness.values
-                    del offspring[i + 1].l_min
-                    del offspring[i + 1].l_max
-                    del offspring[i + 1].r_min
-                    del offspring[i + 1].r_max
-
+                del offspring[i].fitness.values
+                del offspring[i].l_min
+                del offspring[i].l_max
+                del offspring[i].r_min
+                del offspring[i].r_max
+                del offspring[i + 1].fitness.values
+                del offspring[i + 1].l_min
+                del offspring[i + 1].l_max
+                del offspring[i + 1].r_min
+                del offspring[i + 1].r_max
                 i += 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation
             if random.random() < config.exploration_ratio:
                 (offspring[i],) = toolbox.score_mutate(offspring[i])
-                del offspring[i].fitness.values
-                del offspring[i].l_min
-                del offspring[i].l_max
-                del offspring[i].r_min
-                del offspring[i].r_max
             else:
                 (offspring[i],) = toolbox.mutate(offspring[i])
-                del offspring[i].fitness.values
-                del offspring[i].l_min
-                del offspring[i].l_max
-                del offspring[i].r_min
-                del offspring[i].r_max
+            del offspring[i].fitness.values
+            del offspring[i].l_min
+            del offspring[i].l_max
+            del offspring[i].r_min
+            del offspring[i].r_max
             i = i + 1
         else:
             i += 1

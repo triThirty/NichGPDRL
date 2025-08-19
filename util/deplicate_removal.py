@@ -2,6 +2,7 @@ from util.sequencing import GP_evolve_S
 from util.routing import GP_evolve_R
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
+from Levenshtein import jaro_winkler as similar
 
 
 def phyno_hash_individual(ind):
@@ -36,6 +37,51 @@ def remove_duplicates(population):
             unique_pop.append(ind)
 
     return unique_pop
+
+
+def remove_duplicates_based_on_similarity(population, config):
+    unique_pop = []
+
+    for i, ind_added in enumerate(population):
+        is_similar = False
+        for ind in unique_pop:
+            if similar(
+                str(ind[0]), str(ind_added[0]), score_cutoff=config.score_cutoff
+            ) and similar(
+                str(ind[1]), str(ind_added[1]), score_cutoff=config.score_cutoff
+            ):
+                is_similar = True
+                break
+
+        if not is_similar:
+            unique_pop.append(ind_added)
+    return unique_pop
+
+
+def similarity_matrix(population):
+    n = len(population)
+    l_sim_matrix = np.zeros((n, n))
+    r_sim_matrix = np.zeros((n, n))
+
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                l_sim_matrix[i, j] = similar(
+                    str(population[i][0]),
+                    str(population[j][0]),
+                )
+
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                r_sim_matrix[i, j] = similar(
+                    str(population[i][1]),
+                    str(population[j][1]),
+                )
+    np.fill_diagonal(l_sim_matrix, -np.inf)
+    np.fill_diagonal(r_sim_matrix, -np.inf)
+
+    return l_sim_matrix + r_sim_matrix
 
 
 def calculate_ranking_accuracy(data):
@@ -107,3 +153,11 @@ def phenotype_distance(offspring):
     masked_matrix = distance_matrix + np.diag([np.inf] * distance_matrix.shape[0])
     min_indices = np.argmin(masked_matrix, axis=1)
     return min_indices
+
+
+def remove_duplicates_from_list_a(list_a, list_b):
+    """
+    Remove duplicates from list_a that are present in list_b.
+    """
+    list_a = [item for item in list_a if item not in list_b]
+    return list_a

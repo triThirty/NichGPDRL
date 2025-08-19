@@ -500,12 +500,20 @@ class TransformerEncoder(Module):
         # max_score_index = 0
         for mod in self.layers:
             # output, minimal_score_index, max_score_index = mod(
-            output, score_vector = mod(
-                output,
-                src_mask=mask,
-                is_causal=is_causal,
-                src_key_padding_mask=src_key_padding_mask_for_layers,
-            )
+            if torch.is_grad_enabled():
+                output, score_vector = mod(
+                    output,
+                    src_mask=mask,
+                    is_causal=is_causal,
+                    src_key_padding_mask=src_key_padding_mask_for_layers,
+                )
+            else:
+                output = mod(
+                    output,
+                    src_mask=mask,
+                    is_causal=is_causal,
+                    src_key_padding_mask=src_key_padding_mask_for_layers,
+                )
 
         if convert_to_nested:
             output = output.to_padded_tensor(0.0, src.size())
@@ -514,7 +522,10 @@ class TransformerEncoder(Module):
             output = self.norm(output)
 
         # return output, minimal_score_index, max_score_index
-        return output, score_vector
+        if torch.is_grad_enabled():
+            return output, score_vector
+        elif not torch.is_grad_enabled():
+            return output
 
 
 class TransformerEncoderLayer(Module):

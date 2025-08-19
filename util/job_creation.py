@@ -336,7 +336,7 @@ class creation:
         tard_rate = tard.clip(0, 1).sum() / tard.size
         # print(output_time, cumulative_tard, tard_mean)
         # return tard
-        output_time = self.flowtime_list # add by mengxu 2023.12.14
+        output_time = np.mean(self.flowtime_list) # add by mengxu 2023.12.14
         return output_time, cumulative_tard, tard_mean, tard_max, tard_rate
 
     # the following is the original in the simulator

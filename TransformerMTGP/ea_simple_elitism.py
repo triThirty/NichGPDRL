@@ -12,6 +12,8 @@ from model.model import MyNN, SharedEmbeddings
 from util.deplicate_removal import (
     phyno_remove_duplicates,
     compute_phenotype,
+    remove_duplicates,
+    remove_duplicates_from_list_a,
 )
 from util.functions import record
 from util.statistics import statistics
@@ -45,6 +47,13 @@ def eaSimple(
     accuracy_trend = []
     proportion_trend = []
     shared_emb = SharedEmbeddings()
+    transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
+    optimizer = torch.optim.Adam(
+        params=list(transformer_model.parameters()),
+        lr=1e-3,
+    )
+    training_dataset = []
+    validation_dataset = []
 
     # Begin the generational process
     for gen in range(start_gen, ngen + 1):
@@ -68,13 +77,25 @@ def eaSimple(
         )
 
         # Step 4: Update Surrogate Model
-        transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
-        optimizer = torch.optim.Adam(
-            params=list(transformer_model.parameters()),
-            lr=1e-3,
+        intermediate_dataset = []
+        for ind in population:
+            if 20 <= len(ind[0]) + len(ind[1]) <= 150:
+                intermediate_dataset.append(ind)
+        intermediate_dataset = remove_duplicates_from_list_a(
+            intermediate_dataset, training_dataset + validation_dataset
         )
+        np.random.shuffle(intermediate_dataset)
+        training_dataset.extend(
+            intermediate_dataset[: int(len(intermediate_dataset) * 0.8)]
+        )
+        validation_dataset.extend(
+            intermediate_dataset[int(len(intermediate_dataset) * 0.8) :]
+        )
+        training_dataset = remove_duplicates(training_dataset)
+        validation_dataset = remove_duplicates(validation_dataset)
         new_surrogate_train(
-            population,
+            training_dataset,
+            validation_dataset,
             transformer_model,
             optimizer,
             device,
@@ -99,7 +120,7 @@ def eaSimple(
 
         # Step 8: Estimate Fitness using Surrogate
         surrogate_evaluate(pop_intermediate, transformer_model, device)
-        del transformer_model
+        # del transformer_model
         # Step 8: Estimate Fitness using Surrogate
 
         # Step 9: Fill P with Best Rules from intermediate population
@@ -112,8 +133,9 @@ def eaSimple(
         # Step 9: Fill P with Best Rules from intermediate population
 
         # Statistics
-        statistics(toolbox, pop_intermediate, config, population, proportion_trend)
+        # statistics(toolbox, pop_intermediate, config, population, proportion_trend)
         # Statistics
+        del elitism_pop
         del pop_intermediate
 
     return (

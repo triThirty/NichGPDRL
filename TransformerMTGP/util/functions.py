@@ -24,7 +24,7 @@ def list_net_loss(scores, labels, margin=0.0, lambda_var=0.1):
     lambda_var: 组内方差正则化系数
     """
     loss = 0.0
-    scores = -scores
+    # scores = -scores
     n = scores.shape[0]
 
     # 计算组内方差正则化
@@ -42,10 +42,10 @@ def list_net_loss(scores, labels, margin=0.0, lambda_var=0.1):
         for j in range(i + 1, n):
             if labels[i] == labels[j]:
                 # 相同标签：强制分数接近
-                loss += scores[i] - scores[j]
+                loss += torch.abs(scores[i] - scores[j])
             else:
                 # 不同标签：使用Margin Ranking Loss
-                sign = 1.0 if labels[i] > labels[j] else -1.0
+                sign = -1.0 if labels[i] > labels[j] else 1.0
                 diff = (scores[i] - scores[j]) * sign
                 loss += torch.relu(diff)
 

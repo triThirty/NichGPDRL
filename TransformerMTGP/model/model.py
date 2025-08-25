@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
-from torch.nn.utils.rnn import pad_sequence
 import torch.nn.utils.parametrizations as P
 
 from torch_geometric.nn import (
@@ -80,41 +80,34 @@ class MyNN(nn.Module):
         )
 
     # split_x: the primitive set index
-    def forward(self, batch_data, is_batch=True):
+    def forward(self, x, segment, is_batch=True):
         if is_batch:
-            num_nodes_per_graph = batch_data.batch.bincount().tolist()
-            split_x = torch.split(batch_data.x, num_nodes_per_graph)
-            split_segement_ids = torch.split(
-                batch_data.segement_ids, num_nodes_per_graph
-            )
-            split_x = pad_sequence(split_x, batch_first=True)
-            split_segement_ids = pad_sequence(split_segement_ids, batch_first=True)
-            post_processed_data = self.embedding_layer(split_x, split_segement_ids)
-            self.src_key_padding_mask = self.src_mask(split_x)
+            batch = self.get_batch(x)
+            post_processed_data = self.embedding_layer(x, segment)
+            src_key_padding_mask = self.src_mask(x)
         else:
-            split_x = batch_data.x
-            post_processed_data = self.embedding_layer(
-                split_x, batch_data.segement_ids, is_batch=is_batch
-            )
-            self.src_key_padding_mask = None
+            post_processed_data = self.embedding_layer(x, segment, is_batch=is_batch)
+            src_key_padding_mask = None
+            batch = None
         for layer in self.ugformer_layers:
-            # x, minimal_score_index, max_score_index = layer(
-            x, score_vector = layer(
-                post_processed_data, src_key_padding_mask=self.src_key_padding_mask
-            )
+            if torch.is_grad_enabled():
+                x, score_vector = layer(
+                    post_processed_data, src_key_padding_mask=src_key_padding_mask
+                )
+            elif not torch.is_grad_enabled():
+                x = layer(
+                    post_processed_data, src_key_padding_mask=src_key_padding_mask
+                )
+        del post_processed_data
 
         if is_batch:
-            valid_mask = ~self.src_key_padding_mask
+            valid_mask = ~src_key_padding_mask
             filtered_x = x[valid_mask]
         else:
             filtered_x = x.squeeze(0)
-        batch_data.x = filtered_x
+        x = filtered_x
 
-        x = batch_data.x
-        # for layer in self.lst_gnn:
-        #     x = x + layer(x, batch_data.edge_index)
-
-        x = global_add_pool(x, batch_data.batch)
+        x = global_add_pool(x, batch)
 
         for layer in self.predictions:
             x = layer(x)
@@ -130,38 +123,74 @@ class MyNN(nn.Module):
         padding_mask = x == 0
         return padding_mask
 
-    def mytraining(
-        self,
-        cost_func,
-        optimizer,
-        training_batch,
-        validation_batch,
-        epoch,
-    ):
-        times = 0
-        epoch_times = epoch
-        validation_loss = []
-        training_loss = []
-        while times <= epoch_times:
-            cumulation_training_loss = 0.0
-            self.train()
-            for batch_data in training_batch:
-                optimizer.zero_grad()
-                output_data = self.forward(batch_data)
-                target_data = batch_data.y.view(-1, 1)
-                training_loss_value = cost_func(output_data, target_data)
+    def get_batch(self, x):
+        batch_list = []
+        for i, t in enumerate(x):
+            non_zero_dim = torch.count_nonzero(t).item()
+            batch_tensor = torch.full((non_zero_dim,), fill_value=i, dtype=torch.long)
+            batch_list.append(batch_tensor)
+        batch = torch.cat(batch_list)
+        return batch
 
-                training_loss_value.backward()
-                optimizer.step()
-                cumulation_training_loss = (
-                    cumulation_training_loss + training_loss_value.item()
-                )
-            training_loss.append(cumulation_training_loss / len(training_batch))
 
-            times += 1
-            if times % 5 == 0:
-                print("The training loss value is:", training_loss_value.item())
-        return training_loss, validation_loss
+def mytraining(
+    model,
+    cost_func,
+    optimizer,
+    training_batch,
+    validation_batch,
+    epoch,
+):
+    times = 0
+    epoch_times = epoch
+    validation_loss = []
+    training_loss = []
+    early_stopping_times = 0
+    while times <= epoch_times:
+        cumulation_training_loss = 0.0
+        model.train()
+        for x, y, segment in training_batch:
+            if len(x) == 1:
+                break
+            optimizer.zero_grad()
+            output_data = model.forward(x, segment)
+            target_data = y.view(-1, 1)
+            training_loss_value = cost_func(output_data, target_data)
+
+            training_loss_value.backward()
+            optimizer.step()
+            cumulation_training_loss = (
+                cumulation_training_loss + training_loss_value.item()
+            )
+        # training_loss.append(cumulation_training_loss / len(training_batch))
+
+        cumulation_validation_loss = 0.0
+        model.eval()
+        with torch.no_grad():
+            for x, y, segment in validation_batch:
+                if len(x) == 1:
+                    break
+                validation_outputs = model.forward(x, segment)
+                validation_loss_value = cost_func(validation_outputs, y.view(-1, 1))
+                cumulation_validation_loss += validation_loss_value.item()
+        avg_validation_loss = cumulation_validation_loss / (
+            len(validation_batch) * len(validation_batch.dataset)
+        )
+        avg_training_loss = cumulation_training_loss / (
+            len(training_batch) * len(training_batch.dataset)
+        )
+        validation_loss.append(avg_validation_loss)
+        diffs = np.diff(validation_loss)
+
+        if len(diffs) > 3 and np.all(diffs[-3:] > 0):
+            print(f"Early Stop, the validation loss value is: {avg_validation_loss}")
+            break
+
+        # times += 1
+        # if times % 5 == 0:
+        #     print("The training loss value is:", avg_training_loss)
+        #     print("The validation loss value is:", avg_validation_loss)
+    return training_loss, validation_loss
 
 
 class SharedEmbeddings(nn.Module):

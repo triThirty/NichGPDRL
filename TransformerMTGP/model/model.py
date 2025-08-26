@@ -34,12 +34,12 @@ class MyNN(nn.Module):
         self.num_heads = num_heads
         self.output_size = output_size
 
-        self.lst_gnn = torch.nn.ModuleList()
+        # self.lst_gnn = torch.nn.ModuleList()
 
         self.ugformer_layers = torch.nn.ModuleList()
 
-        for _layer in range(1):
-            encoder_layers = TransformerEncoderLayer(
+        for _layer in range(8):
+            encoder_layers = torch.nn.TransformerEncoderLayer(
                 d_model=self.feature_dim_size,
                 nhead=self.num_heads,
                 norm_first=True,
@@ -49,18 +49,20 @@ class MyNN(nn.Module):
                 # bias=False,
             )
             self.ugformer_layers.append(
-                TransformerEncoder(encoder_layers, 1, enable_nested_tensor=False)
-            )
-        for _ in range(self.num_layers):
-            self.lst_gnn.append(
-                GATConv(
-                    in_channels=self.feature_dim_size,
-                    out_channels=self.feature_dim_size,
-                    heads=self.num_heads,
-                    concat=False,
-                    dropout=0.5,
+                torch.nn.TransformerEncoder(
+                    encoder_layers, 1, enable_nested_tensor=False
                 )
             )
+        # for _ in range(self.num_layers):
+        #     self.lst_gnn.append(
+        #         GATConv(
+        #             in_channels=self.feature_dim_size,
+        #             out_channels=self.feature_dim_size,
+        #             heads=self.num_heads,
+        #             concat=False,
+        #             dropout=0.5,
+        #         )
+        #     )
 
         self.predictions = torch.nn.ModuleList()
         self.predictions.append(

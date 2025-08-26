@@ -47,7 +47,7 @@ def eaSimple(
     accuracy_trend = []
     proportion_trend = []
     shared_emb = SharedEmbeddings()
-    transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
+    transformer_model = MyNN(64, 1024, 1, 1, 3, shared_emb)
     optimizer = torch.optim.Adam(
         params=list(transformer_model.parameters()),
         lr=1e-3,

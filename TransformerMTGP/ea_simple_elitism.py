@@ -47,6 +47,11 @@ def eaSimple(
     accuracy_trend = []
     proportion_trend = []
     shared_emb = SharedEmbeddings()
+    transformer_model = MyNN(64, 1024, 1, 2, 3, shared_emb)
+    optimizer = torch.optim.Adam(
+        params=list(transformer_model.parameters()),
+        lr=1e-3,
+    )
 
     training_dataset = []
     validation_dataset = []
@@ -73,11 +78,7 @@ def eaSimple(
         )
 
         # Step 4: Update Surrogate Model
-        transformer_model = MyNN(64, 1024, 1, 2, 3, shared_emb)
-        optimizer = torch.optim.Adam(
-            params=list(transformer_model.parameters()),
-            lr=1e-3,
-        )
+
         intermediate_dataset = []
         for ind in population:
             if 20 <= len(ind[0]) + len(ind[1]) <= 150:
@@ -121,7 +122,7 @@ def eaSimple(
 
         # Step 8: Estimate Fitness using Surrogate
         surrogate_evaluate(pop_intermediate, transformer_model, device)
-        del transformer_model
+        # del transformer_model
         # Step 8: Estimate Fitness using Surrogate
 
         # Step 9: Fill P with Best Rules from intermediate population

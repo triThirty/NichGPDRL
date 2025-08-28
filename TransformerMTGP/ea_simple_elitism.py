@@ -138,6 +138,14 @@ def eaSimple(
         del elitism_pop
         del pop_intermediate
 
+    checkpoint = {
+        "epoch": gen,
+        "model_state_dict": transformer_model.state_dict(),
+        "optimizer_state_dict": optimizer.state_dict(),
+    }
+
+    torch.save(checkpoint, f"data/checkpoint_{config.seeds}.pth")
+
     return (
         population,
         logbook,

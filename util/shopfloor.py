@@ -335,7 +335,6 @@ def evaluate(individual, **kwargs):
         spf.job_creator.tardiness_output()
     )
     fitness = cumulative_tard[-1]
-    # fitness = output_time
 
     for i in range(config.ins_each_gen - 1):
         seed = seed + 1000
@@ -358,7 +357,6 @@ def evaluate(individual, **kwargs):
             spf.job_creator.tardiness_output()
         )
         fitness = fitness + cumulative_tard[-1]
-        # fitness = fitness + output_time
 
     fitness = fitness / config.ins_each_gen
     scores = [fitness]

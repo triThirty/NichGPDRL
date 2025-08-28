@@ -34,35 +34,18 @@ class MyNN(nn.Module):
         self.num_heads = num_heads
         self.output_size = output_size
 
-        # self.lst_gnn = torch.nn.ModuleList()
-
-        self.ugformer_layers = torch.nn.ModuleList()
-
-        for _layer in range(8):
-            encoder_layers = torch.nn.TransformerEncoderLayer(
-                d_model=self.feature_dim_size,
-                nhead=self.num_heads,
-                norm_first=True,
-                dim_feedforward=self.ff_hidden_size,
-                dropout=0.5,
-                batch_first=True,
-                # bias=False,
-            )
-            self.ugformer_layers.append(
-                torch.nn.TransformerEncoder(
-                    encoder_layers, 1, enable_nested_tensor=False
-                )
-            )
-        # for _ in range(self.num_layers):
-        #     self.lst_gnn.append(
-        #         GATConv(
-        #             in_channels=self.feature_dim_size,
-        #             out_channels=self.feature_dim_size,
-        #             heads=self.num_heads,
-        #             concat=False,
-        #             dropout=0.5,
-        #         )
-        #     )
+        encoder_layers = TransformerEncoderLayer(
+            d_model=self.feature_dim_size,
+            nhead=self.num_heads,
+            norm_first=True,
+            dim_feedforward=self.ff_hidden_size,
+            dropout=0.5,
+            batch_first=True,
+            # bias=False,
+        )
+        # self.ugformer_layers.append(
+        self.encoder = TransformerEncoder(encoder_layers, 4, enable_nested_tensor=False)
+        # )
 
         self.predictions = torch.nn.ModuleList()
         self.predictions.append(
@@ -91,15 +74,15 @@ class MyNN(nn.Module):
             post_processed_data = self.embedding_layer(x, segment, is_batch=is_batch)
             src_key_padding_mask = None
             batch = None
-        for layer in self.ugformer_layers:
-            if torch.is_grad_enabled():
-                x, score_vector = layer(
-                    post_processed_data, src_key_padding_mask=src_key_padding_mask
-                )
-            elif not torch.is_grad_enabled():
-                x = layer(
-                    post_processed_data, src_key_padding_mask=src_key_padding_mask
-                )
+        # for layer in self.ugformer_layers:
+        if torch.is_grad_enabled():
+            x, score_vector = self.encoder(
+                post_processed_data, src_key_padding_mask=src_key_padding_mask
+            )
+        elif not torch.is_grad_enabled():
+            x = self.encoder(
+                post_processed_data, src_key_padding_mask=src_key_padding_mask
+            )
         del post_processed_data
 
         if is_batch:
@@ -119,6 +102,7 @@ class MyNN(nn.Module):
         if is_batch:
             return x
         else:
+            score_vector = torch.mean(torch.stack(score_vector, dim=0), dim=0)
             return x, score_vector
 
     def src_mask(self, x):

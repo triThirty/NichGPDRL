@@ -12,6 +12,8 @@ from torch.nn.modules.dropout import Dropout
 from torch.nn.modules.linear import Linear
 from torch.nn.modules.normalization import LayerNorm
 
+import numpy as np
+
 
 def _generate_square_subsequent_mask(
     sz: int,
@@ -496,8 +498,7 @@ class TransformerEncoder(Module):
         seq_len = _get_seq_len(src, batch_first)
         is_causal = _detect_is_causal_mask(mask, is_causal, seq_len)
 
-        # minimal_score_index = 0
-        # max_score_index = 0
+        score_vector_list = []
         for mod in self.layers:
             # output, minimal_score_index, max_score_index = mod(
             if torch.is_grad_enabled():
@@ -507,6 +508,7 @@ class TransformerEncoder(Module):
                     is_causal=is_causal,
                     src_key_padding_mask=src_key_padding_mask_for_layers,
                 )
+                score_vector_list.append(score_vector)
             else:
                 output = mod(
                     output,
@@ -523,7 +525,7 @@ class TransformerEncoder(Module):
 
         # return output, minimal_score_index, max_score_index
         if torch.is_grad_enabled():
-            return output, score_vector
+            return output, score_vector_list
         elif not torch.is_grad_enabled():
             return output
 
@@ -658,6 +660,7 @@ class TransformerEncoderLayer(Module):
         # self.max_score_index = None
 
         self.score_vector = None
+        # self.score_vector = np.array([])
 
     def __setstate__(self, state):
         super().__setstate__(state)
@@ -839,17 +842,8 @@ class TransformerEncoderLayer(Module):
             is_causal=is_causal,
             average_attn_weights=True,
         )
-        # TODO: modify by me
-        # weights.fill_diagonal_(0.0)
         if weights.shape[0] == 1:
-            # self.minimal_score_index = torch.argmin(
-            #     weights.squeeze(0).fill_diagonal_(0.0).sum(0)
-            # )
-            # self.max_score_index = torch.argmax(
-            #     weights.squeeze(0).fill_diagonal_(0.0).sum(0)
-            # )
             self.score_vector = weights.squeeze(0).fill_diagonal_(0.0).sum(0)
-        # TODO: end of modification
         return self.dropout1(x)
 
     # feed forward block

@@ -144,6 +144,7 @@ def eaSimple(
         "epoch": gen,
         "model_state_dict": transformer_model.state_dict(),
         "optimizer_state_dict": optimizer.state_dict(),
+        "embedding_state_dict": shared_emb.state_dict(),
     }
 
     torch.save(checkpoint, f"data/checkpoint_{config.seeds}.pth")

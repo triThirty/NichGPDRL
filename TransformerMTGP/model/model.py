@@ -9,12 +9,12 @@ from torch_geometric.nn import (
     GATConv,
 )
 
-import sys
-from pathlib import Path
+# import sys
+# from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.parent.parent))
+# sys.path.append(str(Path(__file__).parent.parent.parent.parent))
 
-from model.transformer import (
+from TransformerMTGP.model.transformer import (
     TransformerEncoder,
     TransformerEncoderLayer,
 )
@@ -79,6 +79,8 @@ class MyNN(nn.Module):
             P.spectral_norm(nn.Linear(self.feature_dim_size, self.output_size))
         )
 
+        self.attention_weights = []
+
     # split_x: the primitive set index
     def forward(self, x, segment, is_batch=True):
         if is_batch:
@@ -94,6 +96,7 @@ class MyNN(nn.Module):
                 x, score_vector = layer(
                     post_processed_data, src_key_padding_mask=src_key_padding_mask
                 )
+                self.attention_weights = layer.attention_weights
             elif not torch.is_grad_enabled():
                 x = layer(
                     post_processed_data, src_key_padding_mask=src_key_padding_mask
@@ -117,7 +120,7 @@ class MyNN(nn.Module):
         if is_batch:
             return x
         else:
-            return x, score_vector
+            return x, score_vector, self.attention_weights
 
     def src_mask(self, x):
         padding_mask = x == 0

@@ -370,6 +370,8 @@ class TransformerEncoder(Module):
             )
             self.use_nested_tensor = False
 
+        self.attention_weights = []
+
     def forward(
         self,
         src: Tensor,
@@ -501,12 +503,13 @@ class TransformerEncoder(Module):
         for mod in self.layers:
             # output, minimal_score_index, max_score_index = mod(
             if torch.is_grad_enabled():
-                output, score_vector = mod(
+                output, score_vector, weights = mod(
                     output,
                     src_mask=mask,
                     is_causal=is_causal,
                     src_key_padding_mask=src_key_padding_mask_for_layers,
                 )
+                self.attention_weights.append(weights)
             else:
                 output = mod(
                     output,
@@ -805,9 +808,13 @@ class TransformerEncoderLayer(Module):
 
         x = src
         if self.norm_first:
-            x = x + self._sa_block(
+            x1, weights = self._sa_block(
                 self.norm1(x), src_mask, src_key_padding_mask, is_causal=is_causal
             )
+            x = x + x1
+            # x = x + self._sa_block(
+            #     self.norm1(x), src_mask, src_key_padding_mask, is_causal=is_causal
+            # )
             x = x + self._ff_block(self.norm2(x))
         else:
             x = self.norm1(
@@ -817,7 +824,7 @@ class TransformerEncoderLayer(Module):
             x = self.norm2(x + self._ff_block(x))
 
         # return x, self.minimal_score_index, self.max_score_index
-        return x, self.score_vector
+        return x, self.score_vector, weights
 
     # self-attention block
     def _sa_block(
@@ -837,7 +844,7 @@ class TransformerEncoderLayer(Module):
             key_padding_mask=key_padding_mask,
             need_weights=True,
             is_causal=is_causal,
-            average_attn_weights=True,
+            average_attn_weights=False,
         )
         # TODO: modify by me
         # weights.fill_diagonal_(0.0)
@@ -848,9 +855,10 @@ class TransformerEncoderLayer(Module):
             # self.max_score_index = torch.argmax(
             #     weights.squeeze(0).fill_diagonal_(0.0).sum(0)
             # )
-            self.score_vector = weights.squeeze(0).fill_diagonal_(0.0).sum(0)
+            a = torch.mean(weights, dim=1)
+            self.score_vector = a.squeeze(0).fill_diagonal_(0.0).sum(0)
         # TODO: end of modification
-        return self.dropout1(x)
+        return self.dropout1(x), weights
 
     # feed forward block
     def _ff_block(self, x: Tensor) -> Tensor:

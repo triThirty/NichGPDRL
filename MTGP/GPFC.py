@@ -1,6 +1,7 @@
 import simpy
 from deap import base, creator, gp, tools
-import MTGP_KNN.multi_tree as REP
+# import MTGP_KNN.multi_tree as REP
+import util.multi_tree as REP
 from MTGP import ea_simple_elitism
 from util.ParallelToolbox import ParallelToolbox
 import util.saveFile as saveFile
@@ -14,10 +15,18 @@ import util.agent_workcenter as agent_workcenter
 import util.sequencing as sequencing
 import util.routing as routing
 import util.multi_tree as mt
-from util.selection import (
-    selElitistAndTournament,
-)
+from util.selection import selElitistAndTournament, ScoreBasedselElitistAndTournament
 from util.shopfloor import evaluate
+
+
+# def init_toolbox(toolbox, pset, config):
+#     REP.init_toolbox(toolbox, pset)
+#     toolbox.register(
+#         "select",
+#         selElitistAndTournament,
+#         tournsize=config.TOURNAMENT_SIZE,
+#         elitism=config.ELITISM,
+#     )
 
 
 def init_toolbox(toolbox, pset, config):
@@ -25,6 +34,12 @@ def init_toolbox(toolbox, pset, config):
     toolbox.register(
         "select",
         selElitistAndTournament,
+        tournsize=config.TOURNAMENT_SIZE,
+        elitism=config.ELITISM,
+    )
+    toolbox.register(
+        "score_base_select",
+        ScoreBasedselElitistAndTournament,
         tournsize=config.TOURNAMENT_SIZE,
         elitism=config.ELITISM,
     )

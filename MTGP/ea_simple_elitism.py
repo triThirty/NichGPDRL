@@ -3,12 +3,39 @@ import random
 from deap import tools
 import numpy as np
 from util.functions import record
-from TransformerMTGP.util.functions import varAnd
+
+# from TransformerMTGP.util.functions import varAnd
 from TransformerMTGP.model.model import MyNN, SharedEmbeddings
 import torch
 from TransformerMTGP.model.surrogate import surrogate_evaluate
 
 from util.deplicate_removal import remove_duplicates
+
+
+def varAnd(population, toolbox, cxpb, mutpb, reppb):
+    offspring = [toolbox.clone(ind) for ind in population]
+    new_cxpb = cxpb / (cxpb + mutpb + reppb)
+    new_mutpb = mutpb / (cxpb + mutpb + reppb) + new_cxpb
+    i = 1
+    while i < len(offspring):
+        randomValue = random.random()
+        if randomValue < new_cxpb:  # crossover
+            if offspring[i - 1] == offspring[i]:
+                (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
+                (offspring[i],) = toolbox.mutate(offspring[i])
+            else:
+                offspring[i - 1], offspring[i] = toolbox.mate(
+                    offspring[i - 1], offspring[i]
+                )
+            del offspring[i - 1].fitness.values, offspring[i].fitness.values
+            i = i + 2
+        elif new_cxpb <= randomValue < new_mutpb:  # mutation
+            (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
+            del offspring[i - 1].fitness.values
+            i = i + 1
+        else:
+            i = i + 1
+    return offspring
 
 
 def eaSimple(
@@ -32,13 +59,6 @@ def eaSimple(
     best_ind_all_gen = []
     all_individuals = []
 
-    loaded_checkpoint = torch.load(f"data/checkpoint_{config.seeds}.pth")
-    shared_emb = SharedEmbeddings()
-    shared_emb.load_state_dict(loaded_checkpoint["embedding_state_dict"])
-    transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
-    transformer_model.load_state_dict(loaded_checkpoint["model_state_dict"])
-    transformer_model.eval()
-
     # Begin the generational process
     for gen in range(1, ngen + 1):
         # Step 3: Full Fitness Evaluation
@@ -58,16 +78,13 @@ def eaSimple(
             min_fitness,
             best_ind_all_gen,
         )
-        surrogate_evaluate(population, transformer_model, "cpu")
 
         # Step 5-7: Produce Offspring from population in intermediate population
         parents = toolbox.select(population, len(population))  # Select parents
         elitism_pop = tools.selBest(population, elitism)  # Select elitism
         pop_intermediate = []
         while len(pop_intermediate) < len(population):
-            offspring_intermediate = varAnd(
-                parents, toolbox, cxpb, mutpb, reppb, config
-            )
+            offspring_intermediate = varAnd(parents, toolbox, cxpb, mutpb, reppb)
             pop_intermediate.extend(offspring_intermediate)
             pop_intermediate = remove_duplicates(pop_intermediate)
             del offspring_intermediate

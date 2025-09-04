@@ -1,5 +1,6 @@
 import simpy
 from deap import base, creator, gp, tools
+
 # import MTGP_KNN.multi_tree as REP
 import util.multi_tree as REP
 from MTGP import ea_simple_elitism
@@ -18,15 +19,7 @@ import util.multi_tree as mt
 from util.selection import selElitistAndTournament, ScoreBasedselElitistAndTournament
 from util.shopfloor import evaluate
 
-
-# def init_toolbox(toolbox, pset, config):
-#     REP.init_toolbox(toolbox, pset)
-#     toolbox.register(
-#         "select",
-#         selElitistAndTournament,
-#         tournsize=config.TOURNAMENT_SIZE,
-#         elitism=config.ELITISM,
-#     )
+from util.deplicate_removal import remove_duplicates
 
 
 def init_toolbox(toolbox, pset, config):
@@ -69,6 +62,11 @@ def GPFC_main(config):
     toolbox.register("evaluate", evaluate)
 
     pop = toolbox.population(n=config.POP_SIZE)
+    pop = remove_duplicates(pop)
+    while len(pop) < config.POP_SIZE:
+        new_ind = toolbox.individual()
+        pop.append(new_ind)
+        pop = remove_duplicates(pop)
     stats = init_stats()
     hof = tools.HallOfFame(1)
     pop, logbook, min_fitness, best_ind_all_gen, all_individuals = (

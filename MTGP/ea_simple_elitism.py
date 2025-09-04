@@ -8,6 +8,8 @@ from TransformerMTGP.model.model import MyNN, SharedEmbeddings
 import torch
 from TransformerMTGP.model.surrogate import surrogate_evaluate
 
+from util.deplicate_removal import remove_duplicates
+
 
 def eaSimple(
     population,
@@ -30,9 +32,7 @@ def eaSimple(
     best_ind_all_gen = []
     all_individuals = []
 
-    loaded_checkpoint = torch.load(
-        f"data/checkpoint_{config.seeds}.pth"
-    )
+    loaded_checkpoint = torch.load(f"data/checkpoint_{config.seeds}.pth")
     shared_emb = SharedEmbeddings()
     shared_emb.load_state_dict(loaded_checkpoint["embedding_state_dict"])
     transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
@@ -69,6 +69,7 @@ def eaSimple(
                 parents, toolbox, cxpb, mutpb, reppb, config
             )
             pop_intermediate.extend(offspring_intermediate)
+            pop_intermediate = remove_duplicates(pop_intermediate)
             del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) - elitism]
         # Step 5-7: Produce Offspring from population in intermediate population

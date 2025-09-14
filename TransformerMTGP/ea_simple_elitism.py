@@ -1,6 +1,7 @@
 import numpy as np
 from deap import tools
 import torch
+from sklearn.neighbors import KNeighborsRegressor
 
 
 from TransformerMTGP.model.surrogate import (
@@ -18,6 +19,10 @@ from util.deplicate_removal import (
 from util.functions import record
 from util.statistics import statistics
 from TransformerMTGP.util.functions import varAnd
+from MTGP_KNN.util.decistion_situation_generator import (
+    KNN_train,
+    predict,
+)
 
 
 def eaSimple(
@@ -42,6 +47,9 @@ def eaSimple(
 
     logbook = tools.Logbook()
     logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
+    KNN_model = KNeighborsRegressor(
+        n_neighbors=config.n_neighbors, p=2, weights="distance"
+    )
     min_fitness = []
     best_ind_all_gen = []
     accuracy_trend = []
@@ -50,6 +58,8 @@ def eaSimple(
 
     training_dataset = []
     validation_dataset = []
+    decision_matrix = []
+    fitness_matrix = []
 
     # Begin the generational process
     for gen in range(start_gen, ngen + 1):
@@ -73,6 +83,9 @@ def eaSimple(
         )
 
         # Step 4: Update Surrogate Model
+        decision_matrix.extend([ind.decision_vector for ind in population])
+        fitness_matrix.extend([ind.fitness.values[0] for ind in population])
+        knn_model = KNN_train(X=decision_matrix, y=fitness_matrix, KNN_model=KNN_model)
 
         # Step 4.1: Initialize Transformer Model for each generation
         transformer_model = MyNN(64, 1024, 1, 8, 3, shared_emb)
@@ -124,13 +137,15 @@ def eaSimple(
 
         # Step 8: Estimate Fitness using Surrogate
         surrogate_evaluate(pop_intermediate, transformer_model, device)
+        predict(knn_model, pop_intermediate)
         del transformer_model
         # Step 8: Estimate Fitness using Surrogate
 
         # Step 9: Fill P with Best Rules from intermediate population
         population = (
             elitism_pop
-            + sorted(pop_intermediate, key=lambda x: x.score)[
+            # + sorted(pop_intermediate, key=lambda x: x.score)[
+            + sorted(pop_intermediate, key=lambda x: x.fitness.values[0])[
                 : len(population) - elitism
             ]
         )

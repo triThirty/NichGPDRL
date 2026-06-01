@@ -1,0 +1,7 @@
+device: "cpu"
+algo: CCBG
+
+scenarios: HH
+seeds: 0
+
+n_neighbors: 3

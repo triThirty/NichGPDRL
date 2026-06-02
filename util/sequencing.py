@@ -5,6 +5,7 @@ import random
 import numpy as np
 import math
 from deap import gp
+from scipy.stats import rankdata
 # import MTGP.multi_tree as mt
 
 '''
@@ -322,7 +323,7 @@ def GP_evolve_S_ranks(data, tree_S): # genetic programming evolved sequencing ru
         individualvalue[job_position] = 10000000
     return ranks #todo: need to check by mengxu 2023.10.18
 
-def GP_evolve_S(data, tree_S): # genetic programming evolved sequencing rule
+def GP_evolve_S(data, tree_S, return_rank=False): # genetic programming evolved sequencing rule
     new_data = []
     new_data.append(np.array([data[0] for i in range(len(data[3]))]))
     new_data.append(np.array([data[1] for i in range(len(data[3]))]))
@@ -333,7 +334,11 @@ def GP_evolve_S(data, tree_S): # genetic programming evolved sequencing rule
     if isinstance(individualvalue, (np.int64, np.float64, float, int)):
         return 0 #todo: need to check if this is right!!! by mengxu 2022.10.15
     job_position = individualvalue.argmin()
-    return job_position
+    if return_rank:
+        ranks = rankdata(individualvalue, method='min')
+        return ranks
+    else:
+        return job_position
 
 def treeNode_S(tree, index, data):
     if tree[index].arity == 2:

@@ -206,9 +206,10 @@ class machine:
                     if self.getDecisionSituation:
                         # sequencingDecision = SequencingDecisionSituation.SequencingDecisionSituation(sequencing_data_generation)
                         # self.SequencingDecisionSituationList.append(sequencingDecision)
-                        self.SequencingDecisionSituationList["sequencing"].append(
-                            sequencing_data_generation
-                        )
+                        if sequencing_data_generation[0] == 4 :
+                            self.SequencingDecisionSituationList["sequencing"].append(
+                                sequencing_data_generation
+                            )
                 elif self.GPrule_action:
                     self.position = self.job_sequencing(
                         self.sequencing_data_generation(),

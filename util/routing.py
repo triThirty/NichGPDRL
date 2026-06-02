@@ -4,6 +4,7 @@ import simpy
 import random
 import numpy as np
 import torch
+from scipy.stats import rankdata
 
 '''
 this module contains the machine routing rules used for comparison
@@ -205,13 +206,17 @@ def GP_evolve_R_ranks(tree_R, idx, data, current_pt, next_pt, OWT, WKR, NOR, W, 
     return ranks  # todo: need to check by mengxu 2023.10.18
 
 
-def GP_evolve_R(tree_R, idx, data, current_pt, next_pt, OWT, WKR, NOR, W, TIS, SLACK, *args): # genetic programming evolved sequencing rule
+def GP_evolve_R(tree_R, idx, data, current_pt, next_pt, OWT, WKR, NOR, W, TIS, SLACK, *args, return_rank=False): # genetic programming evolved sequencing rule
     data = np.transpose(data)  # todo: check what's the data here!!!
     individualvalue = treeNode_R(tree_R, 0, data, current_pt, next_pt, OWT, WKR, NOR, W, TIS, SLACK)  # todo: actually, this should be used for sequencing rule
     if isinstance(individualvalue, (np.int64, np.float64, float, int)):
         return 0 #todo: need to check if this is right!!! by mengxu 2022.10.15
     machine_idx = individualvalue.argmin()
-    return machine_idx
+    if return_rank:
+        ranks = rankdata(individualvalue, method='min')
+        return ranks
+    else:
+        return machine_idx
 
 
 def treeNode_R(tree, index, data, current_pt, next_pt, OWT, WKR, NOR, W, TIS, SLACK):

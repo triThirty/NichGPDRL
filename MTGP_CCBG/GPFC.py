@@ -66,25 +66,33 @@ def GPFC_main(config):
     stats = init_stats()
     hof = tools.HallOfFame(1)
     rd["decision_situations"] = []
-    env = simpy.Environment()
-    spf = knn_shopfloor(
-        env,
-        2000,
-        12,
-        config.wc_no,
-        reference_sequencing_rule,
-        reference_routing_rule,
-        routing_rule="GP_evolve_R",
-        sequencing_rule="GP_evolve_S",
-        seed=np.random.randint(0, 1000000),
-        ifPrint=False,
-        dataset_name=config.scenarios,
-    )
-    spf.simulation()
+    num_sequenced_situations = 0
+    sequence_decision_situations = []
+    routing_decision_situations = []
+    while num_sequenced_situations <= 50:
+        env = simpy.Environment()
+        spf = knn_shopfloor(
+                env,
+                2000,
+                12,
+                config.wc_no,
+                reference_sequencing_rule,
+                reference_routing_rule,
+                routing_rule="GP_evolve_R",
+                sequencing_rule="GP_evolve_S",
+                seed=np.random.randint(0, 1000000),
+                ifPrint=False,
+                dataset_name=config.scenarios,
+            )
+        spf.simulation()
+        num_sequenced_situations += len(spf.decision_situations["sequencing"])
+        sequence_decision_situations.extend(spf.decision_situations["sequencing"])
+        routing_decision_situations.extend(spf.decision_situations["routing"])
+
 
     for routing_data, sequencing_data in zip(
-        spf.decision_situations["routing"][-45::3],
-        spf.decision_situations["sequencing"][-45::3],
+        routing_decision_situations[:50],
+        sequence_decision_situations[:50],
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)

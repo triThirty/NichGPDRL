@@ -166,8 +166,8 @@ class workcenter:
                 WKR = 0
                 NOR = 0
 
-                if len(remaining_ptl) > 1:
-                    next_pt = remaining_ptl[1]
+                if len(remaining_ptl) >= 1:
+                    next_pt = remaining_ptl[0]
                     remaining_ptl_sum = np.sum(remaining_ptl, axis=0)
                     WKR = remaining_ptl_sum - current_pt
                     NOR = len(remaining_ptl) - 1

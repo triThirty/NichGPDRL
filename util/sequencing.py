@@ -331,11 +331,12 @@ def GP_evolve_S(data, tree_S, return_rank=False): # genetic programming evolved 
     for i in range(3, len(data)):
         new_data.append(data[i])
     individualvalue = treeNode_S(tree_S, 0, new_data)  # todo: actually, this should be used for sequencing rule
-    if isinstance(individualvalue, (np.int64, np.float64, float, int)):
-        return 0 #todo: need to check if this is right!!! by mengxu 2022.10.15
+    if isinstance(individualvalue, (np.int64, np.float64, float, int, np.int32)):
+        # return 0 #todo: need to check if this is right!!! by mengxu 2022.10.15
+        individualvalue = np.array([individualvalue]*len(data[0]))
     job_position = individualvalue.argmin()
     if return_rank:
-        ranks = rankdata(individualvalue, method='min')
+        ranks = rankdata(individualvalue, method='ordinal')
         return ranks
     else:
         return job_position

@@ -79,11 +79,11 @@ def correlation(population, rd):
             node_decision_vector = _compute_decision_vector(
                 route_subtree, None, decision_situations
             )
-            if len(route_subtree) == len(ind[0]) or len(route_subtree) == 1:
+            if len(route_subtree) == len(ind[0]):
                 node_corr.append(0.0)
             else:
                 row_correlations = [
-                    spearmanr(row_a, row_b).statistic 
+                    np.abs(spearmanr(row_a, row_b).statistic)
                     for row_a, row_b in zip(ind_route_decision_vector, node_decision_vector)
                 ]
                 node_corr.append(
@@ -98,11 +98,15 @@ def correlation(population, rd):
             node_decision_vector = _compute_decision_vector(
                 None, seq_subtree, decision_situations
             )
-            if len(seq_subtree) == len(ind[1]) or len(seq_subtree) == 1:
+            if len(seq_subtree) == len(ind[1]):
                 node_corr.append(0.0)
             else:
+                row_correlations = [
+                    np.abs(spearmanr(row_a, row_b).statistic)
+                    for row_a, row_b in zip(ind_seq_decision_vector, node_decision_vector)
+                ]
                 node_corr.append(
-                    _spearman_corr(ind_seq_decision_vector, node_decision_vector)
+                    np.mean(row_correlations)
                 )
 
         ind.r_max = np.argmax(node_corr)

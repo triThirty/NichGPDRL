@@ -3,6 +3,7 @@ import random
 from deap import tools
 import numpy as np
 from util.functions import record
+from util.deplicate_removal import remove_duplicates
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
@@ -79,6 +80,7 @@ def eaSimple(
         while len(pop_intermediate) < len(population):
             offspring_intermediate = varAnd(parents, toolbox, cxpb, mutpb, reppb)
             pop_intermediate.extend(offspring_intermediate)
+            pop_intermediate = remove_duplicates(pop_intermediate)
             del offspring_intermediate
         pop_intermediate[:] = pop_intermediate[: len(population) - elitism]
         # Step 5-7: Produce Offspring from population in intermediate population

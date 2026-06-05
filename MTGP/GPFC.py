@@ -19,8 +19,6 @@ import util.multi_tree as mt
 from util.selection import selElitistAndTournament
 from util.shopfloor import evaluate
 
-from util.deplicate_removal import remove_duplicates
-
 
 def init_toolbox(toolbox, pset, config):
     REP.init_toolbox(toolbox, pset)
@@ -56,11 +54,6 @@ def GPFC_main(config):
     toolbox.register("evaluate", evaluate)
 
     pop = toolbox.population(n=config.POP_SIZE)
-    pop = remove_duplicates(pop)
-    while len(pop) < config.POP_SIZE:
-        new_ind = toolbox.individual()
-        pop.append(new_ind)
-        pop = remove_duplicates(pop)
     stats = init_stats()
     hof = tools.HallOfFame(1)
     pop, logbook, min_fitness, best_ind_all_gen, all_individuals = (

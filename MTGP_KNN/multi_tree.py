@@ -46,7 +46,11 @@ def ccbg_xmate(ind1, ind2):
     else:
         correlation_value = np.array(ind1.r_scores)
         another_correlation_value = np.array(ind2.r_scores)
-    selected_p = (1 - correlation_value) / sum(1 - correlation_value)
+    selected_p = (
+        (1 - correlation_value) / sum(1 - correlation_value)
+        if sum(1 - correlation_value) > 0
+        else np.ones_like(correlation_value) / len(correlation_value)
+    )
     another_selected_p = another_correlation_value / sum(another_correlation_value)
     selected_node_idx = np.random.choice(len(selected_p), p=selected_p)
     selected_another_node_idx = np.random.choice(

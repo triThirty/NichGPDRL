@@ -4,6 +4,7 @@ import random
 from util.multi_tree import maxheight, wrap
 from deap import gp, creator
 from deap import tools
+import numpy as np
 
 
 def init_toolbox(toolbox, pset):
@@ -22,7 +23,7 @@ def init_toolbox(toolbox, pset):
 
     toolbox.register("expr_mut", gp.genFull, min_=2, max_=8)
 
-    toolbox.register("mate", lim_xmate)
+    toolbox.register("mate", lim_ccbg_xmate)
     toolbox.register("mutate", lim_xmut, expr=toolbox.expr_mut)
 
 
@@ -37,8 +38,35 @@ def xmate(ind1, ind2):
     return ind1, ind2
 
 
+def ccbg_xmate(ind1, ind2):
+    i1 = random.randrange(len(ind1))
+    if i1 == 0:
+        correlation_value = np.array(ind1.l_scores)
+        another_correlation_value = np.array(ind2.l_scores)
+    else:
+        correlation_value = np.array(ind1.r_scores)
+        another_correlation_value = np.array(ind2.r_scores)
+    selected_p = (1 - correlation_value) / sum(1 - correlation_value)
+    another_selected_p = another_correlation_value / sum(another_correlation_value)
+    selected_node_idx = np.random.choice(len(selected_p), p=selected_p)
+    selected_another_node_idx = np.random.choice(
+        len(another_selected_p), p=another_selected_p
+    )
+    slice1 = ind1[i1].searchSubtree(selected_node_idx)
+    slice2 = ind2[i1].searchSubtree(selected_another_node_idx)
+    ind1[i1][slice1], ind2[i1][slice2] = ind2[i1][slice2], ind1[i1][slice1]
+
+    i2 = 1 - i1
+    ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+    return ind1, ind2
+
+
 def lim_xmate(ind1, ind2):
     return wrap(xmate, ind1, ind2)
+
+
+def lim_ccbg_xmate(ind1, ind2):
+    return wrap(ccbg_xmate, ind1, ind2)
 
 
 def xmut(ind, expr):

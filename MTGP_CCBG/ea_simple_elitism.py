@@ -29,14 +29,9 @@ def varAnd(population, toolbox, cxpb, mutpb, reppb):
                 (offspring[i - 1],) = toolbox.mutate(offspring[i - 1])
                 (offspring[i],) = toolbox.mutate(offspring[i])
             else:
-                i1 = random.randrange(len(offspring[i]))
-                if i1 == 0:
-                    correlation_value = np.array(offspring[i - 1].l_scores)
-                else:
-                    correlation_value = np.array(offspring[i - 1].r_scores)
-                selected_p = (1 - correlation_value)/sum(1 - correlation_value)
-                selected_node_idx = np.random.choice(len(selected_p), p=selected_p)
-
+                offspring[i - 1], offspring[i] = toolbox.mate(
+                    offspring[i - 1], offspring[i]
+                )
             del offspring[i - 1].fitness.values, offspring[i].fitness.values
             i = i + 2
         elif new_cxpb <= randomValue < new_mutpb:  # mutation

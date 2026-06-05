@@ -79,18 +79,18 @@ def correlation(population, rd):
             node_decision_vector = _compute_decision_vector(
                 route_subtree, None, decision_situations
             )
-            if len(route_subtree) == len(ind[0]):
-                node_corr.append(0.0)
-            else:
-                row_correlations = [
-                    np.abs(spearmanr(row_a, row_b).statistic)
-                    for row_a, row_b in zip(ind_route_decision_vector, node_decision_vector)
-                ]
-                node_corr.append(
-                    np.mean(row_correlations)
-                )
+            # if len(route_subtree) == len(ind[0]):
+            #     node_corr.append(0.0)
+            # else:
+            row_correlations = [
+                np.abs(spearmanr(row_a, row_b).statistic)
+                for row_a, row_b in zip(ind_route_decision_vector, node_decision_vector)
+            ]
+            node_corr.append(
+                np.mean(row_correlations)
+            )
 
-        ind.l_max = np.argmax(node_corr)
+        ind.l_scores = node_corr
 
         node_corr = []
 
@@ -98,15 +98,15 @@ def correlation(population, rd):
             node_decision_vector = _compute_decision_vector(
                 None, seq_subtree, decision_situations
             )
-            if len(seq_subtree) == len(ind[1]):
-                node_corr.append(0.0)
-            else:
-                row_correlations = [
-                    np.abs(spearmanr(row_a, row_b).statistic)
-                    for row_a, row_b in zip(ind_seq_decision_vector, node_decision_vector)
-                ]
-                node_corr.append(
-                    np.mean(row_correlations)
-                )
+            # if len(seq_subtree) == len(ind[1]):
+            #     node_corr.append(0.0)
+            # else:
+            row_correlations = [
+                np.abs(spearmanr(row_a, row_b).statistic)
+                for row_a, row_b in zip(ind_seq_decision_vector, node_decision_vector)
+            ]
+            node_corr.append(
+                np.mean(row_correlations)
+            )
 
-        ind.r_max = np.argmax(node_corr)
+        ind.r_scores = node_corr

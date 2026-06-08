@@ -90,8 +90,8 @@ def GPFC_main(config):
         routing_decision_situations.extend(spf.decision_situations["routing"])
 
     for routing_data, sequencing_data in zip(
-        routing_decision_situations[:-50],
-        sequence_decision_situations[:-50],
+        routing_decision_situations[-50:],
+        sequence_decision_situations[-50:],
     ):
         decision_situation = (routing_data, sequencing_data)
         rd["decision_situations"].append(decision_situation)

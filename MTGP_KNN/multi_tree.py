@@ -60,8 +60,8 @@ def ccbg_xmate(ind1, ind2):
     slice2 = ind2[i1].searchSubtree(selected_another_node_idx)
     ind1[i1][slice1], ind2[i1][slice2] = ind2[i1][slice2], ind1[i1][slice1]
 
-    # i2 = 1 - i1
-    # ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
+    i2 = 1 - i1
+    ind1[i2], ind2[i2] = ind2[i2], ind1[i2]
     return ind1, ind2
 
 

@@ -1,15 +1,16 @@
-# import networkx as nx
-# import matplotlib.pyplot as plt
-# from networkx.drawing.nx_agraph import graphviz_layout
+import networkx as nx
+import matplotlib.pyplot as plt
+from torch_geometric.data import Data
+from networkx.drawing.nx_agraph import graphviz_layout
 import numpy as np
 import torch
-from torch_geometric.data import Data
+from torch_geometric.utils import to_networkx
 from torch.nn.utils.rnn import pad_sequence
 
-from torch.utils.data import TensorDataset, DataLoader, Subset
+from torch.utils.data import TensorDataset, DataLoader
 
 from TransformerMTGP.src.classes.individual import Individual
-from TransformerMTGP.util.functions import positional_encoding, list_net_loss
+from TransformerMTGP.util.functions import list_net_loss
 from TransformerMTGP.model.model import mytraining
 
 lr_deduction = 0.9
@@ -93,22 +94,26 @@ def surrogate_evaluate(population, model, device):
         ind.r_min = np.argmin(r_score_vector)
         ind.r_max = np.argmax(r_score_vector)
 
-        # G = to_networkx(ind_data, to_undirected=False)
-        # node_colors = ["skyblue" for i in G.nodes]
-        # node_colors[ind.l_min] = "red"
-        # node_colors[ind.l_max] = "green"
-        # node_colors[ind.r_min + graph1.x.size(0)] = "red"
-        # node_colors[ind.r_max + graph1.x.size(0)] = "green"
-        # # node_colors[ind.max_score_node_index] = "green"
-        # pos = graphviz_layout(G, prog="dot")
-        # plt.figure(figsize=(8, 6))
-        # nx.draw(
-        #     G,
-        #     pos,
-        #     with_labels=True,
-        #     # labels=node_labels,
-        #     node_color=node_colors,
-        #     node_size=200,
-        # )
-        # plt.title("GNN Input Graph")
-        # plt.show()
+        ind.l_score_vector = l_score_vector
+        ind.r_score_vector = r_score_vector
+
+        ind_data = Data(x=combined_x, edge_index=torch.empty((2, 0), dtype=torch.long))
+        G = to_networkx(ind_data, to_undirected=False)
+        node_colors = ["skyblue" for i in G.nodes]
+        node_colors[ind.l_min] = "red"
+        node_colors[ind.l_max] = "green"
+        node_colors[ind.r_min + graph1.x.size(0)] = "red"
+        node_colors[ind.r_max + graph1.x.size(0)] = "green"
+        # node_colors[ind.max_score_node_index] = "green"
+        pos = graphviz_layout(G, prog="dot")
+        plt.figure(figsize=(8, 6))
+        nx.draw(
+            G,
+            pos,
+            with_labels=True,
+            # labels=node_labels,
+            node_color=node_colors,
+            node_size=200,
+        )
+        plt.title("GNN Input Graph")
+        plt.show()

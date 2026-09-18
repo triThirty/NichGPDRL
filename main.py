@@ -30,6 +30,11 @@ def my_app(cfg: DictConfig) -> None:
     elif cfg.algo == "MTGP":
         MTGPmain.main(cfg)
         experiment_run(cfg, cfg.evaluation_iterations)
+    elif cfg.algo == "CCBG":
+        from MTGP_CCBG.GPFC import main as CCBGmain
+
+        CCBGmain(cfg)
+        experiment_run(cfg, cfg.evaluation_iterations)
 
 
 def merge_conf(cli_conf: DictConfig) -> DictConfig:

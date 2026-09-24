@@ -1,22 +1,24 @@
 import copy
-from typing import Optional, Any, Union, Callable
-import torch
 import warnings
+from collections.abc import Callable
+from typing import Any
+
+import torch
 from torch import Tensor
 from torch.nn import functional as F
-from torch.nn.modules.module import Module
+from torch.nn.init import xavier_uniform_
 from torch.nn.modules.activation import MultiheadAttention
 from torch.nn.modules.container import ModuleList
-from torch.nn.init import xavier_uniform_
 from torch.nn.modules.dropout import Dropout
 from torch.nn.modules.linear import Linear
+from torch.nn.modules.module import Module
 from torch.nn.modules.normalization import LayerNorm
 
 
 def _generate_square_subsequent_mask(
     sz: int,
-    device: Optional[torch.device] = None,
-    dtype: Optional[torch.dtype] = None,
+    device: torch.device | None = None,
+    dtype: torch.dtype | None = None,
 ) -> Tensor:
     r"""Generate a square causal mask for the sequence.
 
@@ -32,7 +34,7 @@ def _generate_square_subsequent_mask(
     )
 
 
-def _get_seq_len(src: Tensor, batch_first: bool) -> Optional[int]:
+def _get_seq_len(src: Tensor, batch_first: bool) -> int | None:
 
     if src.is_nested:
         return None
@@ -93,9 +95,9 @@ class Transformer(Module):
         num_decoder_layers: int = 6,
         dim_feedforward: int = 2048,
         dropout: float = 0.1,
-        activation: Union[str, Callable[[Tensor], Tensor]] = F.relu,
-        custom_encoder: Optional[Any] = None,
-        custom_decoder: Optional[Any] = None,
+        activation: str | Callable[[Tensor], Tensor] = F.relu,
+        custom_encoder: Any | None = None,
+        custom_decoder: Any | None = None,
         layer_norm_eps: float = 1e-5,
         batch_first: bool = False,
         norm_first: bool = False,
@@ -162,14 +164,14 @@ class Transformer(Module):
         self,
         src: Tensor,
         tgt: Tensor,
-        src_mask: Optional[Tensor] = None,
-        tgt_mask: Optional[Tensor] = None,
-        memory_mask: Optional[Tensor] = None,
-        src_key_padding_mask: Optional[Tensor] = None,
-        tgt_key_padding_mask: Optional[Tensor] = None,
-        memory_key_padding_mask: Optional[Tensor] = None,
-        src_is_causal: Optional[bool] = None,
-        tgt_is_causal: Optional[bool] = None,
+        src_mask: Tensor | None = None,
+        tgt_mask: Tensor | None = None,
+        memory_mask: Tensor | None = None,
+        src_key_padding_mask: Tensor | None = None,
+        tgt_key_padding_mask: Tensor | None = None,
+        memory_key_padding_mask: Tensor | None = None,
+        src_is_causal: bool | None = None,
+        tgt_is_causal: bool | None = None,
         memory_is_causal: bool = False,
     ) -> Tensor:
         r"""Take in and process masked source/target sequences.
@@ -248,9 +250,7 @@ class Transformer(Module):
             >>> output = transformer_model(src, tgt, src_mask=src_mask, tgt_mask=tgt_mask)
         """
         is_batched = src.dim() == 3
-        if not self.batch_first and src.size(1) != tgt.size(1) and is_batched:
-            raise RuntimeError("the batch number of src and tgt must be equal")
-        elif self.batch_first and src.size(0) != tgt.size(0) and is_batched:
+        if not self.batch_first and src.size(1) != tgt.size(1) and is_batched or self.batch_first and src.size(0) != tgt.size(0) and is_batched:
             raise RuntimeError("the batch number of src and tgt must be equal")
 
         if src.size(-1) != self.d_model or tgt.size(-1) != self.d_model:
@@ -279,8 +279,8 @@ class Transformer(Module):
     @staticmethod
     def generate_square_subsequent_mask(
         sz: int,
-        device: Optional[torch.device] = None,
-        dtype: Optional[torch.dtype] = None,
+        device: torch.device | None = None,
+        dtype: torch.dtype | None = None,
     ) -> Tensor:
         r"""Generate a square causal mask for the sequence.
 
@@ -321,7 +321,7 @@ class TransformerEncoder(Module):
         self,
         encoder_layer: "TransformerEncoderLayer",
         num_layers: int,
-        norm: Optional[Module] = None,
+        norm: Module | None = None,
         enable_nested_tensor: bool = True,
         mask_check: bool = True,
     ) -> None:
@@ -373,9 +373,9 @@ class TransformerEncoder(Module):
     def forward(
         self,
         src: Tensor,
-        mask: Optional[Tensor] = None,
-        src_key_padding_mask: Optional[Tensor] = None,
-        is_causal: Optional[bool] = None,
+        mask: Tensor | None = None,
+        src_key_padding_mask: Tensor | None = None,
+        is_causal: bool | None = None,
     ) -> Tensor:
         r"""Pass the input through the encoder layers in turn.
 
@@ -611,7 +611,7 @@ class TransformerEncoderLayer(Module):
         nhead: int,
         dim_feedforward: int = 2048,
         dropout: float = 0.1,
-        activation: Union[str, Callable[[Tensor], Tensor]] = F.relu,
+        activation: str | Callable[[Tensor], Tensor] = F.relu,
         layer_norm_eps: float = 1e-5,
         batch_first: bool = False,
         norm_first: bool = False,
@@ -667,8 +667,8 @@ class TransformerEncoderLayer(Module):
     def forward(
         self,
         src: Tensor,
-        src_mask: Optional[Tensor] = None,
-        src_key_padding_mask: Optional[Tensor] = None,
+        src_mask: Tensor | None = None,
+        src_key_padding_mask: Tensor | None = None,
         is_causal: bool = False,
     ) -> Tensor:
         r"""Pass the input through the encoder layer.
@@ -823,8 +823,8 @@ class TransformerEncoderLayer(Module):
     def _sa_block(
         self,
         x: Tensor,
-        attn_mask: Optional[Tensor],
-        key_padding_mask: Optional[Tensor],
+        attn_mask: Tensor | None,
+        key_padding_mask: Tensor | None,
         is_causal: bool = False,
     ) -> Tensor:
         # TODO: modify by me
@@ -873,9 +873,9 @@ def _get_activation_fn(activation: str) -> Callable[[Tensor], Tensor]:
 
 
 def _detect_is_causal_mask(
-    mask: Optional[Tensor],
-    is_causal: Optional[bool] = None,
-    size: Optional[int] = None,
+    mask: Tensor | None,
+    is_causal: bool | None = None,
+    size: int | None = None,
 ) -> bool:
     """Return whether the given attention mask is causal.
 

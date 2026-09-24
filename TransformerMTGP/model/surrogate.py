@@ -1,17 +1,16 @@
-import networkx as nx
 import matplotlib.pyplot as plt
-from torch_geometric.data import Data
-from networkx.drawing.nx_agraph import graphviz_layout
+import networkx as nx
 import numpy as np
 import torch
-from torch_geometric.utils import to_networkx
+from networkx.drawing.nx_agraph import graphviz_layout
 from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import DataLoader, TensorDataset
+from torch_geometric.data import Data
+from torch_geometric.utils import to_networkx
 
-from torch.utils.data import TensorDataset, DataLoader
-
+from TransformerMTGP.model.model import mytraining
 from TransformerMTGP.src.classes.individual import Individual
 from TransformerMTGP.util.functions import list_net_loss
-from TransformerMTGP.model.model import mytraining
 
 lr_deduction = 0.9
 epoch = 100

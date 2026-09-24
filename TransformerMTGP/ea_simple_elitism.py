@@ -1,28 +1,26 @@
 import numpy as np
-from deap import tools
 import torch
+from deap import tools
+from model.model import MyNN, SharedEmbeddings
 from sklearn.neighbors import KNeighborsRegressor
 
-
-from TransformerMTGP.model.surrogate import (
-    surrogate_evaluate,
-    new_surrogate_train,
+from MTGP_KNN.util.decistion_situation_generator import (
+    KNN_train,
+    predict,
 )
-from model.model import MyNN, SharedEmbeddings
-
+from TransformerMTGP.model.surrogate import (
+    new_surrogate_train,
+    surrogate_evaluate,
+)
+from TransformerMTGP.util.functions import varAnd
 from util.deplicate_removal import (
-    phyno_remove_duplicates,
     compute_phenotype,
+    phyno_remove_duplicates,
     remove_duplicates,
     remove_duplicates_from_list_a,
 )
 from util.functions import record
 from util.statistics import statistics
-from TransformerMTGP.util.functions import varAnd
-from MTGP_KNN.util.decistion_situation_generator import (
-    KNN_train,
-    predict,
-)
 
 
 def eaSimple(
@@ -63,7 +61,6 @@ def eaSimple(
 
     # Begin the generational process
     for gen in range(start_gen, ngen + 1):
-
         # Step 3: Full Fitness Evaluation
         fitnesses = toolbox.multiProcess(toolbox.evaluate, population, config)
         for ind, fit in zip(population, fitnesses):

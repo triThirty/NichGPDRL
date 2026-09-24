@@ -1,9 +1,9 @@
 import random
-from sklearn.neighbors import KNeighborsRegressor
 
 from deap import tools
-import numpy as np
+from sklearn.neighbors import KNeighborsRegressor
 
+from MTGP_CCBG.util.correlation_computer import correlation
 from MTGP_KNN.util.decistion_situation_generator import (
     KNN_train,
     predict,
@@ -14,7 +14,6 @@ from util.deplicate_removal import (
 )
 from util.functions import record
 from util.statistics import statistics
-from MTGP_CCBG.util.correlation_computer import correlation
 
 
 def varAnd(population, toolbox, cxpb, mutpb, reppb):
